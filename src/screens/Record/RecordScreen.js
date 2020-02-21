@@ -1,18 +1,11 @@
-import React, {useEffect, useReducer} from 'react';
+import React, {createContext, useEffect, useReducer} from 'react';
 import Geolocation from 'react-native-geolocation-service';
 import RecordReducer, {MOVE_MAP, SLIDE_BOTTOM} from '../../reducers/RecordReducer';
-import SearchForm from './SearchForm';
-import RecordMap from './RecordMap';
+import SearchPanel from './SearchPanel';
+import Map from './Map';
 
-export const containerStyle = {
-  zIndex: 1,
-  flex: 0.9,
-  backgroundColor: '#FFFFFF',
-  borderRadius: 15,
-  paddingTop: 5,
-  paddingRight: 5,
-  paddingLeft: 5,
-};
+export const RecordContext = createContext();
+const {Provider} = RecordContext;
 
 const initState = {
   region: {
@@ -22,7 +15,9 @@ const initState = {
     longitudeDelta: 0.0421,
   },
   slidePosition: SLIDE_BOTTOM,
+  keyword: '',
   places: [],
+  selectedIndex: -1,
 };
 
 function RecordScreen() {
@@ -37,10 +32,10 @@ function RecordScreen() {
   }, [Geolocation]);
   
   return (
-    <>
-      <RecordMap state={state} dispatch={dispatch}/>
-      <SearchForm state={state} dispatch={dispatch}/>
-    </>
+    <Provider value={{state, dispatch}}>
+      <Map/>
+      <SearchPanel/>
+    </Provider>
   );
 }
 

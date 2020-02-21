@@ -1,11 +1,18 @@
 export const MOVE_MAP = 'MOVE_MAP';
+
+export const WRITE_KEYWORD = 'WRITE_KEYWORD';
+
 export const FOCUS_PLACE = 'FOCUS_PLACE';
 export const FETCH_PLACES = 'FETCH_PLACES';
 
-export const SLIDE_BOTTOM = 80;
-export const SLIDE_MIDDLE = 250;
+export const CLEAR_SEARCH_LIST = 'CLEAR_SEARCH_LIST';
 
-export default function(state, [type, payload]) {
+export const SET_SLIDE_POSITION = 'SET_SLIDE_POSITION';
+
+export const SLIDE_BOTTOM = 80;
+export const SLIDE_MIDDLE = 300;
+
+export default function (state, [type, payload]) {
   switch (type) {
     case MOVE_MAP:
       return {
@@ -16,19 +23,39 @@ export default function(state, [type, payload]) {
         },
         slidePosition: SLIDE_BOTTOM,
       };
+    case WRITE_KEYWORD:
+      return {
+        ...state,
+        keyword: payload,
+      };
     case FOCUS_PLACE:
       return {
         ...state,
         region: {
           ...state.region,
-          ...payload,
+          latitude: payload.latitude,
+          longitude: payload.longitude,
         },
         slidePosition: SLIDE_MIDDLE,
+        selectedIndex: payload.index,
       };
     case FETCH_PLACES:
       return {
         ...state,
         places: payload,
+        slidePosition: SLIDE_MIDDLE,
+      };
+    case SET_SLIDE_POSITION:
+      return {
+        ...state,
+        slidePosition: payload,
+      };
+    case CLEAR_SEARCH_LIST:
+      return {
+        ...state,
+        keyword: '',
+        places: [],
+        selectedIndex: -1,
       };
     default:
       return state;
