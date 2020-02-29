@@ -1,8 +1,8 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {Dimensions, View} from 'react-native';
 import SlidingUpPanel from 'rn-sliding-up-panel';
-import {RecordContext} from './RecordScreen';
-import {SLIDE_BOTTOM, SLIDE_MIDDLE} from '../../reducers/RecordReducer';
+import {RecordContext} from './SearchScreen';
+import {SLIDE_BOTTOM, SLIDE_MIDDLE} from '../../reducers/searchReducer';
 import SearchForm from './SearchForm';
 import RecordForm from './RecordForm';
 import PlaceDetail from './PlaceDetail';
@@ -46,7 +46,7 @@ function SearchPanel() {
           tab === 'PlaceDetail' && <PlaceDetail setAllowDrag={setAllowDrag} setTab={setTab} SLIDE_TOP={SLIDE_TOP}/>
         }
         {
-          tab === 'RecordForm' && <RecordForm setTab={setTab}/>
+          tab === 'RecordForm' && <RecordForm setAllowDrag={setAllowDrag} setTab={setTab}/>
         }
       </View>
     </SlidingUpPanel>

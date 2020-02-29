@@ -1,6 +1,6 @@
 import React, {createContext, useEffect, useReducer} from 'react';
 import Geolocation from 'react-native-geolocation-service';
-import RecordReducer, {MOVE_MAP, SLIDE_BOTTOM} from '../../reducers/RecordReducer';
+import searchReducer, {MOVE_MAP, SLIDE_BOTTOM} from '../../reducers/searchReducer';
 import SearchPanel from './SearchPanel';
 import Map from './Map';
 
@@ -20,8 +20,8 @@ const initState = {
   selectedIndex: -1,
 };
 
-function RecordScreen() {
-  const [state, dispatch] = useReducer(RecordReducer, initState);
+function SearchScreen() {
+  const [state, dispatch] = useReducer(searchReducer, initState);
   
   useEffect(() => {
     Geolocation.getCurrentPosition(
@@ -39,4 +39,4 @@ function RecordScreen() {
   );
 }
 
-export default RecordScreen;
+export default SearchScreen;

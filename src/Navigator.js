@@ -5,7 +5,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
-import RecordScreen from './screens/Record/RecordScreen';
+import SearchScreen from './screens/Search/SearchScreen';
 import StatsScreen from './screens/StatsScreen';
 
 IonIcons.loadFont();
@@ -47,7 +47,7 @@ function TabNavigator() {
       initialRouteName='Record'
     >
       <Tab.Screen name='Home' component={HomeScreen}/>
-      <Tab.Screen name='Record' component={RecordScreen}/>
+      <Tab.Screen name='Record' component={SearchScreen}/>
       <Tab.Screen name='Stats' component={StatsScreen}/>
     </Tab.Navigator>
   );

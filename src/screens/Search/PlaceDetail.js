@@ -2,8 +2,8 @@ import React, {useContext} from 'react';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import {Button, ListItem} from 'react-native-elements';
 import {WebView} from 'react-native-webview';
-import {RecordContext} from './RecordScreen';
-import {SET_SLIDE_POSITION} from '../../reducers/RecordReducer';
+import {RecordContext} from './SearchScreen';
+import {SET_SLIDE_POSITION} from '../../reducers/searchReducer';
 
 function PlaceDetail({setAllowDrag, setTab, SLIDE_TOP}) {
   const {state: {places, selectedIndex}, dispatch} = useContext(RecordContext);
@@ -31,6 +31,7 @@ function PlaceDetail({setAllowDrag, setTab, SLIDE_TOP}) {
         onPress={() => {
           setTab('RecordForm');
           dispatch([SET_SLIDE_POSITION, SLIDE_TOP]);
+          setAllowDrag(false);
         }}
       />
       <WebView

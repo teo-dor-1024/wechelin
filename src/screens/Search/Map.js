@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import MapView, {Marker} from 'react-native-maps';
-import {RecordContext} from './RecordScreen';
-import {FOCUS_PLACE, MOVE_MAP} from '../../reducers/RecordReducer';
+import {RecordContext} from './SearchScreen';
+import {FOCUS_PLACE, MOVE_MAP} from '../../reducers/searchReducer';
 
 function Map() {
   const {state: {region, places}, dispatch} = useContext(RecordContext);

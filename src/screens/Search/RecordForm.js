@@ -1,0 +1,177 @@
+import React, {useContext, useEffect, useRef, useState} from 'react';
+import {useMutation} from '@apollo/react-hooks';
+import gql from 'graphql-tag';
+import {Button, ButtonGroup, CheckBox, Input, ListItem} from 'react-native-elements';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import IonIcons from 'react-native-vector-icons/Ionicons';
+import {RecordContext} from './SearchScreen';
+import {CLEAR_SEARCH_LIST, SET_SLIDE_POSITION, SLIDE_MIDDLE} from '../../reducers/searchReducer';
+import useMyInfo from '../../util/useMyInfo';
+
+const CREATE_RECORD = gql`
+  mutation ($input: NewRecord!) {
+    createRecord(input: $input)
+  }
+`;
+
+function RecordForm({setAllowDrag, setTab}) {
+  const {state: {places, selectedIndex}, dispatch} = useContext(RecordContext);
+  const {id, name, category, address, url, latitude, longitude} = places[selectedIndex];
+  const [formData, setFormData] = useState({
+    visitedDate: new Date(),
+    menus: '',
+    money: 0,
+    tasty: -1,
+    kind: -1,
+    costEfficient: -1,
+    isDutch: true,
+  });
+  const {visitedDate, menus, money, tasty, kind, costEfficient, isDutch} = formData;
+  const [isDateOpen, setIsDateOpen] = useState(false);
+  const menuRef = useRef();
+  const moneyRef = useRef();
+  
+  const [isWriteDone, setIsWriteDone] = useState(false);
+  const [createRecord] = useMutation(CREATE_RECORD);
+  const {id: userId} = useMyInfo();
+  
+  useEffect(() => {
+    const record = async () => {
+      try {
+        await createRecord({
+          variables: {
+            input: {
+              userId,
+              placeId: id,
+              placeName: name,
+              category,
+              address,
+              url,
+              x: longitude,
+              y: latitude,
+              menus: menus.split(',').map(menu => menu.trim()),
+              money,
+              score,
+              visitedDate,
+              visitedYear: visitedDate.getFullYear(),
+              visitedMonth: visitedDate.getMonth() + 1,
+              isDutch,
+            },
+          },
+        });
+        dispatch([CLEAR_SEARCH_LIST]);
+        setTab('SearchForm');
+      } catch (error) {
+        console.error(error.toString());
+        setIsWriteDone(false);
+      }
+    };
+    
+    isWriteDone && record();
+  }, [isWriteDone]);
+  
+  return (
+    <>
+      <ListItem
+        title={`${name}`}
+        titleStyle={{fontSize: 22, fontWeight: 'bold'}}
+        subtitle='기록하기'
+        subtitleStyle={{color: '#424242'}}
+        rightIcon={
+          <IonIcons
+            name='ios-close-circle-outline'
+            size={30}
+            color='#848484'
+            onPress={() => {
+              setTab('PlaceDetail');
+              dispatch([SET_SLIDE_POSITION, SLIDE_MIDDLE]);
+              setAllowDrag(true);
+            }}
+          />
+        }
+      />
+      <Input
+        ref={menuRef}
+        label='날짜'
+        containerStyle={{marginTop: 20}}
+        inputStyle={{color: '#2E2E2E'}}
+        placeholder='날짜를 선택하세요'
+        disabled
+        value={visitedDate.toLocaleString()}
+        onTouchStart={() => setIsDateOpen(true)}
+      />
+      <Input
+        ref={menuRef}
+        containerStyle={{marginTop: 20}}
+        label='메뉴'
+        placeholder='메뉴를 입력하세요'
+        value={menus}
+        onChangeText={menus => setFormData({...formData, menus})}
+        onSubmitEditing={() => moneyRef.current.focus()}
+      />
+      <Input
+        ref={moneyRef}
+        containerStyle={{marginTop: 20}}
+        keyboardType='number-pad'
+        label='금액'
+        placeholder='금액을 입력하세요'
+        value={money}
+        onChangeText={money => setFormData({...formData, money})}
+      />
+      <ButtonGroup
+        containerStyle={{marginTop: 20}}
+        buttons={['맛있음', '맛없음']}
+        selectedIndex={tasty}
+        onPress={selectedIdx => setFormData({
+          ...formData,
+          tasty: selectedIdx === tasty ? -1 : selectedIdx,
+        })}
+      />
+      <ButtonGroup
+        buttons={['친절함', '불친절함']}
+        selectedIndex={kind}
+        onPress={selectedIdx => setFormData({
+          ...formData,
+          kind: selectedIdx === kind ? -1 : selectedIdx,
+        })}
+      />
+      <ButtonGroup
+        buttons={['가성비 좋음', '비쌈']}
+        selectedIndex={costEfficient}
+        onPress={selectedIdx => setFormData({
+          ...formData,
+          costEfficient: selectedIdx === costEfficient ? -1 : selectedIdx,
+        })}
+      />
+      <CheckBox
+        containerStyle={{marginTop: 20}}
+        title='정산 대상'
+        checked={isDutch}
+        onPress={() => setFormData({...formData, isDutch: !isDutch})}
+      />
+      <Button
+        title='기록하기'
+        titleStyle={{fontWeight: 'bold'}}
+        containerStyle={{marginTop: 30}}
+        onPress={() => setIsWriteDone(true)}
+      />
+      <DateTimePickerModal
+        isVisible={isDateOpen}
+        mode='datetime'
+        onConfirm={visitedDate => {
+          setFormData({...formData, visitedDate});
+          setIsDateOpen(false);
+        }}
+        onCancel={() => setIsDateOpen(false)}
+        headerTextIOS='날짜를 선택하세요'
+        cancelTextIOS='취소'
+        confirmTextIOS='완료'
+        minimumDate={new Date(2010, 0, 1)}
+        locale='ko_KO'
+        minuteInterval={30}
+      />
+    </>
+  );
+}
+
+export default RecordForm;

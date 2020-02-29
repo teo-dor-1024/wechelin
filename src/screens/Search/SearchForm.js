@@ -1,11 +1,11 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {RecordContext} from './RecordScreen';
+import {RecordContext} from './SearchScreen';
 import {ListItem, SearchBar} from 'react-native-elements';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import {ScrollView} from 'react-native';
 import {convertDistance} from '../../util/StringUtils';
 import {fetchPlacesAroundMe} from '../../util/fetch';
-import {CLEAR_SEARCH_LIST, FETCH_PLACES, FOCUS_PLACE, WRITE_KEYWORD} from '../../reducers/RecordReducer';
+import {CLEAR_SEARCH_LIST, FETCH_PLACES, FOCUS_PLACE, WRITE_KEYWORD} from '../../reducers/searchReducer';
 
 function SearchForm({setAllowDrag, setTab}) {
   const {state: {region, keyword, places}, dispatch} = useContext(RecordContext);
