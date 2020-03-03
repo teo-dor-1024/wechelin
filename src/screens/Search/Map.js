@@ -1,14 +1,7 @@
 import React, {useContext} from 'react';
 import MapView, {Marker} from 'react-native-maps';
 import {RecordContext} from './SearchScreen';
-import {
-  FOCUS_PLACE,
-  MOVE_MAP,
-  SET_ADD_PIN_INFO,
-  SET_SLIDE_POSITION,
-  SLIDE_BOTTOM,
-  SLIDE_MIDDLE,
-} from '../../reducers/searchReducer';
+import {FOCUS_PLACE, SET_ADD_PIN_INFO} from '../../reducers/searchReducer';
 
 function Map() {
   const {
@@ -22,20 +15,8 @@ function Map() {
     <MapView
       style={{flex: 1}}
       region={region}
-      onRegionChangeComplete={region => dispatch([MOVE_MAP, region])}
-      onPress={
-        ({nativeEvent: {coordinate}}) => {
-          if (addPinMode) {
-            dispatch([SET_ADD_PIN_INFO, {...coordinate}]);
-            dispatch([SET_SLIDE_POSITION, SLIDE_MIDDLE]);
-          } else {
-            dispatch([SET_SLIDE_POSITION, SLIDE_BOTTOM]);
-          }
-        }
-      }
+      onPress={({nativeEvent: {coordinate}}) => addPinMode && dispatch([SET_ADD_PIN_INFO, {...coordinate}])}
       showsUserLocation
-      followsUserLocation
-      showsMyLocationButton
     >
       {
         places.map(({id, name, latitude, longitude}, index) =>

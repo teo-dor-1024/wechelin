@@ -1,6 +1,6 @@
 import React, {createContext, useEffect, useReducer} from 'react';
 import Geolocation from 'react-native-geolocation-service';
-import searchReducer, {MOVE_MAP, SLIDE_BOTTOM} from '../../reducers/searchReducer';
+import searchReducer, {MOVE_MAP} from '../../reducers/searchReducer';
 import SearchPanel from './SearchPanel';
 import Map from './Map';
 
@@ -14,7 +14,6 @@ const initState = {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   },
-  slidePosition: SLIDE_BOTTOM,
   keyword: '',
   places: [],
   selectedIndex: -1,

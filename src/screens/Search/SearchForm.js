@@ -12,8 +12,9 @@ import {
   SET_ADD_PIN_MODE,
   WRITE_KEYWORD,
 } from '../../reducers/searchReducer';
+import {SLIDE_BOTTOM, SLIDE_MIDDLE} from './SearchPanel';
 
-function SearchForm({setAllowDrag, setTab}) {
+function SearchForm({setAllowDrag, setTab, slideRef}) {
   const {state: {region, keyword, places}, dispatch} = useContext(RecordContext);
   const [text, setText] = useState('');
   
@@ -30,6 +31,14 @@ function SearchForm({setAllowDrag, setTab}) {
     fetchPlaces(keyword, region);
   }, [keyword]);
   
+  const onClickManual = () => {
+    setTab('ManualAddForm');
+    dispatch([CLEAR_SEARCH_LIST]);
+    dispatch([SET_ADD_PIN_MODE, true]);
+    setAllowDrag(false);
+    slideRef.current.show(SLIDE_BOTTOM);
+  };
+  
   return (
     <>
       {
@@ -45,7 +54,10 @@ function SearchForm({setAllowDrag, setTab}) {
             cancelButtonProps={{buttonTextStyle: {fontSize: 15, paddingTop: 20}}}
             value={text}
             onChangeText={text => setText(text)}
-            onSubmitEditing={() => dispatch([WRITE_KEYWORD, text])}
+            onSubmitEditing={() => {
+              dispatch([WRITE_KEYWORD, text]);
+              slideRef.current.show(SLIDE_MIDDLE);
+            }}
           />
           :
           <>
@@ -55,7 +67,18 @@ function SearchForm({setAllowDrag, setTab}) {
               subtitle={`근처 ${places.length} 개의 검색결과`}
               subtitleStyle={{color: '#424242'}}
               onPress={({nativeEvent}) => nativeEvent.stopImmediatePropagation && nativeEvent.stopImmediatePropagation()}
-              rightIcon={<IonIcons name='ios-close-circle-outline' size={30} color='#848484' onPress={() => dispatch([CLEAR_SEARCH_LIST])}/>}
+              rightIcon={
+                <IonIcons
+                  name='ios-close-circle-outline'
+                  size={30}
+                  color='#848484'
+                  onPress={() => {
+                    dispatch([CLEAR_SEARCH_LIST]);
+                    setText('');
+                    slideRef.current.show(SLIDE_BOTTOM);
+                  }}
+                />
+              }
             />
             <ListItem
               title='찾으시는 장소가 없으신가요?'
@@ -63,12 +86,7 @@ function SearchForm({setAllowDrag, setTab}) {
               subtitle='직접 등록하러 가기'
               subtitleStyle={{color: '#0174DF', fontSize: 14}}
               rightIcon={<Icon type='ionicon' name='ios-add-circle-outline' size={30} color='#58ACFA'/>}
-              onPress={() => {
-                setTab('ManualAddForm');
-                dispatch([CLEAR_SEARCH_LIST]);
-                dispatch([SET_ADD_PIN_MODE, true]);
-                setAllowDrag(false);
-              }}
+              onPress={onClickManual}
               bottomDivider
             />
             <ScrollView

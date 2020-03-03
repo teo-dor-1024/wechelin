@@ -5,7 +5,7 @@ import {Button, ButtonGroup, CheckBox, Input, ListItem} from 'react-native-eleme
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import {RecordContext} from './SearchScreen';
-import {CLEAR_SEARCH_LIST, SET_SLIDE_POSITION, SLIDE_MIDDLE} from '../../reducers/searchReducer';
+import {CLEAR_SEARCH_LIST} from '../../reducers/searchReducer';
 import useMyInfo from '../../util/useMyInfo';
 import {convertMoney} from '../../util/StringUtils';
 
@@ -102,14 +102,12 @@ function RecordForm({setAllowDrag, setTab}) {
             size={30}
             color='#848484'
             onPress={() => {
-              console.log(addPinMode);
               if (addPinMode) {
                 setTab('ManualAddForm');
               } else {
                 setTab('PlaceDetail');
                 setAllowDrag(true);
               }
-              dispatch([SET_SLIDE_POSITION, SLIDE_MIDDLE]);
             }}
           />
         }
@@ -118,7 +116,8 @@ function RecordForm({setAllowDrag, setTab}) {
         ref={menuRef}
         label='날짜'
         containerStyle={{marginTop: 20}}
-        inputStyle={{color: '#2E2E2E'}}
+        inputStyle={{color: '#000000'}}
+        placeholderTextColor='#BDBDBD'
         placeholder='날짜를 선택하세요'
         disabled
         value={visitedDate.toLocaleString()}
@@ -127,6 +126,7 @@ function RecordForm({setAllowDrag, setTab}) {
       <Input
         ref={menuRef}
         containerStyle={{marginTop: 20}}
+        placeholderTextColor='#BDBDBD'
         label='메뉴'
         placeholder='메뉴를 입력하세요'
         value={menus}
@@ -136,6 +136,7 @@ function RecordForm({setAllowDrag, setTab}) {
       <Input
         ref={moneyRef}
         containerStyle={{marginTop: 20}}
+        placeholderTextColor='#BDBDBD'
         keyboardType='number-pad'
         returnKeyType='done'
         label='금액'
@@ -183,6 +184,7 @@ function RecordForm({setAllowDrag, setTab}) {
         onPress={() => setIsWriteDone(true)}
       />
       <DateTimePickerModal
+        isDarkModeEnabled
         isVisible={isDateOpen}
         mode='datetime'
         onConfirm={visitedDate => {

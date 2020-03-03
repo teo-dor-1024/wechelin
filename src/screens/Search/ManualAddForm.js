@@ -3,7 +3,8 @@ import {View} from 'react-native';
 import {Button, Input, Text} from 'react-native-elements';
 import RNPickerSelect from 'react-native-picker-select';
 import {RecordContext} from './SearchScreen';
-import {SET_ADD_PIN_INFO, SET_ADD_PIN_MODE, SET_SLIDE_POSITION, SLIDE_MIDDLE} from '../../reducers/searchReducer';
+import {SET_ADD_PIN_INFO, SET_ADD_PIN_MODE} from '../../reducers/searchReducer';
+import {SLIDE_BOTTOM, SLIDE_MIDDLE} from './SearchPanel';
 
 const styles = {
   descContainer: {
@@ -42,7 +43,7 @@ const category2Items = [
   {label: '기타', value: '기타', level1: '기타'},
 ];
 
-function ManualAddForm({setAllowDrag, setTab, SLIDE_TOP}) {
+function ManualAddForm({setAllowDrag, setTab, SLIDE_TOP, slideRef}) {
   const {state: {addPinInfo}, dispatch} = useContext(RecordContext);
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
@@ -51,11 +52,10 @@ function ManualAddForm({setAllowDrag, setTab, SLIDE_TOP}) {
   const addressEl = useRef();
   
   useEffect(() => {
-    addPinInfo.latitude && dispatch([SET_SLIDE_POSITION, SLIDE_MIDDLE]);
+    addPinInfo.latitude && slideRef.current.show(SLIDE_MIDDLE);
   }, [addPinInfo.latitude]);
   
   useEffect(() => {
-    console.log(addPinInfo);
     const {name, address, category} = addPinInfo;
     setName(name);
     setAddress(address);
@@ -72,7 +72,7 @@ function ManualAddForm({setAllowDrag, setTab, SLIDE_TOP}) {
   
   return (
     <View style={styles.descContainer}>
-      <Text style={styles.description} onPress={() => dispatch([SET_SLIDE_POSITION, SLIDE_MIDDLE])}>
+      <Text style={styles.description} onPress={() => slideRef.current.show(SLIDE_MIDDLE)}>
         {
           addPinInfo.latitude ?
             '아래 정보를 입력 후 등록을 누르세요.'
@@ -86,6 +86,7 @@ function ManualAddForm({setAllowDrag, setTab, SLIDE_TOP}) {
             <Input
               placeholder='가게명을 입력하세요'
               containerStyle={{marginTop: 20}}
+              placeholderTextColor='#BDBDBD'
               value={name}
               onChangeText={name => setName(name)}
               onSubmitEditing={() => {
@@ -98,6 +99,7 @@ function ManualAddForm({setAllowDrag, setTab, SLIDE_TOP}) {
               ref={addressEl}
               placeholder='주소를 입력하세요'
               containerStyle={{marginTop: 10}}
+              placeholderTextColor='#BDBDBD'
               value={address}
               onChangeText={address => setAddress(address)}
               onSubmitEditing={() => dispatch([SET_ADD_PIN_INFO, {address}])}
@@ -114,6 +116,7 @@ function ManualAddForm({setAllowDrag, setTab, SLIDE_TOP}) {
                     borderRadius: 5,
                     borderColor: '#BDBDBD',
                     padding: 10,
+                    color: '#000000',
                   },
                 }}
                 placeholder={{label: '대분류 선택하세요', value: ' '}}
@@ -133,6 +136,7 @@ function ManualAddForm({setAllowDrag, setTab, SLIDE_TOP}) {
                     borderColor: '#BDBDBD',
                     padding: 10,
                     marginLeft: 10,
+                    color: '#000000',
                   },
                 }}
                 placeholder={{label: '소분류 선택하세요', value: ' '}}
@@ -154,6 +158,7 @@ function ManualAddForm({setAllowDrag, setTab, SLIDE_TOP}) {
             setAllowDrag(true);
             setTab('SearchForm');
             dispatch([SET_ADD_PIN_MODE, false]);
+            slideRef.current.show(SLIDE_BOTTOM);
           }}
         />
         <Button
@@ -161,7 +166,7 @@ function ManualAddForm({setAllowDrag, setTab, SLIDE_TOP}) {
           type='clear'
           disabled={!addPinInfo.latitude || !name}
           onPress={() => {
-            dispatch([SET_SLIDE_POSITION, SLIDE_TOP]);
+            slideRef.current.show(SLIDE_TOP);
             setTab('RecordForm');
           }}
         />
