@@ -1,22 +1,23 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {RecordContext} from './SearchScreen';
-import {ListItem, SearchBar} from 'react-native-elements';
+import {Icon, ListItem, SearchBar} from 'react-native-elements';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import {ScrollView} from 'react-native';
 import {convertDistance} from '../../util/StringUtils';
 import {fetchPlacesAroundMe} from '../../util/fetch';
-import {CLEAR_SEARCH_LIST, FETCH_PLACES, FOCUS_PLACE, WRITE_KEYWORD} from '../../reducers/searchReducer';
+import {
+  CLEAR_SEARCH_LIST,
+  FETCH_PLACES,
+  FOCUS_PLACE,
+  SET_ADD_PIN_MODE,
+  WRITE_KEYWORD,
+} from '../../reducers/searchReducer';
 
 function SearchForm({setAllowDrag, setTab}) {
   const {state: {region, keyword, places}, dispatch} = useContext(RecordContext);
-  
-  const [shouldFetch, setShouldFetch] = useState(false);
+  const [text, setText] = useState('');
   
   useEffect(() => {
-    if (!shouldFetch) {
-      return;
-    }
-    
     const fetchPlaces = async (keyword, region) => {
       const fetchResult = keyword ?
         await fetchPlacesAroundMe(keyword, region)
@@ -24,16 +25,15 @@ function SearchForm({setAllowDrag, setTab}) {
         [];
       
       dispatch([FETCH_PLACES, fetchResult]);
-      setShouldFetch(false);
     };
     
     fetchPlaces(keyword, region);
-  }, [shouldFetch, keyword, region]);
+  }, [keyword]);
   
   return (
     <>
       {
-        !places.length ?
+        !keyword ?
           <SearchBar
             platform='ios'
             placeholder='장소 또는 주소 검색'
@@ -43,9 +43,9 @@ function SearchForm({setAllowDrag, setTab}) {
             inputContainerStyle={{backgroundColor: '#F2F2F2', height: 10}}
             inputStyle={{fontSize: 15}}
             cancelButtonProps={{buttonTextStyle: {fontSize: 15, paddingTop: 20}}}
-            value={keyword}
-            onChangeText={text => dispatch([WRITE_KEYWORD, text])}
-            onSubmitEditing={() => setShouldFetch(true)}
+            value={text}
+            onChangeText={text => setText(text)}
+            onSubmitEditing={() => dispatch([WRITE_KEYWORD, text])}
           />
           :
           <>
@@ -54,15 +54,22 @@ function SearchForm({setAllowDrag, setTab}) {
               titleStyle={{fontSize: 22, fontWeight: 'bold'}}
               subtitle={`근처 ${places.length} 개의 검색결과`}
               subtitleStyle={{color: '#424242'}}
-              onPress={({nativeEvent}) => nativeEvent.stopImmediatePropagation()}
-              rightIcon={
-                <IonIcons
-                  name='ios-close-circle-outline'
-                  size={30}
-                  color='#848484'
-                  onPress={() => dispatch([CLEAR_SEARCH_LIST])}
-                />
-              }
+              onPress={({nativeEvent}) => nativeEvent.stopImmediatePropagation && nativeEvent.stopImmediatePropagation()}
+              rightIcon={<IonIcons name='ios-close-circle-outline' size={30} color='#848484' onPress={() => dispatch([CLEAR_SEARCH_LIST])}/>}
+            />
+            <ListItem
+              title='찾으시는 장소가 없으신가요?'
+              titleStyle={{fontWeight: 'bold', fontSize: 16}}
+              subtitle='직접 등록하러 가기'
+              subtitleStyle={{color: '#0174DF', fontSize: 14}}
+              rightIcon={<Icon type='ionicon' name='ios-add-circle-outline' size={30} color='#58ACFA'/>}
+              onPress={() => {
+                setTab('ManualAddForm');
+                dispatch([CLEAR_SEARCH_LIST]);
+                dispatch([SET_ADD_PIN_MODE, true]);
+                setAllowDrag(false);
+              }}
+              bottomDivider
             />
             <ScrollView
               onTouchStart={() => setAllowDrag(false)}

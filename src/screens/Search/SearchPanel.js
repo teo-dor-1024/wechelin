@@ -6,6 +6,7 @@ import {SLIDE_BOTTOM, SLIDE_MIDDLE} from '../../reducers/searchReducer';
 import SearchForm from './SearchForm';
 import RecordForm from './RecordForm';
 import PlaceDetail from './PlaceDetail';
+import ManualAddForm from './ManualAddForm';
 
 const containerStyle = {
   zIndex: 1,
@@ -29,7 +30,7 @@ function SearchPanel() {
   
   useEffect(() => {
     slidePanel.current.show(slidePosition);
-  }, [slidePosition]);
+  });
   
   return (
     <SlidingUpPanel
@@ -37,10 +38,16 @@ function SearchPanel() {
       draggableRange={{bottom: SLIDE_BOTTOM, top: SLIDE_TOP}}
       snappingPoints={[SLIDE_BOTTOM, SLIDE_MIDDLE, SLIDE_TOP]}
       allowDragging={allowDrag}
+      friction={2}
+      minimumVelocityThreshold={0.5}
+      minimumDistanceThreshold={1}
     >
       <View style={containerStyle}>
         {
           tab === 'SearchForm' && <SearchForm setAllowDrag={setAllowDrag} setTab={setTab}/>
+        }
+        {
+          tab === 'ManualAddForm' && <ManualAddForm setAllowDrag={setAllowDrag} setTab={setTab} SLIDE_TOP={SLIDE_TOP}/>
         }
         {
           tab === 'PlaceDetail' && <PlaceDetail setAllowDrag={setAllowDrag} setTab={setTab} SLIDE_TOP={SLIDE_TOP}/>

@@ -18,6 +18,14 @@ const initState = {
   keyword: '',
   places: [],
   selectedIndex: -1,
+  addPinMode: false,
+  addPinInfo: {
+    name: '',
+    category: '',
+    address: '',
+    latitude: 0,
+    longitude: 0,
+  },
 };
 
 function SearchScreen() {

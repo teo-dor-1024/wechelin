@@ -3,3 +3,5 @@ export const convertDistance = distance => {
   
   return kmVal < 1 ? `${distance}m` : `${kmVal.toString()}km`;
 };
+
+export const convertMoney = (money = 0) => money.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');

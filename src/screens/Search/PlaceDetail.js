@@ -3,7 +3,7 @@ import IonIcons from 'react-native-vector-icons/Ionicons';
 import {Button, ListItem} from 'react-native-elements';
 import {WebView} from 'react-native-webview';
 import {RecordContext} from './SearchScreen';
-import {SET_SLIDE_POSITION} from '../../reducers/searchReducer';
+import {SET_SLIDE_POSITION, SLIDE_MIDDLE} from '../../reducers/searchReducer';
 
 function PlaceDetail({setAllowDrag, setTab, SLIDE_TOP}) {
   const {state: {places, selectedIndex}, dispatch} = useContext(RecordContext);
@@ -21,7 +21,10 @@ function PlaceDetail({setAllowDrag, setTab, SLIDE_TOP}) {
             name='ios-close-circle-outline'
             size={30}
             color='#848484'
-            onPress={() => setTab('SearchForm')}
+            onPress={() => {
+              dispatch([SET_SLIDE_POSITION, SLIDE_MIDDLE]);
+              setTab('SearchForm');
+            }}
           />
         }
       />
@@ -38,7 +41,7 @@ function PlaceDetail({setAllowDrag, setTab, SLIDE_TOP}) {
         source={{uri: url}}
         containerStyle={{marginTop: 10}}
         style={{marginTop: -35}}
-        onToonTouchStart={() => setAllowDrag(false)}
+        onTouchStart={() => setAllowDrag(false)}
         onTouchEnd={() => setAllowDrag(true)}
         onTouchCancel={() => setAllowDrag(true)}
       />

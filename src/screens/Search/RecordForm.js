@@ -7,6 +7,7 @@ import IonIcons from 'react-native-vector-icons/Ionicons';
 import {RecordContext} from './SearchScreen';
 import {CLEAR_SEARCH_LIST, SET_SLIDE_POSITION, SLIDE_MIDDLE} from '../../reducers/searchReducer';
 import useMyInfo from '../../util/useMyInfo';
+import {convertMoney} from '../../util/StringUtils';
 
 const CREATE_RECORD = gql`
   mutation ($input: NewRecord!) {
@@ -15,12 +16,28 @@ const CREATE_RECORD = gql`
 `;
 
 function RecordForm({setAllowDrag, setTab}) {
-  const {state: {places, selectedIndex}, dispatch} = useContext(RecordContext);
-  const {id, name, category, address, url, latitude, longitude} = places[selectedIndex];
+  const {
+    state: {
+      places, selectedIndex, addPinMode, addPinInfo,
+    },
+    dispatch,
+  } = useContext(RecordContext);
+  
+  const {
+    id, name, category, address, url, latitude, longitude,
+  } = addPinMode ?
+    {
+      id: `${addPinInfo.latitude}${addPinInfo.longitude}`,
+      url: '',
+      ...addPinInfo,
+    }
+    :
+    places[selectedIndex];
+  
   const [formData, setFormData] = useState({
     visitedDate: new Date(),
     menus: '',
-    money: 0,
+    money: '',
     tasty: -1,
     kind: -1,
     costEfficient: -1,
@@ -50,8 +67,10 @@ function RecordForm({setAllowDrag, setTab}) {
               x: longitude,
               y: latitude,
               menus: menus.split(',').map(menu => menu.trim()),
-              money,
-              score,
+              money: money ? parseInt(money.replace(/,/g, ''), 10) : 0,
+              tasty,
+              kind,
+              costEfficient,
               visitedDate,
               visitedYear: visitedDate.getFullYear(),
               visitedMonth: visitedDate.getMonth() + 1,
@@ -83,9 +102,14 @@ function RecordForm({setAllowDrag, setTab}) {
             size={30}
             color='#848484'
             onPress={() => {
-              setTab('PlaceDetail');
+              console.log(addPinMode);
+              if (addPinMode) {
+                setTab('ManualAddForm');
+              } else {
+                setTab('PlaceDetail');
+                setAllowDrag(true);
+              }
               dispatch([SET_SLIDE_POSITION, SLIDE_MIDDLE]);
-              setAllowDrag(true);
             }}
           />
         }
@@ -113,10 +137,13 @@ function RecordForm({setAllowDrag, setTab}) {
         ref={moneyRef}
         containerStyle={{marginTop: 20}}
         keyboardType='number-pad'
+        returnKeyType='done'
         label='금액'
         placeholder='금액을 입력하세요'
         value={money}
-        onChangeText={money => setFormData({...formData, money})}
+        onChangeText={money => setFormData({...formData, money: money.replace(',', '')})}
+        onFocus={() => setFormData({...formData, money: money.replace(/,/g, '')})}
+        onBlur={() => setFormData({...formData, money: convertMoney(money)})}
       />
       <ButtonGroup
         containerStyle={{marginTop: 20}}
