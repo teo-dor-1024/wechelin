@@ -120,7 +120,8 @@ function ManualAddForm({setAllowDrag, setTab, SLIDE_TOP, slideRef}) {
                   },
                 }}
                 placeholder={{label: '대분류 선택하세요', value: ' '}}
-                value={category1}
+                doneText='완료'
+                // value={category1}
                 onValueChange={value => setCategory1(value)}
                 items={category1Items}
                 onDonePress={onPickCategory}
@@ -140,6 +141,7 @@ function ManualAddForm({setAllowDrag, setTab, SLIDE_TOP, slideRef}) {
                   },
                 }}
                 placeholder={{label: '소분류 선택하세요', value: ' '}}
+                doneText='완료'
                 value={category2}
                 onValueChange={(value) => setCategory2(value)}
                 items={category2Items.filter(({level1}) => level1 === category1)}

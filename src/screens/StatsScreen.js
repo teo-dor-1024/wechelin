@@ -14,8 +14,7 @@ function StatsScreen() {
     <>
       <StatusBar barStyle="dark-content" />
       <WebView
-        // source={{uri: 'http://192.168.1.101:8000/wechelin/stats'}}
-        source={{uri: 'http://192.168.219.121:8000/wechelin/stats'}}
+        source={{uri: 'http://192.168.0.15:8000/wechelin/stats'}}
         style={{marginTop: 40}}
         useWebKit={true}
         injectedJavaScriptBeforeContentLoaded={`sessionStorage.setItem('me', '${JSON.stringify({myId: id})}'); true;`}

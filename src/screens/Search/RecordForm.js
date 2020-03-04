@@ -1,13 +1,14 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {useMutation} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import {Button, ButtonGroup, CheckBox, Input, ListItem} from 'react-native-elements';
+import {useNavigation} from '@react-navigation/native';
+import {Button, ButtonGroup, CheckBox, Icon, Input, ListItem} from 'react-native-elements';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import IonIcons from 'react-native-vector-icons/Ionicons';
 import {RecordContext} from './SearchScreen';
 import {CLEAR_SEARCH_LIST} from '../../reducers/searchReducer';
 import useMyInfo from '../../util/useMyInfo';
 import {convertMoney} from '../../util/StringUtils';
+import {SLIDE_BOTTOM} from './SearchPanel';
 
 const CREATE_RECORD = gql`
   mutation ($input: NewRecord!) {
@@ -15,7 +16,19 @@ const CREATE_RECORD = gql`
   }
 `;
 
-function RecordForm({setAllowDrag, setTab}) {
+const defaultPlaceInfo = {
+  id: '',
+  name: '',
+  category: '',
+  address: '',
+  url: '',
+  latitude: 0,
+  longitude: 0,
+};
+
+function RecordForm({setAllowDrag, setTab, slideRef}) {
+  const navigation = useNavigation();
+  
   const {
     state: {
       places, selectedIndex, addPinMode, addPinInfo,
@@ -32,7 +45,7 @@ function RecordForm({setAllowDrag, setTab}) {
       ...addPinInfo,
     }
     :
-    places[selectedIndex];
+    (places[selectedIndex] || defaultPlaceInfo);
   
   const [formData, setFormData] = useState({
     visitedDate: new Date(),
@@ -55,7 +68,7 @@ function RecordForm({setAllowDrag, setTab}) {
   useEffect(() => {
     const record = async () => {
       try {
-        await createRecord({
+        const {data: {createRecord: result}} = await createRecord({
           variables: {
             input: {
               userId,
@@ -64,8 +77,8 @@ function RecordForm({setAllowDrag, setTab}) {
               category,
               address,
               url,
-              x: longitude,
-              y: latitude,
+              x: longitude.toString(),
+              y: latitude.toString(),
               menus: menus.split(',').map(menu => menu.trim()),
               money: money ? parseInt(money.replace(/,/g, ''), 10) : 0,
               tasty,
@@ -78,10 +91,18 @@ function RecordForm({setAllowDrag, setTab}) {
             },
           },
         });
-        dispatch([CLEAR_SEARCH_LIST]);
-        setTab('SearchForm');
+        
+        if (result) {
+          dispatch([CLEAR_SEARCH_LIST]);
+          setTab('SearchForm');
+          slideRef.current.show(SLIDE_BOTTOM);
+          navigation.navigate('Home');
+        } else {
+          alert('기록 저장 실패!');
+        }
       } catch (error) {
-        console.error(error.toString());
+        alert('기록 저장 실패!');
+      } finally {
         setIsWriteDone(false);
       }
     };
@@ -97,7 +118,8 @@ function RecordForm({setAllowDrag, setTab}) {
         subtitle='기록하기'
         subtitleStyle={{color: '#424242'}}
         rightIcon={
-          <IonIcons
+          <Icon
+            type="ionicon"
             name='ios-close-circle-outline'
             size={30}
             color='#848484'
@@ -142,9 +164,18 @@ function RecordForm({setAllowDrag, setTab}) {
         label='금액'
         placeholder='금액을 입력하세요'
         value={money}
-        onChangeText={money => setFormData({...formData, money: money.replace(',', '')})}
-        onFocus={() => setFormData({...formData, money: money.replace(/,/g, '')})}
-        onBlur={() => setFormData({...formData, money: convertMoney(money)})}
+        onChangeText={money => setFormData({
+          ...formData,
+          money: money.replace(',', ''),
+        })}
+        onFocus={() => setFormData({
+          ...formData,
+          money: money.replace(/,/g, ''),
+        })}
+        onBlur={() => setFormData({
+          ...formData,
+          money: convertMoney(money),
+        })}
       />
       <ButtonGroup
         containerStyle={{marginTop: 20}}

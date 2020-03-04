@@ -6,8 +6,7 @@ import {ApolloProvider} from '@apollo/react-hooks';
 import Navigator from './src/Navigator';
 
 const client = new ApolloClient({
-  // link: createHttpLink({uri: 'http://api.doeatrecord.com/graphql'}),
-  link: createHttpLink({uri: 'http://127.0.0.1:4000/graphql'}),
+  link: createHttpLink({uri: 'http://api.doeatrecord.com/graphql'}),
   cache: new InMemoryCache(),
 });
 

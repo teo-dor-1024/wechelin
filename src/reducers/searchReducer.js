@@ -10,6 +10,14 @@ export const CLEAR_SEARCH_LIST = 'CLEAR_SEARCH_LIST';
 export const SET_ADD_PIN_MODE = 'SET_ADD_PIN_MODE';
 export const SET_ADD_PIN_INFO = 'SET_ADD_PIN_INFO';
 
+const defaultAddPinInfo = {
+  name: '',
+  category: '',
+  address: '',
+  latitude: 0,
+  longitude: 0,
+};
+
 export default function (state, [type, payload]) {
   switch (type) {
     case MOVE_MAP:
@@ -47,6 +55,8 @@ export default function (state, [type, payload]) {
         keyword: '',
         places: [],
         selectedIndex: -1,
+        addPinMode: false,
+        addPinInfo: {...defaultAddPinInfo},
       };
     case SET_ADD_PIN_MODE:
       return {
@@ -56,13 +66,7 @@ export default function (state, [type, payload]) {
           payload ?
             state.addPinInfo
             :
-            {
-              name: '',
-              category: '',
-              address: '',
-              latitude: 0,
-              longitude: 0,
-            },
+            {...defaultAddPinInfo},
       };
     case SET_ADD_PIN_INFO:
       return {

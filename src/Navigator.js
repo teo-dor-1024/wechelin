@@ -1,14 +1,12 @@
 import React from 'react';
-import IonIcons from 'react-native-vector-icons/Ionicons';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {Icon} from 'react-native-elements';
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import SearchScreen from './screens/Search/SearchScreen';
 import StatsScreen from './screens/StatsScreen';
-
-IonIcons.loadFont();
 
 const Tab = createBottomTabNavigator();
 
@@ -33,7 +31,8 @@ function TabNavigator() {
           }
           
           return (
-            <IonIcons
+            <Icon
+              type='ionicon'
               name={name}
               size={32}
               color={focused ? '#2E2E2E' : '#BDBDBD'}

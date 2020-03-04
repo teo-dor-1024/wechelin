@@ -71,6 +71,7 @@ function SearchPanel() {
             <RecordForm
               setAllowDrag={setAllowDrag}
               setTab={setTab}
+              slideRef={slideRef}
             />
           )
         }

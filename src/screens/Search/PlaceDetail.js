@@ -1,6 +1,5 @@
 import React, {useContext} from 'react';
-import IonIcons from 'react-native-vector-icons/Ionicons';
-import {Button, ListItem} from 'react-native-elements';
+import {Button, Icon, ListItem} from 'react-native-elements';
 import {WebView} from 'react-native-webview';
 import {RecordContext} from './SearchScreen';
 
@@ -16,7 +15,8 @@ function PlaceDetail({setAllowDrag, setTab, SLIDE_TOP, slideRef}) {
         subtitle="카카오맵 정보"
         subtitleStyle={{color: '#424242'}}
         rightIcon={
-          <IonIcons
+          <Icon
+            type='ionicon'
             name='ios-close-circle-outline'
             size={30}
             color='#848484'

@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {RecordContext} from './SearchScreen';
 import {Icon, ListItem, SearchBar} from 'react-native-elements';
-import IonIcons from 'react-native-vector-icons/Ionicons';
 import {ScrollView} from 'react-native';
 import {convertDistance} from '../../util/StringUtils';
 import {fetchPlacesAroundMe} from '../../util/fetch';
@@ -68,7 +67,8 @@ function SearchForm({setAllowDrag, setTab, slideRef}) {
               subtitleStyle={{color: '#424242'}}
               onPress={({nativeEvent}) => nativeEvent.stopImmediatePropagation && nativeEvent.stopImmediatePropagation()}
               rightIcon={
-                <IonIcons
+                <Icon
+                  type='ionicon'
                   name='ios-close-circle-outline'
                   size={30}
                   color='#848484'
