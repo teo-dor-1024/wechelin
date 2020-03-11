@@ -2,7 +2,9 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import {useMutation} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import {useNavigation} from '@react-navigation/native';
-import {Button, ButtonGroup, CheckBox, Icon, Input, ListItem} from 'react-native-elements';
+import {View} from 'react-native';
+import {Button, CheckBox, Icon, Input, ListItem, Text} from 'react-native-elements';
+import StarRating from 'react-native-star-rating';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {RecordContext} from './SearchScreen';
 import {CLEAR_SEARCH_LIST} from '../../reducers/searchReducer';
@@ -51,12 +53,10 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
     visitedDate: new Date(),
     menus: '',
     money: '',
-    tasty: -1,
-    kind: -1,
-    costEfficient: -1,
+    score: 0,
     isDutch: true,
   });
-  const {visitedDate, menus, money, tasty, kind, costEfficient, isDutch} = formData;
+  const {visitedDate, menus, money, score, isDutch} = formData;
   const [isDateOpen, setIsDateOpen] = useState(false);
   const menuRef = useRef();
   const moneyRef = useRef();
@@ -81,9 +81,7 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
               y: latitude.toString(),
               menus: menus.split(',').map(menu => menu.trim()),
               money: money ? parseInt(money.replace(/,/g, ''), 10) : 0,
-              tasty,
-              kind,
-              costEfficient,
+              score,
               visitedDate,
               visitedYear: visitedDate.getFullYear(),
               visitedMonth: visitedDate.getMonth() + 1,
@@ -134,6 +132,17 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
           />
         }
       />
+      <View style={{alignItems: 'flex-end'}}>
+        <CheckBox
+          right
+          containerStyle={{
+            marginTop: 20, backgroundColor: '#FFFFFF', borderWidth: 0, padding: 0, width: 100,
+          }}
+          title='정산 대상'
+          checked={isDutch}
+          onPress={() => setFormData({...formData, isDutch: !isDutch})}
+        />
+      </View>
       <Input
         ref={menuRef}
         label='날짜'
@@ -177,41 +186,39 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
           money: convertMoney(money),
         })}
       />
-      <ButtonGroup
-        containerStyle={{marginTop: 20}}
-        buttons={['맛있음', '맛없음']}
-        selectedIndex={tasty}
-        onPress={selectedIdx => setFormData({
-          ...formData,
-          tasty: selectedIdx === tasty ? -1 : selectedIdx,
-        })}
-      />
-      <ButtonGroup
-        buttons={['친절함', '불친절함']}
-        selectedIndex={kind}
-        onPress={selectedIdx => setFormData({
-          ...formData,
-          kind: selectedIdx === kind ? -1 : selectedIdx,
-        })}
-      />
-      <ButtonGroup
-        buttons={['가성비 좋음', '비쌈']}
-        selectedIndex={costEfficient}
-        onPress={selectedIdx => setFormData({
-          ...formData,
-          costEfficient: selectedIdx === costEfficient ? -1 : selectedIdx,
-        })}
-      />
-      <CheckBox
-        containerStyle={{marginTop: 20}}
-        title='정산 대상'
-        checked={isDutch}
-        onPress={() => setFormData({...formData, isDutch: !isDutch})}
-      />
+      <View style={{alignItems: 'center', marginTop: 30}}>
+        <Text style={{fontWeight: 'bold', fontSize: 18, marginBottom: 10, color: '#2E2E2E'}}>
+          {
+            score === 5 ?
+              '존맛!!'
+              :
+              score === 4 ?
+                '추천할 만해!'
+                :
+                score === 3 ?
+                  '평타는 치네'
+                  :
+                  score === 2 ?
+                    '좀 별론데...?'
+                    :
+                    score === 1 ?
+                      '최악, 다신 안가'
+                      :
+                      '아직 평가하긴 이르다'
+          }
+        </Text>
+        <StarRating
+          emptyStarColor='#FACC2E'
+          fullStarColor='#FACC2E'
+          maxStars={5}
+          rating={score}
+          selectedStar={nextScore => setFormData({...formData, score: nextScore === score ? 0 : nextScore})}
+        />
+      </View>
       <Button
         title='기록하기'
         titleStyle={{fontWeight: 'bold'}}
-        containerStyle={{marginTop: 30}}
+        containerStyle={{marginTop: 60}}
         onPress={() => setIsWriteDone(true)}
       />
       <DateTimePickerModal
