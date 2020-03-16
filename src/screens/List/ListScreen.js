@@ -19,8 +19,6 @@ const GET_RECORDS = gql`
         url
         address
         visitedDate
-        changedYear
-        changedMonth
         menus
         money
         score
