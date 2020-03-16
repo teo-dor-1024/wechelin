@@ -13,7 +13,7 @@ export const convertDate = strFullDate => {
   
   const fullDate = new Date(strFullDate);
   const year = fullDate.getFullYear();
-  const month = fullDate.getMonth();
+  const month = fullDate.getMonth() + 1;
   const date = fullDate.getDate();
   const hour24 = fullDate.getHours();
   let hour;

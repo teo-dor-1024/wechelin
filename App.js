@@ -7,6 +7,7 @@ import Navigator from './src/Navigator';
 
 const client = new ApolloClient({
   link: createHttpLink({uri: 'http://api.doeatrecord.com/graphql'}),
+  // link: createHttpLink({uri: 'http://localhost:4000/graphql'}),
   cache: new InMemoryCache(),
 });
 

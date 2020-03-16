@@ -40,6 +40,12 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
   
   const {
     id, name, category, address, url, latitude, longitude,
+    _id,
+    visitedDate: modifyVisitedDate,
+    menus: modifyMenus,
+    money: modifyMoney,
+    score: modifyScore,
+    isDutch: modifyIsDutch,
   } = addPinMode ?
     {
       id: `${addPinInfo.latitude}${addPinInfo.longitude}`,
@@ -50,11 +56,11 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
     (places[selectedIndex] || defaultPlaceInfo);
   
   const [formData, setFormData] = useState({
-    visitedDate: new Date(),
-    menus: '',
-    money: '',
-    score: 0,
-    isDutch: true,
+    visitedDate: modifyVisitedDate ? new Date(modifyVisitedDate) : new Date(),
+    menus: modifyMenus ? modifyMenus.join(',') : '',
+    money: modifyMoney ? modifyMoney.toString() : '',
+    score: modifyScore || 0,
+    isDutch: modifyIsDutch || true,
   });
   const {visitedDate, menus, money, score, isDutch} = formData;
   const [isDateOpen, setIsDateOpen] = useState(false);
@@ -71,6 +77,7 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
         const {data: {createRecord: result}} = await createRecord({
           variables: {
             input: {
+              _id,
               userId,
               placeId: id,
               placeName: name,
@@ -94,7 +101,7 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
           dispatch([CLEAR_SEARCH_LIST]);
           setTab('SearchForm');
           slideRef.current.show(SLIDE_BOTTOM);
-          navigation.navigate('Home');
+          navigation.navigate('List', {reload: true});
         } else {
           alert('기록 저장 실패!');
         }
@@ -111,9 +118,9 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
   return (
     <>
       <ListItem
-        title={`${name}`}
+        title={name}
         titleStyle={{fontSize: 22, fontWeight: 'bold'}}
-        subtitle='기록하기'
+        subtitle={_id ? '수정하기' : '기록하기'}
         subtitleStyle={{color: '#424242'}}
         rightIcon={
           <Icon
@@ -124,6 +131,11 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
             onPress={() => {
               if (addPinMode) {
                 setTab('ManualAddForm');
+              } else if (_id) {
+                dispatch([CLEAR_SEARCH_LIST]);
+                setTab('SearchForm');
+                setAllowDrag(true);
+                slideRef.current.show(SLIDE_BOTTOM);
               } else {
                 setTab('PlaceDetail');
                 setAllowDrag(true);

@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Dimensions, View} from 'react-native';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import SearchForm from './SearchForm';
@@ -19,7 +19,7 @@ const containerStyle = {
   paddingLeft: 10,
 };
 
-function SearchPanel() {
+function SearchPanel({modifyInfo}) {
   const {height} = Dimensions.get('window');
   const SLIDE_TOP = height - 150;
   
@@ -27,6 +27,16 @@ function SearchPanel() {
   const [allowDrag, setAllowDrag] = useState(true);
   
   const slideRef = useRef();
+  
+  useEffect(() => {
+    if (!modifyInfo) {
+      return;
+    }
+    
+    setTab('RecordForm');
+    slideRef.current.show(SLIDE_TOP);
+    setAllowDrag(false);
+  }, [modifyInfo]);
   
   return (
     <SlidingUpPanel

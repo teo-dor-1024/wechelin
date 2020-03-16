@@ -26,8 +26,8 @@ function SearchForm({setAllowDrag, setTab, slideRef}) {
       
       dispatch([FETCH_PLACES, fetchResult]);
     };
-    
-    fetchPlaces(keyword, region);
+  
+    !places.length && fetchPlaces(keyword, region);
   }, [keyword]);
   
   const onClickManual = () => {

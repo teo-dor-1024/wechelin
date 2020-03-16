@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 function useMyInfo() {
   const [id, setId] = useState('');
-  const [nickNickname, setNickName] = useState('');
+  const [nickName, setNickName] = useState('');
 
   useEffect(() => {
     const getMyInfo = async () => {
@@ -14,7 +14,7 @@ function useMyInfo() {
     getMyInfo();
   }, []);
 
-  return {id, nickNickname};
+  return {id, nickName};
 }
 
 export default useMyInfo;

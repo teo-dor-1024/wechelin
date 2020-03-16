@@ -1,6 +1,6 @@
 import React, {createContext, useEffect, useReducer} from 'react';
 import Geolocation from 'react-native-geolocation-service';
-import searchReducer, {MOVE_MAP} from '../../reducers/searchReducer';
+import searchReducer, {FETCH_PLACES, FOCUS_PLACE, MOVE_MAP} from '../../reducers/searchReducer';
 import SearchPanel from './SearchPanel';
 import Map from './Map';
 
@@ -27,8 +27,9 @@ const initState = {
   },
 };
 
-function SearchScreen() {
+function SearchScreen({route: {params}}) {
   const [state, dispatch] = useReducer(searchReducer, initState);
+  const modifyInfo = params ? params.modify : null;
   
   useEffect(() => {
     Geolocation.getCurrentPosition(
@@ -38,10 +39,30 @@ function SearchScreen() {
     );
   }, [Geolocation]);
   
+  useEffect(() => {
+    if (!modifyInfo) {
+      return;
+    }
+    
+    const {key, x, y, placeId, placeName, ...rest} = modifyInfo;
+    const latitude = parseFloat(y);
+    const longitude = parseFloat(x);
+    
+    dispatch([FETCH_PLACES, [{
+      ...rest,
+      _id: key,
+      id: placeId,
+      name: placeName,
+      latitude,
+      longitude,
+    }]]);
+    dispatch([FOCUS_PLACE, {index: 0, latitude, longitude}]);
+  }, [modifyInfo]);
+  
   return (
     <Provider value={{state, dispatch}}>
       <Map/>
-      <SearchPanel/>
+      <SearchPanel modifyInfo={modifyInfo}/>
     </Provider>
   );
 }
