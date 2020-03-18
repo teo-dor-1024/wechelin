@@ -10,8 +10,6 @@ const styles = {
     borderBottomColor: '#D8D8D8',
     borderBottomWidth: 0.4,
     height: 100,
-    paddingLeft: 15,
-    paddingRight: 15,
   },
   hiddenItem: {
     flexDirection: 'row',
@@ -36,62 +34,66 @@ const styles = {
 
 function SortedByVisitedDate({hasMore, records, onPressMoreView, onPressModify, onPressDelete}) {
   return (
-    <SwipeListView
-      useFlatList
-      data={hasMore ? records.concat([{moreBtn: true, key: 'moreBtn'}]) : records}
-      renderItem={({item}) => {
-        const {moreBtn, placeName, visitedDate, menus = [], money, score} = item;
-      
-        return moreBtn ?
-          <Button
-            title='더보기'
-            type='clear'
-            containerStyle={{backgroundColor: '#FFFFFF', height: 60, padding: 10}}
-            titleStyle={{color: '#585858'}}
-            onPress={onPressMoreView}
-          />
-          :
-          <View style={styles.listItem}>
-            <ListItem
-              title={placeName}
-              titleStyle={{fontWeight: 'bold'}}
-              rightElement={
-                <View>
-                  <Icon name='star' type='antdesign' color='#FACC2E'/>
-                  <Text><Text style={{fontWeight: 'bold', color: '#FACC2E', fontSize: 20}}>{score}</Text> / 5</Text>
-                </View>
-              }
-              subtitle={
-                <View>
-                  <Text style={{fontWeight: 'bold'}}>{convertDate(visitedDate)}</Text>
-                  <Text>{menus.join(',')}</Text>
-                  <Text>{convertMoney(money)} 원</Text>
-                </View>
-              }
+    records.length ?
+      <SwipeListView
+        useFlatList
+        showsVerticalScrollIndicator={false}
+        data={hasMore ? records.concat([{moreBtn: true, key: 'moreBtn'}]) : records}
+        renderItem={({item}) => {
+          const {moreBtn, placeName, visitedDate, menus = [], money, score} = item;
+          
+          return moreBtn ?
+            <Button
+              title='더보기'
+              type='clear'
+              containerStyle={{backgroundColor: '#FFFFFF', height: 60, padding: 10}}
+              titleStyle={{color: '#585858'}}
+              onPress={onPressMoreView}
             />
-          </View>;
-      }}
-      renderHiddenItem={({item: {key, moreBtn, ...rest}}) => !moreBtn && (
-        <View style={styles.hiddenItem}>
-          <TouchableOpacity
-            style={styles.optionButton}
-            onPress={() => onPressModify({key, ...rest})}
-          >
-            <Icon name='edit' type='material' color='#FFFFFF' style={{margin: 0, padding: 0}}/>
-            <Text style={styles.buttonText}>수정</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{...styles.optionButton, backgroundColor: '#DF3A01'}}
-            onPress={() => onPressDelete(key)}
-          >
-            <Icon name='delete' type='antdesign' color='#FFFFFF'/>
-            <Text style={styles.buttonText}>삭제</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-      leftOpenValue={80}
-      rightOpenValue={-80}
-    />
+            :
+            <View style={styles.listItem}>
+              <ListItem
+                title={placeName}
+                titleStyle={{fontWeight: 'bold'}}
+                rightElement={
+                  <View>
+                    <Icon name='star' type='antdesign' color='#FACC2E'/>
+                    <Text><Text style={{fontWeight: 'bold', color: '#FACC2E', fontSize: 20}}>{score}</Text> / 5</Text>
+                  </View>
+                }
+                subtitle={
+                  <View>
+                    <Text style={{fontWeight: 'bold'}}>{convertDate(visitedDate)}</Text>
+                    <Text>{menus.join(',')}</Text>
+                    <Text>{convertMoney(money)} 원</Text>
+                  </View>
+                }
+              />
+            </View>;
+        }}
+        renderHiddenItem={({item: {key, moreBtn, ...rest}}) => !moreBtn && (
+          <View style={styles.hiddenItem}>
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={() => onPressModify({key, ...rest})}
+            >
+              <Icon name='edit' type='material' color='#FFFFFF' style={{margin: 0, padding: 0}}/>
+              <Text style={styles.buttonText}>수정</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{...styles.optionButton, backgroundColor: '#DF3A01'}}
+              onPress={() => onPressDelete(key)}
+            >
+              <Icon name='delete' type='antdesign' color='#FFFFFF'/>
+              <Text style={styles.buttonText}>삭제</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        leftOpenValue={80}
+        rightOpenValue={-80}
+      />
+      :
+      <Text>기록이 없습니다.</Text>
   );
 }
 

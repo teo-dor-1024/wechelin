@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, View} from 'react-native';
-import {Icon, ListItem, Text} from 'react-native-elements';
-import useMyInfo from '../../util/useMyInfo';
-import gql from 'graphql-tag';
+import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-community/async-storage';
 import {useMutation, useQuery} from '@apollo/react-hooks';
+import gql from 'graphql-tag';
+import {SafeAreaView, View} from 'react-native';
+import {Button, Icon, ListItem, Text} from 'react-native-elements';
+import useMyInfo from '../../util/useMyInfo';
 import ReceivedAlarms from './ReceivedAlarms';
 import RequestedAlarms from './RequestedAlarms';
 import UserSearchForm from './UserSearchForm';
@@ -44,6 +46,7 @@ const REQUEST_MATCHING = gql`
 `;
 
 function MyScreen() {
+  const navigation = useNavigation();
   const {id, nickName} = useMyInfo();
   const {loading, error, data, refetch} = useQuery(GET_MY_INFO, {variables: {myId: id, alarm: true}});
   
@@ -73,6 +76,11 @@ function MyScreen() {
     setTargetName(name);
   };
   
+  const logout = async () => {
+    await AsyncStorage.clear();
+    navigation.replace('LoginScreen');
+  };
+  
   if (loading) {
     return (
       <SafeAreaView>
@@ -93,6 +101,15 @@ function MyScreen() {
   
   return (
     <SafeAreaView>
+      <View style={{alignItems: 'flex-end', padding: 20}}>
+        <Button
+          type='clear'
+          title='로그아웃'
+          titleStyle={{color: '#1C1C1C'}}
+          icon={<Icon name='log-out' type='feather' size={20} containerStyle={{marginRight: 5}}/>}
+          onPress={logout}
+        />
+      </View>
       <View style={{flexDirection: 'row', marginLeft: 20, marginBottom: 10, alignItems: 'center'}}>
         <Icon type='material-community' name='bell-outline' size={25}/>
         <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 5}}>
@@ -118,7 +135,7 @@ function MyScreen() {
               </Text>
             </View>
             <Text style={{marginLeft: 20, fontWeight: 'bold', fontSize: 18}}>
-              {myLover.nickname}
+              {myLover.nickname}님
             </Text>
           </View>
           :

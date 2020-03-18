@@ -3,7 +3,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Icon} from 'react-native-elements';
-import LoginScreen from './screens/LoginScreen';
+import LoginScreen from './screens/Login/LoginScreen';
 import ListScreen from './screens/List/ListScreen';
 import SearchScreen from './screens/Search/SearchScreen';
 import StatsScreen from './screens/Stats/StatsScreen';

@@ -3,7 +3,7 @@ import {useNavigation} from '@react-navigation/native';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import {SearchBar} from 'react-native-elements';
-import {SafeAreaView, Text} from 'react-native';
+import {SafeAreaView, Text, View} from 'react-native';
 import useMyInfo from '../../util/useMyInfo';
 import SortedByVisitedDate from './SortedByVisitedDate';
 
@@ -110,18 +110,10 @@ function ListScreen({route: {params}}) {
   
   const {records: {records, hasMore}} = data;
   
-  if (!records.length) {
-    return (
-      <SafeAreaView>
-        <Text> 먹은 기록이 없음 ...</Text>
-      </SafeAreaView>
-    );
-  }
-  
   let recordsResult = records.map(({_id, ...rest}) => ({...rest, key: _id}));
   
   return (
-    <SafeAreaView style={{marginBottom: 40, backgroundColor: '#FFFFFF'}}>
+    <SafeAreaView style={{backgroundColor: '#FFFFFF'}}>
       <SearchBar
         platform='ios'
         containerStyle={{
@@ -139,13 +131,15 @@ function ListScreen({route: {params}}) {
         cancelButtonTitle='취소'
         cancelButtonProps={{buttonStyle: {marginRight: 10, height: 45}}}
       />
-      <SortedByVisitedDate
-        hasMore={hasMore}
-        records={recordsResult}
-        onPressMoreView={() => setShouldFetchMore(true)}
-        onPressModify={modify => navigation.navigate('Record', {modify})}
-        onPressDelete={key => setDeletingId(key)}
-      />
+      <View style={{height: 700, paddingHorizontal: 20, paddingBottom: 70}}>
+        <SortedByVisitedDate
+          hasMore={hasMore}
+          records={recordsResult}
+          onPressMoreView={() => setShouldFetchMore(true)}
+          onPressModify={modify => navigation.navigate('Record', {modify})}
+          onPressDelete={key => setDeletingId(key)}
+        />
+      </View>
     </SafeAreaView>
   );
 }

@@ -63,13 +63,13 @@ function ReceivedAlarms({myId, receivedAlarms = [], refetch}) {
                     titleStyle={{fontSize: 13, fontWeight: 'bold'}}
                     containerStyle={{marginRight: 5}}
                     buttonStyle={styles.alarmButton}
-                    onPress={() => setDecideInfo({_id, result: 'accept', type, myId, applicantId})}
+                    onPress={() => setDecideInfo({_id, result: 'accept', myId, applicantId})}
                   />
                   <Button
                     title='아닌데'
                     titleStyle={{fontSize: 13, fontWeight: 'bold'}}
                     buttonStyle={{...styles.alarmButton, backgroundColor: '#DF3A01'}}
-                    onPress={() => setDecideInfo({_id, result: 'reject', type, myId, applicantId})}
+                    onPress={() => setDecideInfo({_id, result: 'reject', myId, applicantId})}
                   />
                 </View>
               }
