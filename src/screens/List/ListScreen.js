@@ -54,7 +54,10 @@ function ListScreen({route: {params}}) {
   const [deleteRecord] = useMutation(DELETE_RECORD);
   
   useEffect(() => {
-    data && reload && refetch();
+    if (reload) {
+      data && refetch();
+      params.reload = false;
+    }
   }, [reload]);
   
   useEffect(() => {

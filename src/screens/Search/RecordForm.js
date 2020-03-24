@@ -60,7 +60,7 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
     menus: modifyMenus ? modifyMenus.join(',') : '',
     money: modifyMoney ? modifyMoney.toString() : '',
     score: modifyScore || 0,
-    isDutch: modifyIsDutch || true,
+    isDutch: modifyIsDutch === undefined ? true : modifyIsDutch,
   });
   const {visitedDate, menus, money, score, isDutch} = formData;
   const [isDateOpen, setIsDateOpen] = useState(false);
@@ -98,10 +98,8 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
         });
         
         if (result) {
-          dispatch([CLEAR_SEARCH_LIST]);
-          setTab('SearchForm');
           slideRef.current.show(SLIDE_BOTTOM);
-          navigation.navigate('List', {reload: true});
+          dispatch([CLEAR_SEARCH_LIST]);
         } else {
           alert('기록 저장 실패!');
         }
@@ -114,6 +112,13 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
     
     isWriteDone && record();
   }, [isWriteDone]);
+  
+  useEffect(() => {
+    if (selectedIndex === -1 && !addPinMode) {
+      setTab('SearchForm');
+      navigation.navigate('List', {reload: true});
+    }
+  });
   
   return (
     <>
@@ -234,7 +239,6 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
         onPress={() => setIsWriteDone(true)}
       />
       <DateTimePickerModal
-        isDarkModeEnabled
         isVisible={isDateOpen}
         mode='datetime'
         onConfirm={visitedDate => {
@@ -247,7 +251,6 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
         confirmTextIOS='완료'
         minimumDate={new Date(2010, 0, 1)}
         locale='ko_KO'
-        minuteInterval={30}
       />
     </>
   );

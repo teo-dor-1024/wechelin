@@ -29,5 +29,5 @@ export const convertDate = strFullDate => {
   
   const min = fullDate.getMinutes();
   
-  return `${year}. ${month}. ${date}. ${ampm} ${hour}:${min}`;
+  return `${year}. ${month}. ${date}. ${ampm} ${hour}:${min ? min : '00'}`;
 };

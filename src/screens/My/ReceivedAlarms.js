@@ -3,7 +3,7 @@ import {View} from 'react-native';
 import gql from 'graphql-tag';
 import {useMutation} from '@apollo/react-hooks';
 import {Button, ListItem} from 'react-native-elements';
-import {myStyles} from './MyScreen';
+import {getTypeKorName, myStyles} from './MyScreen';
 
 const styles = {
   alarmButton: {
@@ -49,12 +49,12 @@ function ReceivedAlarms({myId, receivedAlarms = [], refetch}) {
   return (
     <View>
       {
-        alarms.map(({_id, applicantId, applicantName}, i) =>
+        alarms.map(({_id, applicantId, applicantName, type}, i) =>
           i < 2 && (
             <ListItem
               key={_id}
               containerStyle={myStyles.alarmItem}
-              title={`${applicantName}님이 우리가 커플이라는데요?`}
+              title={`${applicantName}님이 우리가 ${getTypeKorName(type)}이라는데요?`}
               titleStyle={{fontSize: 14}}
               rightElement={
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>

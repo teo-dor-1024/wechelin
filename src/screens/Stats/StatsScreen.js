@@ -12,7 +12,7 @@ import {convertMoney} from '../../util/StringUtils';
 
 const GET_STATS = gql`
   query Stats($userId: String!, $now: Date) {
-    myLover(myId: $userId) {
+    myLover(userId: $userId) {
       nickname
     }
     spending(userId: $userId, now: $now) {

@@ -64,7 +64,7 @@ function SortedByVisitedDate({hasMore, records, onPressMoreView, onPressModify, 
                 subtitle={
                   <View>
                     <Text style={{fontWeight: 'bold'}}>{convertDate(visitedDate)}</Text>
-                    <Text>{menus.join(',')}</Text>
+                    <Text numberOfLines={1}>{menus.join(',')}</Text>
                     <Text>{convertMoney(money)} 원</Text>
                   </View>
                 }

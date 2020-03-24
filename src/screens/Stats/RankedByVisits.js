@@ -19,6 +19,7 @@ function RankedByVisits({recordsByCount = []}) {
               key={placeName}
               containerStyle={{marginLeft: 20, marginRight: 20, marginBottom: 5}}
               title={placeName}
+              titleProps={{numberOfLines: 1}}
               leftElement={<Text>{index + 1}위</Text>}
               rightElement={<Text>{count}회</Text>}
             />

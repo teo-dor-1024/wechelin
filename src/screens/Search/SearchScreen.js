@@ -1,4 +1,4 @@
-import React, {createContext, useEffect, useReducer} from 'react';
+import React, {createContext, useEffect, useReducer, useState} from 'react';
 import Geolocation from 'react-native-geolocation-service';
 import searchReducer, {FETCH_PLACES, FOCUS_PLACE, MOVE_MAP} from '../../reducers/searchReducer';
 import SearchPanel from './SearchPanel';
@@ -30,14 +30,18 @@ const initState = {
 function SearchScreen({route: {params}}) {
   const [state, dispatch] = useReducer(searchReducer, initState);
   const modifyInfo = params ? params.modify : null;
+  const [goUserPosition, setGoUserPosition] = useState(true);
   
   useEffect(() => {
-    Geolocation.getCurrentPosition(
-      ({coords: {latitude, longitude}}) => dispatch([MOVE_MAP, {latitude, longitude}]),
-      error => console.log(error.code, error.message),
-      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-    );
-  }, [Geolocation]);
+    if (goUserPosition) {
+      Geolocation.getCurrentPosition(
+        ({coords: {latitude, longitude}}) => dispatch([MOVE_MAP, {latitude, longitude}]),
+        error => console.log(error.code, error.message),
+        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+      );
+      setGoUserPosition(false);
+    }
+  }, [Geolocation, goUserPosition]);
   
   useEffect(() => {
     if (!modifyInfo) {
@@ -61,7 +65,7 @@ function SearchScreen({route: {params}}) {
   
   return (
     <Provider value={{state, dispatch}}>
-      <Map/>
+      <Map setGoUserPosition={setGoUserPosition}/>
       <SearchPanel modifyInfo={modifyInfo}/>
     </Provider>
   );

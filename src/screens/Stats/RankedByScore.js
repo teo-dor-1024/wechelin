@@ -24,6 +24,7 @@ function RankedByScore({recordsByScore = []}) {
               key={placeName}
               containerStyle={{marginLeft: 20, marginRight: 20, marginBottom: 5}}
               title={placeName}
+              titleProps={{numberOfLines: 1}}
               leftElement={<Text>{index + 1}위</Text>}
               rightElement={
                 <View style={{flexDirection: 'row'}}>

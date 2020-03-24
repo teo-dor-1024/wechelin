@@ -7,9 +7,17 @@ import Navigator from './src/Navigator';
 import {StatusBar} from 'react-native';
 
 const client = new ApolloClient({
-  link: createHttpLink({uri: 'http://api.doeatrecord.com/graphql'}),
-  // link: createHttpLink({uri: 'http://localhost:4000/graphql'}),
+  // link: createHttpLink({uri: 'http://api.doeatrecord.com/graphql'}),
+  link: createHttpLink({uri: 'http://localhost:4000/graphql'}),
   cache: new InMemoryCache(),
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: 'network-only',
+    },
+    query: {
+      fetchPolicy: 'network-only',
+    },
+  },
 });
 
 export default function App() {
