@@ -4,7 +4,7 @@ import {useMutation} from '@apollo/react-hooks';
 import {View} from 'react-native';
 import {Icon, ListItem} from 'react-native-elements';
 import {myStyles} from './MyScreen';
-import {getTypeKorName} from "./UserSearchForm";
+import {getTypeKorName} from "./SearchUnMatched";
 
 const OFF_ALARM = gql`
   mutation ($_id: ID!) {

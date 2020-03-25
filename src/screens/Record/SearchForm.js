@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {RecordContext} from './SearchScreen';
+import {RecordContext} from './RecordScreen';
 import {Icon, ListItem, SearchBar} from 'react-native-elements';
 import {ScrollView} from 'react-native';
 import {convertDistance} from '../../util/StringUtils';

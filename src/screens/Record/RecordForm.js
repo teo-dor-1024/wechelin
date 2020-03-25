@@ -6,7 +6,7 @@ import {View} from 'react-native';
 import {Button, CheckBox, Icon, Input, ListItem, Text} from 'react-native-elements';
 import StarRating from 'react-native-star-rating';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {RecordContext} from './SearchScreen';
+import {RecordContext} from './RecordScreen';
 import {CLEAR_SEARCH_LIST} from '../../reducers/searchReducer';
 import useMyInfo from '../../util/useMyInfo';
 import {convertMoney} from '../../util/StringUtils';

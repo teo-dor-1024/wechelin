@@ -5,7 +5,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Icon} from 'react-native-elements';
 import LoginScreen from './screens/Login/LoginScreen';
 import ListScreen from './screens/List/ListScreen';
-import SearchScreen from './screens/Search/SearchScreen';
+import RecordScreen from './screens/Record/RecordScreen';
 import StatsScreen from './screens/Stats/StatsScreen';
 import MapScreen from './screens/Map/MapScreen';
 import MyScreen from './screens/My/MyScreen';
@@ -54,11 +54,11 @@ function TabNavigator() {
       tabBarOptions={{
         showLabel: false,
       }}
-      initialRouteName='Record'
+      initialRouteName='RecordScreen'
     >
       <Tab.Screen name='List' component={ListScreen}/>
       <Tab.Screen name='Map' component={MapScreen}/>
-      <Tab.Screen name='Record' component={SearchScreen}/>
+      <Tab.Screen name='Record' component={RecordScreen}/>
       <Tab.Screen name='Stats' component={StatsScreen}/>
       <Tab.Screen name='My' component={MyScreen}/>
     </Tab.Navigator>

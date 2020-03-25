@@ -27,7 +27,7 @@ const initState = {
   },
 };
 
-function SearchScreen({route: {params}}) {
+function RecordScreen({route: {params}}) {
   const [state, dispatch] = useReducer(searchReducer, initState);
   const modifyInfo = params ? params.modify : null;
   const [goUserPosition, setGoUserPosition] = useState(true);
@@ -71,4 +71,4 @@ function SearchScreen({route: {params}}) {
   );
 }
 
-export default SearchScreen;
+export default RecordScreen;

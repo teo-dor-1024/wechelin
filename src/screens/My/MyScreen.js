@@ -3,12 +3,14 @@ import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import {Alert, Modal, SafeAreaView, ScrollView, View} from 'react-native';
+import {Alert, Modal, SafeAreaView, View} from 'react-native';
 import {Button, Icon, Text} from 'react-native-elements';
 import useMyInfo from '../../util/useMyInfo';
 import ReceivedAlarms from './ReceivedAlarms';
 import RequestedAlarms from './RequestedAlarms';
-import UserSearchForm from './UserSearchForm';
+import SearchUnMatched from './SearchUnMatched';
+import MyLover from './MyLover';
+import MyFriends from './MyFriends';
 
 export const myStyles = {
   alarmItem: {
@@ -105,7 +107,7 @@ function MyScreen() {
         setTargetId('');
         setTargetName('');
         navigation.reset();
-        navigation.navigate('My');
+        navigation.navigate('MyScreen');
       } else {
         Alert.alert(
           '요청 처리에 실패했습니다.',
@@ -126,6 +128,26 @@ function MyScreen() {
   const logout = async () => {
     await AsyncStorage.clear();
     navigation.replace('LoginScreen');
+  };
+  
+  const openCoupleSearchForm = () => {
+    setIsVisibleModal(true);
+    setSearchType('couple');
+  };
+  
+  const coupleBreakUp = () => {
+    setSearchType('breakUp');
+    setTargetInfo(myLover.userId, myLover.nickname);
+  };
+  
+  const openFriendSearchForm = () => {
+    setIsVisibleModal(true);
+    setSearchType('friends');
+  };
+  
+  const unFollowFriend = (userId, nickname) => {
+    setSearchType('unFollow');
+    setTargetInfo(userId, nickname);
   };
   
   if (loading) {
@@ -181,134 +203,21 @@ function MyScreen() {
         }
       </View>
       
-      <View style={myStyles.userItem}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Icon type='material-community' name='account-heart' size={25}/>
-          <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 5}}>
-            커플
-          </Text>
-        </View>
-        {
-          (myLover || crushedName) ?
-            null
-            :
-            <Icon
-              name='md-add'
-              type='ionicon'
-              size={25}
-              containerStyle={{marginRight: 10}}
-              color='#0080FF'
-              onPress={() => {
-                setIsVisibleModal(true);
-                setSearchType('couple');
-              }}
-            />
-        }
-      </View>
-      <View style={{...myStyles.userItem, marginBottom: 20}}>
-        {
-          myLover ?
-            <>
-              <Text style={{fontWeight: 'bold', fontSize: 18}}>
-                {myLover.nickname}
-              </Text>
-              <Button
-                title='연결 해제'
-                titleStyle={{fontSize: 14, color: '#FE2E2E'}}
-                type='clear'
-                containerStyle={{height: 30}}
-                buttonStyle={{padding: 5}}
-                onPress={() => Alert.alert(
-                  '정말 연결을 끊으시겠습니까?',
-                  null,
-                  [
-                    {text: '취소', style: 'cancel'},
-                    {
-                      text: '해제',
-                      onPress: () => {
-                        setSearchType('breakUp');
-                        setTargetInfo(myLover.userId, myLover.nickname);
-                      },
-                      style: 'destructive'
-                    },
-                  ],
-                  {cancelable: true}
-                )}
-              />
-            </>
-            :
-            <Text style={{fontSize: 18}}>
-              {
-                crushedName ? `${crushedName}님의 수락을 기다리는 중입니다.` : '연결된 커플이 없습니다.'
-              }
-            </Text>
-        }
-      </View>
+      <MyLover
+        myLover={myLover}
+        crushedName={crushedName}
+        openSearchForm={openCoupleSearchForm}
+        breakUp={coupleBreakUp}
+      />
       
-      <View style={myStyles.userItem}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Icon type='feather' name='users' size={25}/>
-          <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 5}}>
-            친구들
-          </Text>
-        </View>
-        <Icon
-          name='md-add'
-          type='ionicon'
-          size={25}
-          containerStyle={{marginRight: 10}}
-          color='#0080FF'
-          onPress={() => {
-            setIsVisibleModal(true);
-            setSearchType('friends');
-          }}
-        />
-      </View>
-      <ScrollView style={{paddingBottom: 70}}>
-        {
-          myFriends.length ?
-            myFriends.map(({userId, nickname}) => (
-              <View key={userId} style={myStyles.userItem}>
-                <Text style={{fontWeight: 'bold', fontSize: 18}}>
-                  {nickname}
-                </Text>
-                <Button
-                  title='연결 해제'
-                  titleStyle={{fontSize: 14, color: '#FE2E2E'}}
-                  type='clear'
-                  containerStyle={{height: 30}}
-                  buttonStyle={{padding: 5}}
-                  onPress={() => Alert.alert(
-                    '정말 연결을 끊으시겠습니까?',
-                    null,
-                    [
-                      {text: '취소', style: 'cancel'},
-                      {
-                        text: '해제',
-                        onPress: () => {
-                          setSearchType('unFollow');
-                          setTargetInfo(userId, nickname);
-                        },
-                        style: 'destructive'
-                      },
-                    ],
-                    {cancelable: true}
-                  )}
-                />
-              </View>
-            ))
-            :
-            <Text style={{fontSize: 18}}>
-              연결된 친구들이 없습니다.
-            </Text>
-        }
-      </ScrollView>
+      <MyFriends
+        myFriends={myFriends}
+        openSearchForm={openFriendSearchForm}
+        unFollow={unFollowFriend}
+      />
       
-      <Modal
-        animationType="slide"
-        visible={isVisibleModal}
-      >
-        <UserSearchForm
+      <Modal animationType='slide' visible={isVisibleModal}>
+        <SearchUnMatched
           userId={id}
           setTargetInfo={setTargetInfo}
           searchType={searchType}

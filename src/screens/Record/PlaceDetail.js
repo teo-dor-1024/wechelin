@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import {Button, Icon, ListItem} from 'react-native-elements';
 import {WebView} from 'react-native-webview';
-import {RecordContext} from './SearchScreen';
+import {RecordContext} from './RecordScreen';
 
 function PlaceDetail({setAllowDrag, setTab, SLIDE_TOP, slideRef}) {
   const {state: {places, selectedIndex}} = useContext(RecordContext);

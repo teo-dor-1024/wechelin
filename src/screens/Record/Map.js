@@ -1,8 +1,9 @@
 import React, {useContext} from 'react';
 import MapView, {Marker} from 'react-native-maps';
-import {Icon} from 'react-native-elements';
-import {RecordContext} from './SearchScreen';
+import {Button, Icon} from 'react-native-elements';
+import {RecordContext} from './RecordScreen';
 import {FOCUS_PLACE, SET_ADD_PIN_INFO} from '../../reducers/searchReducer';
+import {StyleSheet} from "react-native";
 
 function Map({setGoUserPosition}) {
   const {
@@ -14,23 +15,10 @@ function Map({setGoUserPosition}) {
   
   return (
     <>
-      <Icon
-        name='location-arrow'
-        type='font-awesome'
-        containerStyle={{
-          position: 'absolute',
-          top: 70,
-          right: 10,
-          zIndex: 1,
-          backgroundColor: '#FAFAFA',
-          paddingVertical: 6,
-          paddingHorizontal: 9,
-          borderRadius: 5,
-          borderColor: '#D8D8D8',
-          borderWidth: 1,
-        }}
-        color='#0080FF'
-        size={30}
+      <Button
+        containerStyle={styles.toolContainer}
+        buttonStyle={styles.btnGoUser}
+        icon={<Icon type='feather' name='navigation' size={23}/>}
         onPress={() => setGoUserPosition(true)}
       />
       <MapView
@@ -69,5 +57,22 @@ function Map({setGoUserPosition}) {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  toolContainer: {
+    position: 'absolute',
+    zIndex: 1000,
+    right: 15,
+    top: 45
+  },
+  btnGoUser: {
+    backgroundColor: '#FAFAFA',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    borderColor: '#D8D8D8',
+    borderWidth: 1,
+  },
+});
 
 export default Map;

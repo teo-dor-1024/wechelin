@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import {View} from 'react-native';
 import {Button, Input, Text} from 'react-native-elements';
 import RNPickerSelect from 'react-native-picker-select';
-import {RecordContext} from './SearchScreen';
+import {RecordContext} from './RecordScreen';
 import {SET_ADD_PIN_INFO, SET_ADD_PIN_MODE} from '../../reducers/searchReducer';
 import {SLIDE_BOTTOM, SLIDE_MIDDLE} from './SearchPanel';
 

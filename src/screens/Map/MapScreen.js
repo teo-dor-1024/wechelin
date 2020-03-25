@@ -3,10 +3,10 @@ import gql from 'graphql-tag';
 import {useLazyQuery} from '@apollo/react-hooks';
 import Geolocation from 'react-native-geolocation-service';
 import {Button, Icon} from 'react-native-elements';
-import {Modal, View} from 'react-native';
+import {Modal, StyleSheet, View} from 'react-native';
 import useMyInfo from '../../util/useMyInfo';
 import MapView, {Marker} from 'react-native-maps';
-import UserList from "./UserList";
+import SearchFriends from "./SearchFriends";
 
 const GET_RECORDS_BY_MAP = gql`
   query ($userId: String!, $xMin: String!, $xMax: String!, $yMin: String!, $yMax: String!, $keyword: String) {
@@ -36,15 +36,20 @@ function MapScreen() {
   const [places, setPlaces] = useState([]);
   const [keyword, setKeyword] = useState('');
   
+  const [goUserPosition, setGoUserPosition] = useState(true);
+  
   const [isVisibleModal, setIsVisibleModal] = useState(false);
   
   useEffect(() => {
-    Geolocation.getCurrentPosition(
-      ({coords: {latitude, longitude}}) => setRegion({...region, latitude, longitude}),
-      error => console.log(error.code, error.message),
-      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-    );
-  }, []);
+    if (goUserPosition) {
+      Geolocation.getCurrentPosition(
+        ({coords: {latitude, longitude}}) => setRegion({...region, latitude, longitude}),
+        error => console.log(error.code, error.message),
+        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+      );
+      setGoUserPosition(false);
+    }
+  }, [goUserPosition]);
   
   const [getRecords, {data}] = useLazyQuery(GET_RECORDS_BY_MAP);
   
@@ -90,14 +95,7 @@ function MapScreen() {
             <Button
               title='이지역 재검색'
               titleStyle={{fontSize: 13, color: '#2E64FE'}}
-              buttonStyle={{
-                paddingTop: 5,
-                paddingBottom: 5,
-                borderRadius: 20,
-                backgroundColor: '#FFFFFF',
-                borderColor: '#E6E6E6',
-                borderWidth: 0.3,
-              }}
+              buttonStyle={styles.btnReFetch}
               icon={<Icon type='material-community' name='reload' size={17} color='#2E64FE'/>}
               onPress={onPressReFetch}
             />
@@ -105,23 +103,23 @@ function MapScreen() {
         }
       </View>
       <Button
-        containerStyle={{position: 'absolute', zIndex: 1000, right: 15, top: 45}}
-        buttonStyle={{
-          backgroundColor: '#FAFAFA',
-          paddingVertical: 6,
-          paddingHorizontal: 9,
-          borderRadius: 5,
-          borderColor: '#D8D8D8',
-          borderWidth: 1,
-        }}
-        icon={<Icon type='feather' name='user-plus' size={25}/>}
+        containerStyle={styles.toolContainer}
+        buttonStyle={styles.btnMapToolTop}
+        icon={<Icon type='feather' name='user-plus' size={23}/>}
         onPress={() => setIsVisibleModal(true)}
+      />
+      <Button
+        containerStyle={{...styles.toolContainer, top: 85}}
+        buttonStyle={styles.btnMapToolBottom}
+        icon={<Icon type='feather' name='navigation' size={23}/>}
+        onPress={() => setGoUserPosition(true)}
       />
       <MapView
         ref={mapEl}
         style={{flex: 1}}
         region={region}
         onTouchStart={() => setIsMoved(true)}
+        showsUserLocation
       >
         {
           places.map(({id, name, latitude, longitude}) =>
@@ -138,7 +136,7 @@ function MapScreen() {
         animationType="slide"
         visible={isVisibleModal}
       >
-        <UserList
+        <SearchFriends
           userId={userId}
           setIsVisibleModal={setIsVisibleModal}
         />
@@ -146,5 +144,40 @@ function MapScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  btnReFetch: {
+    paddingTop: 5,
+    paddingBottom: 5,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    borderColor: '#E6E6E6',
+    borderWidth: 0.3,
+  },
+  toolContainer: {
+    position: 'absolute',
+    zIndex: 1000,
+    right: 15,
+    top: 45
+  },
+  btnMapToolTop: {
+    backgroundColor: '#FAFAFA',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderColor: '#D8D8D8',
+    borderWidth: 1,
+  },
+  btnMapToolBottom: {
+    backgroundColor: '#FAFAFA',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    borderColor: '#D8D8D8',
+    borderWidth: 1,
+  },
+});
 
 export default MapScreen;
