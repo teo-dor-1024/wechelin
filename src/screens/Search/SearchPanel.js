@@ -26,16 +26,16 @@ function SearchPanel({modifyInfo}) {
   const [tab, setTab] = useState('SearchForm');
   const [allowDrag, setAllowDrag] = useState(true);
   
-  const slideRef = useRef();
+  const slideRef = useRef(null);
   
   useEffect(() => {
     if (!modifyInfo) {
       return;
     }
-    
+  
+    setAllowDrag(false);
     setTab('RecordForm');
     slideRef.current.show(SLIDE_TOP);
-    setAllowDrag(false);
   }, [modifyInfo]);
   
   return (

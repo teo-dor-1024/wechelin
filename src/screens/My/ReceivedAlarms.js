@@ -3,7 +3,8 @@ import {View} from 'react-native';
 import gql from 'graphql-tag';
 import {useMutation} from '@apollo/react-hooks';
 import {Button, ListItem} from 'react-native-elements';
-import {getTypeKorName, myStyles} from './MyScreen';
+import {myStyles} from './MyScreen';
+import {getTypeKorName} from "./UserSearchForm";
 
 const styles = {
   alarmButton: {

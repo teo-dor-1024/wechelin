@@ -95,26 +95,6 @@ function ListScreen({route: {params}}) {
     setDeletingId('');
   }, [deletingId]);
   
-  if (loading) {
-    return (
-      <SafeAreaView>
-        <Text> 기록 가져오는 중 ...</Text>
-      </SafeAreaView>
-    );
-  }
-  
-  if (error) {
-    return (
-      <SafeAreaView>
-        <Text> 기록 찾다가 에러 발생!! {error.toString()}</Text>
-      </SafeAreaView>
-    );
-  }
-  
-  const {records: {records, hasMore}} = data;
-  
-  let recordsResult = records.map(({_id, ...rest}) => ({...rest, key: _id}));
-  
   return (
     <SafeAreaView style={{backgroundColor: '#FFFFFF'}}>
       <SearchBar
@@ -135,13 +115,20 @@ function ListScreen({route: {params}}) {
         cancelButtonProps={{buttonStyle: {marginRight: 10, height: 45}}}
       />
       <View style={{height: 700, paddingHorizontal: 20, paddingBottom: 70}}>
-        <SortedByVisitedDate
-          hasMore={hasMore}
-          records={recordsResult}
-          onPressMoreView={() => setShouldFetchMore(true)}
-          onPressModify={modify => navigation.navigate('Record', {modify})}
-          onPressDelete={key => setDeletingId(key)}
-        />
+        {
+          loading ?
+            <Text> 기록 가져오는 중 ...</Text>
+            :
+            error ?
+              <Text> 기록 찾다가 에러 발생!! {error.toString()}</Text>
+              :
+              <SortedByVisitedDate
+                data={data.records}
+                onPressMoreView={() => setShouldFetchMore(true)}
+                onPressModify={modify => navigation.navigate('Record', {modify})}
+                onPressDelete={key => setDeletingId(key)}
+              />
+        }
       </View>
     </SafeAreaView>
   );

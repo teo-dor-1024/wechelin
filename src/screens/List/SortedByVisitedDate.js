@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, Icon, ListItem} from 'react-native-elements';
-import {Text, TouchableOpacity, View} from 'react-native';
+import {Alert, Text, TouchableOpacity, View} from 'react-native';
 import {convertDate, convertMoney} from '../../util/StringUtils';
 import {SwipeListView} from 'react-native-swipe-list-view';
 
@@ -32,13 +32,16 @@ const styles = {
   },
 };
 
-function SortedByVisitedDate({hasMore, records, onPressMoreView, onPressModify, onPressDelete}) {
+function SortedByVisitedDate({data, onPressMoreView, onPressModify, onPressDelete}) {
+  const {records, hasMore} = data;
+  const recordsWithKey = records.map(({_id, ...rest}) => ({...rest, key: _id}));
+  
   return (
-    records.length ?
+    recordsWithKey.length ?
       <SwipeListView
         useFlatList
         showsVerticalScrollIndicator={false}
-        data={hasMore ? records.concat([{moreBtn: true, key: 'moreBtn'}]) : records}
+        data={hasMore ? recordsWithKey.concat([{moreBtn: true, key: 'moreBtn'}]) : recordsWithKey}
         renderItem={({item}) => {
           const {moreBtn, placeName, visitedDate, menus = [], money, score} = item;
           
@@ -58,7 +61,9 @@ function SortedByVisitedDate({hasMore, records, onPressMoreView, onPressModify, 
                 rightElement={
                   <View>
                     <Icon name='star' type='antdesign' color='#FACC2E'/>
-                    <Text><Text style={{fontWeight: 'bold', color: '#FACC2E', fontSize: 20}}>{score}</Text> / 5</Text>
+                    <Text>
+                      <Text style={{fontWeight: 'bold', color: '#FACC2E', fontSize: 20}}>{score}</Text> / 5
+                    </Text>
                   </View>
                 }
                 subtitle={
@@ -82,7 +87,19 @@ function SortedByVisitedDate({hasMore, records, onPressMoreView, onPressModify, 
             </TouchableOpacity>
             <TouchableOpacity
               style={{...styles.optionButton, backgroundColor: '#DF3A01'}}
-              onPress={() => onPressDelete(key)}
+              onPress={() => Alert.alert(
+                '정말 삭제하시겠습니까?',
+                null,
+                [
+                  {text: '취소', style: 'cancel'},
+                  {
+                    text: '삭제',
+                    onPress: () => onPressDelete(key),
+                    style: 'destructive'
+                  },
+                ],
+                {cancelable: true}
+              )}
             >
               <Icon name='delete' type='antdesign' color='#FFFFFF'/>
               <Text style={styles.buttonText}>삭제</Text>

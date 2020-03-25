@@ -3,9 +3,10 @@ import gql from 'graphql-tag';
 import {useLazyQuery} from '@apollo/react-hooks';
 import Geolocation from 'react-native-geolocation-service';
 import {Button, Icon} from 'react-native-elements';
-import {View} from 'react-native';
+import {Modal, View} from 'react-native';
 import useMyInfo from '../../util/useMyInfo';
 import MapView, {Marker} from 'react-native-maps';
+import UserList from "./UserList";
 
 const GET_RECORDS_BY_MAP = gql`
   query ($userId: String!, $xMin: String!, $xMax: String!, $yMin: String!, $yMax: String!, $keyword: String) {
@@ -34,6 +35,8 @@ function MapScreen() {
   const [isMoved, setIsMoved] = useState(true);
   const [places, setPlaces] = useState([]);
   const [keyword, setKeyword] = useState('');
+  
+  const [isVisibleModal, setIsVisibleModal] = useState(false);
   
   useEffect(() => {
     Geolocation.getCurrentPosition(
@@ -101,6 +104,19 @@ function MapScreen() {
           )
         }
       </View>
+      <Button
+        containerStyle={{position: 'absolute', zIndex: 1000, right: 15, top: 45}}
+        buttonStyle={{
+          backgroundColor: '#FAFAFA',
+          paddingVertical: 6,
+          paddingHorizontal: 9,
+          borderRadius: 5,
+          borderColor: '#D8D8D8',
+          borderWidth: 1,
+        }}
+        icon={<Icon type='feather' name='user-plus' size={25}/>}
+        onPress={() => setIsVisibleModal(true)}
+      />
       <MapView
         ref={mapEl}
         style={{flex: 1}}
@@ -117,6 +133,16 @@ function MapScreen() {
           )
         }
       </MapView>
+      
+      <Modal
+        animationType="slide"
+        visible={isVisibleModal}
+      >
+        <UserList
+          userId={userId}
+          setIsVisibleModal={setIsVisibleModal}
+        />
+      </Modal>
     </View>
   );
 }

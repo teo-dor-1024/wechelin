@@ -1,30 +1,32 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import {Dimensions, SafeAreaView, ScrollView, View} from 'react-native';
-import {Button, Icon, ListItem, Text} from 'react-native-elements';
+import {Alert, Modal, SafeAreaView, ScrollView, View} from 'react-native';
+import {Button, Icon, Text} from 'react-native-elements';
 import useMyInfo from '../../util/useMyInfo';
 import ReceivedAlarms from './ReceivedAlarms';
 import RequestedAlarms from './RequestedAlarms';
 import UserSearchForm from './UserSearchForm';
-import SlidingUpPanel from "rn-sliding-up-panel";
 
 export const myStyles = {
   alarmItem: {
-    marginHorizontal: 20,
     marginBottom: 5,
     paddingVertical: 10,
   },
+  userItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+    justifyContent: 'space-between'
+  },
 };
 
-export const getTypeKorName = type => type === 'couple' ? '커플' : '친구';
-const SLIDE_BOTTOM = -370;
-
 const GET_MY_INFO = gql`
-  query ($userId: String!, $alarm: Boolean) {
+  query ($userId: String!) {
     myLover(userId: $userId) {
+      userId
       nickname
     }
     myFriends(userId: $userId) {
@@ -37,12 +39,14 @@ const GET_MY_INFO = gql`
       applicantName
       type
     }
-    requestedAlarms(applicantId: $userId, alarm: $alarm) {
+    requestedAlarms(applicantId: $userId) {
       _id
       targetId
       targetName
       type
       result
+      alarm
+      completed
     }
   }
 `;
@@ -53,38 +57,62 @@ const REQUEST_MATCHING = gql`
   }
 `;
 
+const UN_FOLLOW = gql`
+  mutation ($userId: String!, $friendId: String!) {
+    unFollow(userId: $userId, friendId: $friendId)
+  }
+`;
+
+const BREAK_UP = gql`
+  mutation ($userId: String!, $coupleId: String!) {
+    breakUp(userId: $userId, coupleId: $coupleId)
+  }
+`;
+
 function MyScreen() {
   const navigation = useNavigation();
   const {id, nickName} = useMyInfo();
-  const {loading, error, data, refetch} = useQuery(GET_MY_INFO, {variables: {userId: id, alarm: true}});
+  const {loading, error, data, refetch} = useQuery(GET_MY_INFO, {variables: {userId: id}});
   
-  const {height} = Dimensions.get('window');
-  const SLIDE_TOP = height - 500;
-  const searchEl = useRef();
+  const [isVisibleModal, setIsVisibleModal] = useState(false);
   const [searchType, setSearchType] = useState('couple');
-  const typeKorName = getTypeKorName(searchType);
   
   const [targetId, setTargetId] = useState('');
   const [targetName, setTargetName] = useState('');
   const [requestMatching] = useMutation(REQUEST_MATCHING);
+  const [unFollow] = useMutation(UN_FOLLOW);
+  const [breakUp] = useMutation(BREAK_UP);
   
   useEffect(() => {
     const request = async () => {
-      const result = await requestMatching({
-        variables: {
-          applicantId: id,
-          applicantName: nickName,
-          targetId,
-          targetName,
-          type: searchType,
-        },
-      });
+      const result = searchType === 'unFollow' ?
+        await unFollow({variables: {userId: id, friendId: targetId}})
+        :
+        searchType === 'breakUp' ?
+          await breakUp({variables: {userId: id, coupleId: targetId}})
+          :
+          await requestMatching({
+            variables: {
+              applicantId: id,
+              applicantName: nickName,
+              targetId,
+              targetName,
+              type: searchType,
+            },
+          });
       
-      alert(result ? `${typeKorName} 요청되었습니다.` : `${typeKorName} 요청에 실패했습니다.`);
-      setTargetId('');
-      setTargetName('');
-      navigation.reset();
-      navigation.navigate('My');
+      if (result) {
+        setTargetId('');
+        setTargetName('');
+        navigation.reset();
+        navigation.navigate('My');
+      } else {
+        Alert.alert(
+          '요청 처리에 실패했습니다.',
+          '다시 요청해주세요.',
+          {text: '확인'}
+        );
+      }
     };
     
     targetId && request();
@@ -118,9 +146,12 @@ function MyScreen() {
   }
   
   const {receivedAlarms = [], requestedAlarms = [], myLover, myFriends = []} = data;
+  const requestedOnAlarm = requestedAlarms.filter(({alarm}) => alarm);
+  const alreadyRequestedInfo = requestedAlarms.find(({completed, type}) => !completed && type === 'couple');
+  const crushedName = alreadyRequestedInfo ? alreadyRequestedInfo.targetName : '';
   
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{marginHorizontal: 20}}>
       <View style={{alignItems: 'flex-end', padding: 20}}>
         <Button
           type='clear'
@@ -131,32 +162,26 @@ function MyScreen() {
         />
       </View>
       
-      <View style={{flexDirection: 'row', marginLeft: 20, marginBottom: 10, alignItems: 'center'}}>
-        <Icon type='material-community' name='bell-outline' size={25}/>
-        <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 5}}>
-          알림
-        </Text>
+      <View style={{marginBottom: 20}}>
+        <View style={{flexDirection: 'row', marginBottom: 10, alignItems: 'center'}}>
+          <Icon type='material-community' name='bell-outline' size={25}/>
+          <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 5}}>
+            알림
+          </Text>
+        </View>
+        <ReceivedAlarms myId={id} receivedAlarms={receivedAlarms} refetch={refetch}/>
+        <RequestedAlarms requestedAlarms={requestedOnAlarm} refetch={refetch}/>
+        {
+          (receivedAlarms.length || requestedOnAlarm.length) ?
+            null
+            :
+            <Text style={{fontSize: 18}}>
+              수신된 알람이 없습니다.
+            </Text>
+        }
       </View>
-      <ReceivedAlarms myId={id} receivedAlarms={receivedAlarms} refetch={refetch}/>
-      <RequestedAlarms requestedAlarms={requestedAlarms} refetch={refetch}/>
-      {
-        (receivedAlarms.length || requestedAlarms.length) ?
-          null
-          :
-          <ListItem
-            title='수신된 알림이 없습니다.'
-            titleStyle={{fontSize: 14}}
-            containerStyle={{marginHorizontal: 20, marginBottom: 20}}
-          />
-      }
       
-      <View style={{
-        flexDirection: 'row',
-        marginHorizontal: 20,
-        marginVertical: 10,
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}>
+      <View style={myStyles.userItem}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Icon type='material-community' name='account-heart' size={25}/>
           <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 5}}>
@@ -164,7 +189,7 @@ function MyScreen() {
           </Text>
         </View>
         {
-          myLover ?
+          (myLover || crushedName) ?
             null
             :
             <Icon
@@ -172,27 +197,55 @@ function MyScreen() {
               type='ionicon'
               size={25}
               containerStyle={{marginRight: 10}}
-              color='#F5A9D0'
+              color='#0080FF'
               onPress={() => {
-                searchEl.current.show(SLIDE_TOP);
+                setIsVisibleModal(true);
                 setSearchType('couple');
               }}
             />
         }
       </View>
-      <Text style={{marginLeft: 20, marginBottom: 20, fontWeight: 'bold', fontSize: 18}}>
+      <View style={{...myStyles.userItem, marginBottom: 20}}>
         {
-          myLover ? `${myLover.nickname}` : '연결된 커플이 없습니다.'
+          myLover ?
+            <>
+              <Text style={{fontWeight: 'bold', fontSize: 18}}>
+                {myLover.nickname}
+              </Text>
+              <Button
+                title='연결 해제'
+                titleStyle={{fontSize: 14, color: '#FE2E2E'}}
+                type='clear'
+                containerStyle={{height: 30}}
+                buttonStyle={{padding: 5}}
+                onPress={() => Alert.alert(
+                  '정말 연결을 끊으시겠습니까?',
+                  null,
+                  [
+                    {text: '취소', style: 'cancel'},
+                    {
+                      text: '해제',
+                      onPress: () => {
+                        setSearchType('breakUp');
+                        setTargetInfo(myLover.userId, myLover.nickname);
+                      },
+                      style: 'destructive'
+                    },
+                  ],
+                  {cancelable: true}
+                )}
+              />
+            </>
+            :
+            <Text style={{fontSize: 18}}>
+              {
+                crushedName ? `${crushedName}님의 수락을 기다리는 중입니다.` : '연결된 커플이 없습니다.'
+              }
+            </Text>
         }
-      </Text>
+      </View>
       
-      <View style={{
-        flexDirection: 'row',
-        marginHorizontal: 20,
-        marginVertical: 10,
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}>
+      <View style={myStyles.userItem}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Icon type='feather' name='users' size={25}/>
           <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 5}}>
@@ -206,36 +259,62 @@ function MyScreen() {
           containerStyle={{marginRight: 10}}
           color='#0080FF'
           onPress={() => {
-            searchEl.current.show(SLIDE_TOP);
+            setIsVisibleModal(true);
             setSearchType('friends');
           }}
         />
       </View>
       <ScrollView style={{paddingBottom: 70}}>
-      {
-        myFriends.map(({userId, nickname}) => (
-          <Text key={userId} style={{marginLeft: 20, marginBottom: 10, fontWeight: 'bold', fontSize: 18}}>
-            {nickname}
-          </Text>
-        ))
-      }
+        {
+          myFriends.length ?
+            myFriends.map(({userId, nickname}) => (
+              <View key={userId} style={myStyles.userItem}>
+                <Text style={{fontWeight: 'bold', fontSize: 18}}>
+                  {nickname}
+                </Text>
+                <Button
+                  title='연결 해제'
+                  titleStyle={{fontSize: 14, color: '#FE2E2E'}}
+                  type='clear'
+                  containerStyle={{height: 30}}
+                  buttonStyle={{padding: 5}}
+                  onPress={() => Alert.alert(
+                    '정말 연결을 끊으시겠습니까?',
+                    null,
+                    [
+                      {text: '취소', style: 'cancel'},
+                      {
+                        text: '해제',
+                        onPress: () => {
+                          setSearchType('unFollow');
+                          setTargetInfo(userId, nickname);
+                        },
+                        style: 'destructive'
+                      },
+                    ],
+                    {cancelable: true}
+                  )}
+                />
+              </View>
+            ))
+            :
+            <Text style={{fontSize: 18}}>
+              연결된 친구들이 없습니다.
+            </Text>
+        }
       </ScrollView>
       
-      <SlidingUpPanel
-        ref={searchEl}
-        allowDragging={false}
-        draggableRange={{top: SLIDE_TOP, bottom: SLIDE_BOTTOM}}
-        containerStyle={{zIndex: 2, borderRadius: 15}}
-        friction={2}
+      <Modal
+        animationType="slide"
+        visible={isVisibleModal}
       >
         <UserSearchForm
-          searchEl={searchEl}
-          myId={id}
+          userId={id}
           setTargetInfo={setTargetInfo}
           searchType={searchType}
-          typeKorName={typeKorName}
+          setIsVisibleModal={setIsVisibleModal}
         />
-      </SlidingUpPanel>
+      </Modal>
     </SafeAreaView>
   );
 }
