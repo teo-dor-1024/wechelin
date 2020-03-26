@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View} from 'react-native';
+import {Alert, View} from 'react-native';
 import gql from 'graphql-tag';
 import {useMutation} from '@apollo/react-hooks';
 import {Button, ListItem} from 'react-native-elements';
@@ -64,7 +64,19 @@ function ReceivedAlarms({myId, receivedAlarms = [], refetch}) {
                     titleStyle={{fontSize: 13, fontWeight: 'bold'}}
                     containerStyle={{marginRight: 5}}
                     buttonStyle={styles.alarmButton}
-                    onPress={() => setDecideInfo({_id, result: 'accept', myId, applicantId})}
+                    onPress={() => Alert.alert(
+                      '요청을 수락하시겠습니까?',
+                      '연결될 경우 자신의 방문 기록이 공유 됩니다.',
+                      [
+                        {text: '취소', style: 'cancel'},
+                        {
+                          text: '수락',
+                          onPress: () => setDecideInfo({_id, result: 'accept', myId, applicantId}),
+                          style: 'destructive'
+                        },
+                      ],
+                      {cancelable: true}
+                    )}
                   />
                   <Button
                     title='아닌데'

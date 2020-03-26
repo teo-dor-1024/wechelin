@@ -54,7 +54,7 @@ function TabNavigator() {
       tabBarOptions={{
         showLabel: false,
       }}
-      initialRouteName='RecordScreen'
+      initialRouteName='Record'
     >
       <Tab.Screen name='List' component={ListScreen}/>
       <Tab.Screen name='Map' component={MapScreen}/>

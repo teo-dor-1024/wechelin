@@ -45,7 +45,7 @@ function SearchPanel({modifyInfo}) {
       snappingPoints={[SLIDE_BOTTOM, SLIDE_MIDDLE, SLIDE_TOP]}
       allowDragging={allowDrag}
       friction={2}
-      containerStyle={{zIndex: 2}}
+      containerStyle={{zIndex: 100}}
     >
       <View style={containerStyle}>
         {

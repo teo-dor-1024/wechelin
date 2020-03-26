@@ -61,7 +61,7 @@ function Map({setGoUserPosition}) {
 const styles = StyleSheet.create({
   toolContainer: {
     position: 'absolute',
-    zIndex: 1000,
+    zIndex: 99,
     right: 15,
     top: 45
   },

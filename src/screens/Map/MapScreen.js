@@ -3,10 +3,11 @@ import gql from 'graphql-tag';
 import {useLazyQuery} from '@apollo/react-hooks';
 import Geolocation from 'react-native-geolocation-service';
 import {Button, Icon} from 'react-native-elements';
-import {Modal, StyleSheet, View} from 'react-native';
+import {Modal, StyleSheet, View, Dimensions} from 'react-native';
 import useMyInfo from '../../util/useMyInfo';
 import MapView, {Marker} from 'react-native-maps';
 import SearchFriends from "./SearchFriends";
+import ScorePicker from "../components/ScorePicker";
 
 const GET_RECORDS_BY_MAP = gql`
   query ($userId: String!, $xMin: String!, $xMax: String!, $yMin: String!, $yMax: String!, $keyword: String) {
@@ -38,7 +39,9 @@ function MapScreen() {
   
   const [goUserPosition, setGoUserPosition] = useState(true);
   
-  const [isVisibleModal, setIsVisibleModal] = useState(false);
+  const [isVisibleFriendSearchForm, setIsVisibleFriendSearchForm] = useState(false);
+  const [isVisibleScore, setIsVisibleScore] = useState(false);
+  const [score, setScore] = useState(0);
   
   useEffect(() => {
     if (goUserPosition) {
@@ -106,10 +109,16 @@ function MapScreen() {
         containerStyle={styles.toolContainer}
         buttonStyle={styles.btnMapToolTop}
         icon={<Icon type='feather' name='user-plus' size={23}/>}
-        onPress={() => setIsVisibleModal(true)}
+        onPress={() => setIsVisibleFriendSearchForm(true)}
       />
       <Button
-        containerStyle={{...styles.toolContainer, top: 85}}
+        containerStyle={{...styles.toolContainer, top: 86}}
+        buttonStyle={styles.btnMapToolMid}
+        icon={<Icon type='feather' name='star' size={23}/>}
+        onPress={() => setIsVisibleScore(!isVisibleScore)}
+      />
+      <Button
+        containerStyle={{...styles.toolContainer, top: 130}}
         buttonStyle={styles.btnMapToolBottom}
         icon={<Icon type='feather' name='navigation' size={23}/>}
         onPress={() => setGoUserPosition(true)}
@@ -134,13 +143,20 @@ function MapScreen() {
       
       <Modal
         animationType="slide"
-        visible={isVisibleModal}
+        visible={isVisibleFriendSearchForm}
       >
         <SearchFriends
           userId={userId}
-          setIsVisibleModal={setIsVisibleModal}
+          setIsVisibleModal={setIsVisibleFriendSearchForm}
         />
       </Modal>
+      
+      <ScorePicker
+        score={score}
+        onChange={value => setScore(value)}
+        isVisible={isVisibleScore}
+        close={() => setIsVisibleScore(false)}
+      />
     </View>
   );
 }
@@ -156,7 +172,7 @@ const styles = StyleSheet.create({
   },
   toolContainer: {
     position: 'absolute',
-    zIndex: 1000,
+    zIndex: 99,
     right: 15,
     top: 45
   },
@@ -166,6 +182,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
+    borderBottomWidth: 0,
+    borderColor: '#D8D8D8',
+    borderWidth: 1,
+  },
+  btnMapToolMid: {
+    backgroundColor: '#FAFAFA',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 0,
     borderColor: '#D8D8D8',
     borderWidth: 1,
   },
@@ -173,8 +198,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#FAFAFA',
     paddingVertical: 8,
     paddingHorizontal: 10,
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
+    borderTopWidth: 0,
     borderColor: '#D8D8D8',
     borderWidth: 1,
   },
