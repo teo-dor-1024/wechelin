@@ -3,15 +3,14 @@ import gql from 'graphql-tag';
 import {useLazyQuery} from '@apollo/react-hooks';
 import Geolocation from 'react-native-geolocation-service';
 import {Button, Icon} from 'react-native-elements';
-import {Modal, StyleSheet, View, Dimensions} from 'react-native';
+import {Modal, StyleSheet, View} from 'react-native';
 import useMyInfo from '../../util/useMyInfo';
 import MapView, {Marker} from 'react-native-maps';
 import SearchFriends from "./SearchFriends";
-import ScorePicker from "../components/ScorePicker";
 
 const GET_RECORDS_BY_MAP = gql`
-  query ($userId: String!, $xMin: String!, $xMax: String!, $yMin: String!, $yMax: String!, $keyword: String) {
-    mapRecords(userId: $userId, xMin: $xMin, xMax: $xMax, yMin: $yMin, yMax: $yMax, keyword: $keyword) {
+  query ($userId: String!, $xMin: String!, $xMax: String!, $yMin: String!, $yMax: String!) {
+    mapRecords(userId: $userId, xMin: $xMin, xMax: $xMax, yMin: $yMin, yMax: $yMax) {
       _id
       placeName
       count
@@ -22,6 +21,13 @@ const GET_RECORDS_BY_MAP = gql`
     }
   }
 `;
+
+const isInArray = (array, target) => array.findIndex(val => val === target) > -1;
+const getBackgroundColor = (array, target) =>
+  isInArray(array, target) ?
+    '#E6E6E6'
+    :
+    '#FAFAFA';
 
 function MapScreen() {
   const {id: userId} = useMyInfo();
@@ -35,13 +41,22 @@ function MapScreen() {
   });
   const [isMoved, setIsMoved] = useState(true);
   const [places, setPlaces] = useState([]);
-  const [keyword, setKeyword] = useState('');
   
   const [goUserPosition, setGoUserPosition] = useState(true);
   
   const [isVisibleFriendSearchForm, setIsVisibleFriendSearchForm] = useState(false);
-  const [isVisibleScore, setIsVisibleScore] = useState(false);
-  const [score, setScore] = useState(0);
+  const [friendId, setFriendId] = useState('');
+  
+  const [scoreIndexList, setScoreIndexList] = useState([]);
+  
+  const clickScore = selectedIndex => {
+    const newScoreIndexList = isInArray(scoreIndexList, selectedIndex) ?
+      scoreIndexList.filter(scoreIndex => scoreIndex !== selectedIndex)
+      :
+      scoreIndexList.concat(selectedIndex);
+    
+    setScoreIndexList(newScoreIndexList);
+  };
   
   useEffect(() => {
     if (goUserPosition) {
@@ -66,15 +81,18 @@ function MapScreen() {
       
       getRecords({
         variables: {
-          userId,
+          userId: friendId || userId,
           xMin: xMin.toString(),
           xMax: xMax.toString(),
           yMin: yMin.toString(),
           yMax: yMax.toString(),
-          keyword,
         },
       });
-      setRegion({...region, latitude: (yMin + yMax) / 2, longitude: (xMin + xMax) / 2});
+      setRegion({
+        ...region,
+        latitude: (yMin + yMax) / 2,
+        longitude: (xMin + xMax) / 2
+      });
       setIsMoved(false);
     };
     
@@ -82,47 +100,124 @@ function MapScreen() {
   };
   
   useEffect(() => {
-    data && data.mapRecords && setPlaces(data.mapRecords.map(({_id, placeName, x, y}) => ({
-      id: _id,
-      name: placeName,
-      latitude: parseFloat(y),
-      longitude: parseFloat(x),
-    })));
+    onPressReFetch();
+  }, [userId, friendId]);
+  
+  useEffect(() => {
+    if (data && data.mapRecords) {
+      setPlaces(data.mapRecords.map(({_id, placeName, x, y, score}) => ({
+        id: _id,
+        name: placeName,
+        latitude: parseFloat(y),
+        longitude: parseFloat(x),
+        score: score || 0,
+      })));
+    }
   }, [data]);
   
   return (
     <View style={{flex: 1}}>
-      <View style={{position: 'absolute', zIndex: 1000, left: 130, top: 50, width: 120, height: 30}}>
+      <View style={styles.reFetchContainer}>
         {
           isMoved && (
             <Button
               title='이지역 재검색'
               titleStyle={{fontSize: 13, color: '#2E64FE'}}
               buttonStyle={styles.btnReFetch}
-              icon={<Icon type='material-community' name='reload' size={17} color='#2E64FE'/>}
+              icon={{
+                type: 'material-community',
+                name: 'reload',
+                size: 17,
+                color: '#2E64FE'
+              }}
               onPress={onPressReFetch}
             />
           )
         }
       </View>
+      
       <Button
         containerStyle={styles.toolContainer}
-        buttonStyle={styles.btnMapToolTop}
+        buttonStyle={{
+          ...styles.btnMapToolTop,
+          backgroundColor: friendId ? '#E6E6E6' : '#FAFAFA'
+        }}
         icon={<Icon type='feather' name='user-plus' size={23}/>}
-        onPress={() => setIsVisibleFriendSearchForm(true)}
+        onPress={() => {
+          friendId ?
+            setFriendId('')
+            :
+            setIsVisibleFriendSearchForm(true);
+        }}
       />
       <Button
         containerStyle={{...styles.toolContainer, top: 86}}
-        buttonStyle={styles.btnMapToolMid}
-        icon={<Icon type='feather' name='star' size={23}/>}
-        onPress={() => setIsVisibleScore(!isVisibleScore)}
-      />
-      <Button
-        containerStyle={{...styles.toolContainer, top: 130}}
         buttonStyle={styles.btnMapToolBottom}
         icon={<Icon type='feather' name='navigation' size={23}/>}
         onPress={() => setGoUserPosition(true)}
       />
+      
+      <Button
+        containerStyle={{...styles.toolContainer, top: 200}}
+        buttonStyle={{
+          ...styles.btnMapToolTop,
+          backgroundColor: getBackgroundColor(scoreIndexList, 0),
+          paddingHorizontal: 8,
+          width: 45,
+        }}
+        title='1점'
+        titleStyle={{color: 'black'}}
+        onPress={() => clickScore(0)}
+      />
+      <Button
+        containerStyle={{...styles.toolContainer, top: 240}}
+        buttonStyle={{
+          ...styles.btnMapToolMid,
+          backgroundColor: getBackgroundColor(scoreIndexList, 1),
+          paddingHorizontal: 8,
+          width: 45,
+        }}
+        title='2점'
+        titleStyle={{color: 'black'}}
+        onPress={() => clickScore(1)}
+      />
+      <Button
+        containerStyle={{...styles.toolContainer, top: 280}}
+        buttonStyle={{
+          ...styles.btnMapToolMid,
+          backgroundColor: getBackgroundColor(scoreIndexList, 2),
+          paddingHorizontal: 8,
+          width: 45,
+        }}
+        title='3점'
+        titleStyle={{color: 'black'}}
+        onPress={() => clickScore(2)}
+      />
+      <Button
+        containerStyle={{...styles.toolContainer, top: 320}}
+        buttonStyle={{
+          ...styles.btnMapToolMid,
+          backgroundColor: getBackgroundColor(scoreIndexList, 3),
+          paddingHorizontal: 8,
+          width: 45,
+        }}
+        title='4점'
+        titleStyle={{color: 'black'}}
+        onPress={() => clickScore(3)}
+      />
+      <Button
+        containerStyle={{...styles.toolContainer, top: 360}}
+        buttonStyle={{
+          ...styles.btnMapToolBottom,
+          backgroundColor: getBackgroundColor(scoreIndexList, 4),
+          paddingHorizontal: 8,
+          width: 45,
+        }}
+        title='5점'
+        titleStyle={{color: 'black'}}
+        onPress={() => clickScore(4)}
+      />
+      
       <MapView
         ref={mapEl}
         style={{flex: 1}}
@@ -131,13 +226,22 @@ function MapScreen() {
         showsUserLocation
       >
         {
-          places.map(({id, name, latitude, longitude}) =>
-            <Marker
-              key={id}
-              title={name}
-              coordinate={{latitude, longitude}}
-            />,
-          )
+          places
+            .filter(({score}) => {
+              const unit = Math.floor(score);
+              
+              return !scoreIndexList.length
+                || scoreIndexList.findIndex(target => (target + 1) === unit) > -1;
+            })
+            .map(({id, name, latitude, longitude, score}) =>
+              <Marker
+                key={id}
+                title={name}
+                description={`평점: ${score}점`}
+                coordinate={{latitude, longitude}}
+                pinColor={friendId ? '#11D050' : '#FA5858'}
+              />
+            )
         }
       </MapView>
       
@@ -147,21 +251,23 @@ function MapScreen() {
       >
         <SearchFriends
           userId={userId}
-          setIsVisibleModal={setIsVisibleFriendSearchForm}
+          setFriendId={setFriendId}
+          close={() => setIsVisibleFriendSearchForm(false)}
         />
       </Modal>
-      
-      <ScorePicker
-        score={score}
-        onChange={value => setScore(value)}
-        isVisible={isVisibleScore}
-        close={() => setIsVisibleScore(false)}
-      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  reFetchContainer: {
+    position: 'absolute',
+    zIndex: 1000,
+    left: 130,
+    top: 50,
+    width: 120,
+    height: 30,
+  },
   btnReFetch: {
     paddingTop: 5,
     paddingBottom: 5,
@@ -187,7 +293,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   btnMapToolMid: {
-    backgroundColor: '#FAFAFA',
     paddingVertical: 8,
     paddingHorizontal: 10,
     borderRadius: 0,
@@ -202,7 +307,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 0,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
-    borderTopWidth: 0,
     borderColor: '#D8D8D8',
     borderWidth: 1,
   },

@@ -56,6 +56,7 @@
 		2D02E47B1E0B4A5D006451C7 /* wechelin-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "wechelin-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* wechelin-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "wechelin-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		39883941FE9DE77E7EB8FF6C /* Pods-wechelin.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wechelin.release.xcconfig"; path = "Target Support Files/Pods-wechelin/Pods-wechelin.release.xcconfig"; sourceTree = "<group>"; };
+		4CA6F21124317439006524AE /* wechelin.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = wechelin.entitlements; path = wechelin/wechelin.entitlements; sourceTree = "<group>"; };
 		753DF59ECDC16BBD6862B4C3 /* libPods-wechelin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-wechelin.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7650216D96EE7DED5FB5ACC3 /* Pods-wechelinTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wechelinTests.release.xcconfig"; path = "Target Support Files/Pods-wechelinTests/Pods-wechelinTests.release.xcconfig"; sourceTree = "<group>"; };
 		94E470039607E8F34A03B536 /* libPods-wechelin-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-wechelin-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -125,6 +126,7 @@
 		13B07FAE1A68108700A75B9A /* wechelin */ = {
 			isa = PBXGroup;
 			children = (
+				4CA6F21124317439006524AE /* wechelin.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -678,6 +680,7 @@
 			baseConfigurationReference = B736140B759B524E64C509C7 /* Pods-wechelin.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = wechelin/wechelin.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = V9H9Q8NH3Z;
@@ -700,6 +703,7 @@
 			baseConfigurationReference = 39883941FE9DE77E7EB8FF6C /* Pods-wechelin.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = wechelin/wechelin.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = V9H9Q8NH3Z;
 				INFOPLIST_FILE = wechelin/Info.plist;
@@ -935,7 +939,7 @@
 				00E356F71AD99517003FC87E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "wechelin" */ = {
 			isa = XCConfigurationList;
@@ -944,7 +948,7 @@
 				13B07F951A680F5B00A75B9A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "wechelin-tvOS" */ = {
 			isa = XCConfigurationList;
@@ -953,7 +957,7 @@
 				2D02E4981E0B4A5E006451C7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "wechelin-tvOSTests" */ = {
 			isa = XCConfigurationList;
@@ -962,7 +966,7 @@
 				2D02E49A1E0B4A5E006451C7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "wechelin" */ = {
 			isa = XCConfigurationList;
@@ -971,7 +975,7 @@
 				83CBBA211A601CBA00E9B192 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

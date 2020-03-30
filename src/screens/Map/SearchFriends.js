@@ -15,7 +15,7 @@ const GET_MY_FRIENDS = gql`
   }
 `;
 
-function SearchFriends({userId, setIsVisibleModal}) {
+function SearchFriends({userId, close, setFriendId}) {
   const [keyword, setKeyword] = useState('');
   const {loading, error, data} = useQuery(GET_MY_FRIENDS, {
     variables: {
@@ -25,7 +25,7 @@ function SearchFriends({userId, setIsVisibleModal}) {
   
   return (
     <UserSearchForm
-      close={() => setIsVisibleModal(false)}
+      close={close}
       title='친구 핀 추가하기'
       setKeyword={setKeyword}
     >
@@ -50,6 +50,10 @@ function SearchFriends({userId, setIsVisibleModal}) {
                         height: 25,
                         paddingVertical: 0,
                         backgroundColor: '#58ACFA',
+                      }}
+                      onPress={() => {
+                        setFriendId(userId);
+                        close();
                       }}
                     />
                   }

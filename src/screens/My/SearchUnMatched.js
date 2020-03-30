@@ -40,6 +40,7 @@ function SearchUnMatched({userId, setTargetInfo, searchType, setIsVisibleModal})
       close={() => setIsVisibleModal(false)}
       title={`${searchType === 'couple' ? '커플' : '친구들'} 찾기`}
       setKeyword={setKeyword}
+      placeholder='아이디 또는 닉네임으로 검색'
     >
       {
         loading ?
@@ -57,7 +58,7 @@ function SearchUnMatched({userId, setTargetInfo, searchType, setIsVisibleModal})
               return (
                 <ListItem
                   key={userId}
-                  title={nickname}
+                  title={nickname || '게스트'}
                   containerStyle={{paddingVertical: 10, paddingHorizontal: 5}}
                   rightElement={
                     requestedInfo ?

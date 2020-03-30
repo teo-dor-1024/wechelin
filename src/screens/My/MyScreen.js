@@ -3,7 +3,7 @@ import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import {Alert, Modal, SafeAreaView, View} from 'react-native';
+import {Alert, Clipboard, Modal, SafeAreaView, View} from 'react-native';
 import {Button, Icon, Text} from 'react-native-elements';
 import useMyInfo from '../../util/useMyInfo';
 import ReceivedAlarms from './ReceivedAlarms';
@@ -174,7 +174,10 @@ function MyScreen() {
   
   return (
     <SafeAreaView style={{marginHorizontal: 20}}>
-      <View style={{alignItems: 'flex-end', padding: 20}}>
+      <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 10, paddingBottom: 30}}>
+        <Text style={{fontSize: 24, fontWeight: 'bold'}}>
+          {nickName || 'Guest'}님
+        </Text>
         <Button
           type='clear'
           title='로그아웃'
@@ -182,6 +185,24 @@ function MyScreen() {
           icon={<Icon name='log-out' type='feather' size={20} containerStyle={{marginRight: 5}}/>}
           onPress={logout}
         />
+      </View>
+      
+      <View style={{marginBottom: 20}}>
+        <View style={{flexDirection: 'row', marginBottom: 10, alignItems: 'center', justifyContent: 'space-between'}}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Icon type='antdesign' name='idcard' size={25}/>
+            <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 5}}>
+              아이디
+            </Text>
+          </View>
+          <Icon
+            type='material-community'
+            name='content-copy'
+            underlayColor={'#F2F2F2'}
+            onPress={() => Clipboard.setString(id)}
+          />
+        </View>
+        <Text style={{fontSize: 18}}>{id}</Text>
       </View>
       
       <View style={{marginBottom: 20}}>
