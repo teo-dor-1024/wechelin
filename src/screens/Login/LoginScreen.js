@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Dimensions, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {Button, Icon} from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useMutation} from '@apollo/react-hooks';
@@ -19,14 +19,16 @@ const ENROLL_USER = gql`
 `;
 
 function LoginScreen({navigation}) {
+  const {height} = Dimensions.get('window');
   const [isVisible, setIsVisible] = useState(false);
   const [createUser] = useMutation(ENROLL_USER);
   
   useEffect(() => {
     const getToken = async () => {
       const id = await AsyncStorage.getItem('id');
-      id && navigation.replace('TabNavigator');
+      id && await navigation.navigate('TabNavigator');
     };
+    
     getToken();
   });
   
@@ -49,7 +51,10 @@ function LoginScreen({navigation}) {
       const credentialState = await appleAuth.getCredentialStateForUser(user);
       
       if (credentialState === AppleAuthCredentialState.AUTHORIZED) {
-        await login({id: user, nickname: `${familyName}${givenName}`, accessToken: identityToken});
+        const existed = await AsyncStorage.getItem('appleNickname');
+        const nickname = existed || `${familyName}${givenName}`;
+        await AsyncStorage.setItem('appleNickname', nickname);
+        await login({id: user, nickname, accessToken: identityToken});
       }
     } catch (error) {
       if (!error.message.includes("The operation couldn’t be completed.")) {
@@ -73,9 +78,16 @@ function LoginScreen({navigation}) {
   
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Wechelin!</Text>
+      <Text
+        style={{
+          ...styles.title,
+          marginTop: height > 750 ? 120 : 80,
+        }}
+      >
+        Wechelin!
+      </Text>
       <Text style={styles.desc}>위슐랭, 우리만의 맛집 지도 만들기</Text>
-      <View style={{marginTop: 200}}>
+      <View style={{marginTop: height > 830 ? 330 : height > 660 ? 250 : 170}}>
         <Button
           title='Apple로 로그인'
           titleStyle={{color: 'black', fontWeight: 'bold', marginLeft: 5}}
@@ -117,7 +129,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#2E2E2E',
   },
   title: {
-    marginTop: 120,
     fontSize: 34,
     color: '#FFA7C4',
     fontWeight: 'bold',

@@ -681,7 +681,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = wechelin/wechelin.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 1.1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = V9H9Q8NH3Z;
 				INFOPLIST_FILE = wechelin/Info.plist;
@@ -704,7 +704,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = wechelin/wechelin.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 1.1;
 				DEVELOPMENT_TEAM = V9H9Q8NH3Z;
 				INFOPLIST_FILE = wechelin/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;

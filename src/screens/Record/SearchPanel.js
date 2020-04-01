@@ -21,7 +21,16 @@ const containerStyle = {
 
 function SearchPanel({modifyInfo}) {
   const {height} = Dimensions.get('window');
-  const SLIDE_TOP = height - 150;
+  // iPhone Height: 896 / 812 / 736 / 667 / 568
+  const SLIDE_TOP = height - (
+    height > 800 ?
+      150
+      :
+      height > 700 ?
+        90
+        :
+        80
+  );
   
   const [tab, setTab] = useState('SearchForm');
   const [allowDrag, setAllowDrag] = useState(true);
@@ -32,7 +41,7 @@ function SearchPanel({modifyInfo}) {
     if (!modifyInfo) {
       return;
     }
-  
+    
     setAllowDrag(false);
     setTab('RecordForm');
     slideRef.current.show(SLIDE_TOP);

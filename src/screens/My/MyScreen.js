@@ -126,8 +126,8 @@ function MyScreen() {
   };
   
   const logout = async () => {
-    await AsyncStorage.clear();
-    navigation.replace('LoginScreen');
+    await AsyncStorage.removeItem('id');
+    await navigation.navigate('LoginScreen');
   };
   
   const openCoupleSearchForm = () => {

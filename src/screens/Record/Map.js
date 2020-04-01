@@ -63,11 +63,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 99,
     right: 15,
-    top: 45
+    top: 70,
   },
   btnGoUser: {
     backgroundColor: '#FAFAFA',
-    paddingVertical: 8,
+    paddingTop: 10,
+    paddingBottom: 8,
     paddingHorizontal: 10,
     borderRadius: 10,
     borderColor: '#D8D8D8',

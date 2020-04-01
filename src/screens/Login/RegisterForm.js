@@ -9,7 +9,8 @@ function RegisterForm({isVisible, close, login}) {
   
   const onClickLogin = async () => {
     const id = await getUniqueId();
-    await login({id, nickname, accessToken: id})
+    await login({id, nickname, accessToken: id});
+    close();
   };
   
   return (

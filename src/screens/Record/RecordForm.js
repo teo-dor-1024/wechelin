@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import {useMutation} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import {useNavigation} from '@react-navigation/native';
-import {View} from 'react-native';
+import {Dimensions, ScrollView, View} from 'react-native';
 import {Button, CheckBox, Icon, Input, ListItem, Text} from 'react-native-elements';
 import StarRating from 'react-native-star-rating';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -29,6 +29,7 @@ const defaultPlaceInfo = {
 };
 
 function RecordForm({setAllowDrag, setTab, slideRef}) {
+  const {height} = Dimensions.get('window');
   const navigation = useNavigation();
   
   const {
@@ -149,95 +150,98 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
           />
         }
       />
-      <View style={{alignItems: 'flex-end'}}>
-        <CheckBox
-          right
-          containerStyle={{
-            marginTop: 20, backgroundColor: '#FFFFFF', borderWidth: 0, padding: 0, width: 100,
-          }}
-          title='정산 대상'
-          checked={isDutch}
-          onPress={() => setFormData({...formData, isDutch: !isDutch})}
+      <ScrollView style={{marginBottom: height < 600 ? 50 : 0}} scrollEnabled={height < 660}>
+        <View style={{alignItems: 'flex-end'}}>
+          <CheckBox
+            right
+            containerStyle={{
+              marginTop: 20, backgroundColor: '#FFFFFF', borderWidth: 0, padding: 0, width: 100,
+            }}
+            title='정산 대상'
+            checked={isDutch}
+            onPress={() => setFormData({...formData, isDutch: !isDutch})}
+          />
+        </View>
+        <Input
+          ref={menuRef}
+          label='날짜'
+          containerStyle={{marginTop: 20}}
+          inputStyle={{color: '#000000'}}
+          placeholderTextColor='#BDBDBD'
+          placeholder='날짜를 선택하세요'
+          disabled
+          value={visitedDate.toLocaleString()}
+          onTouchStart={() => setIsDateOpen(true)}
         />
-      </View>
-      <Input
-        ref={menuRef}
-        label='날짜'
-        containerStyle={{marginTop: 20}}
-        inputStyle={{color: '#000000'}}
-        placeholderTextColor='#BDBDBD'
-        placeholder='날짜를 선택하세요'
-        disabled
-        value={visitedDate.toLocaleString()}
-        onTouchStart={() => setIsDateOpen(true)}
-      />
-      <Input
-        ref={menuRef}
-        containerStyle={{marginTop: 20}}
-        placeholderTextColor='#BDBDBD'
-        label='메뉴'
-        placeholder='메뉴를 입력하세요'
-        value={menus}
-        onChangeText={menus => setFormData({...formData, menus})}
-        onSubmitEditing={() => moneyRef.current.focus()}
-      />
-      <Input
-        ref={moneyRef}
-        containerStyle={{marginTop: 20}}
-        placeholderTextColor='#BDBDBD'
-        keyboardType='number-pad'
-        returnKeyType='done'
-        label='금액'
-        placeholder='금액을 입력하세요'
-        value={money}
-        onChangeText={money => setFormData({
-          ...formData,
-          money: money.replace(',', ''),
-        })}
-        onFocus={() => setFormData({
-          ...formData,
-          money: money.replace(/,/g, ''),
-        })}
-        onBlur={() => setFormData({
-          ...formData,
-          money: convertMoney(money),
-        })}
-      />
-      <View style={{alignItems: 'center', marginTop: 30}}>
-        <Text style={{fontWeight: 'bold', fontSize: 18, marginBottom: 10, color: '#2E2E2E'}}>
-          {
-            score === 5 ?
-              '존맛!!'
-              :
-              score === 4 ?
-                '추천할 만해!'
+        <Input
+          ref={menuRef}
+          containerStyle={{marginTop: 20}}
+          placeholderTextColor='#BDBDBD'
+          label='메뉴'
+          placeholder='메뉴를 입력하세요'
+          value={menus}
+          onChangeText={menus => setFormData({...formData, menus})}
+          onSubmitEditing={() => moneyRef.current.focus()}
+        />
+        <Input
+          ref={moneyRef}
+          containerStyle={{marginTop: 20}}
+          placeholderTextColor='#BDBDBD'
+          keyboardType='number-pad'
+          returnKeyType='done'
+          label='금액'
+          placeholder='금액을 입력하세요'
+          value={money}
+          onChangeText={money => setFormData({
+            ...formData,
+            money: money.replace(',', ''),
+          })}
+          onFocus={() => setFormData({
+            ...formData,
+            money: money.replace(/,/g, ''),
+          })}
+          onBlur={() => setFormData({
+            ...formData,
+            money: convertMoney(money),
+          })}
+        />
+        <View style={{alignItems: 'center', marginTop: 30}}>
+          <Text style={{fontWeight: 'bold', fontSize: 18, marginBottom: 10, color: '#2E2E2E'}}>
+            {
+              score === 5 ?
+                '존맛!!'
                 :
-                score === 3 ?
-                  '평타는 치네'
+                score === 4 ?
+                  '추천할 만해!'
                   :
-                  score === 2 ?
-                    '좀 별론데...?'
+                  score === 3 ?
+                    '평타는 치네'
                     :
-                    score === 1 ?
-                      '최악, 다신 안가'
+                    score === 2 ?
+                      '좀 별론데...?'
                       :
-                      '아직 평가하긴 이르다'
-          }
-        </Text>
-        <StarRating
-          emptyStarColor='#FACC2E'
-          fullStarColor='#FACC2E'
-          maxStars={5}
-          rating={score}
-          selectedStar={nextScore => setFormData({...formData, score: nextScore === score ? 0 : nextScore})}
+                      score === 1 ?
+                        '최악, 다신 안가'
+                        :
+                        '아직 평가하긴 이르다'
+            }
+          </Text>
+          <StarRating
+            emptyStarColor='#FACC2E'
+            fullStarColor='#FACC2E'
+            maxStars={5}
+            rating={score}
+            selectedStar={nextScore => setFormData({...formData, score: nextScore === score ? 0 : nextScore})}
+          />
+        </View>
+        <Button
+          title='기록하기'
+          titleStyle={{fontWeight: 'bold'}}
+          containerStyle={{marginTop: 60}}
+          onPress={() => setIsWriteDone(true)}
         />
-      </View>
-      <Button
-        title='기록하기'
-        titleStyle={{fontWeight: 'bold'}}
-        containerStyle={{marginTop: 60}}
-        onPress={() => setIsWriteDone(true)}
-      />
+      </ScrollView>
+      
       <DateTimePickerModal
         isVisible={isDateOpen}
         mode='datetime'
