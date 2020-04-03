@@ -8,7 +8,7 @@ import {StatusBar} from 'react-native';
 
 const client = new ApolloClient({
   link: createHttpLink({uri: 'http://api.doeatrecord.com/graphql'}),
-  // link: createHttpLink({uri: 'http://192.168.1.107:4000/graphql'}),
+  // link: createHttpLink({uri: 'http://localhost:4000/graphql'}),
   cache: new InMemoryCache(),
   defaultOptions: {
     watchQuery: {

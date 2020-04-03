@@ -22,7 +22,7 @@ const DECIDE_ALARM = gql`
   }
 `;
 
-const initDecideInfo = {_id: '', result: '', myId: '', applicantId: ''};
+const initDecideInfo = {_id: '', result: '', myId: '', applicantId: '', type: ''};
 
 function ReceivedAlarms({myId, receivedAlarms = [], refetch}) {
   const [alarms, setAlarms] = useState(receivedAlarms);
@@ -71,7 +71,7 @@ function ReceivedAlarms({myId, receivedAlarms = [], refetch}) {
                         {text: '취소', style: 'cancel'},
                         {
                           text: '수락',
-                          onPress: () => setDecideInfo({_id, result: 'accept', myId, applicantId}),
+                          onPress: () => setDecideInfo({_id, result: 'accept', myId, applicantId, type}),
                           style: 'destructive'
                         },
                       ],
@@ -82,7 +82,19 @@ function ReceivedAlarms({myId, receivedAlarms = [], refetch}) {
                     title='아닌데'
                     titleStyle={{fontSize: 13, fontWeight: 'bold'}}
                     buttonStyle={{...styles.alarmButton, backgroundColor: '#DF3A01'}}
-                    onPress={() => setDecideInfo({_id, result: 'reject', myId, applicantId})}
+                    onPress={() => Alert.alert(
+                      '요청을 거절하시겠습니까?',
+                      '',
+                      [
+                        {text: '취소', style: 'cancel'},
+                        {
+                          text: '거절',
+                          onPress: () => setDecideInfo({_id, result: 'reject', myId, applicantId, type}),
+                          style: 'destructive'
+                        },
+                      ],
+                      {cancelable: true}
+                    )}
                   />
                 </View>
               }

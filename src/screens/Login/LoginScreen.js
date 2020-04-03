@@ -26,11 +26,11 @@ function LoginScreen({navigation}) {
   useEffect(() => {
     const getToken = async () => {
       const id = await AsyncStorage.getItem('id');
-      id && await navigation.navigate('TabNavigator');
+      id && await navigation.replace('TabNavigator');
     };
     
     getToken();
-  });
+  }, []);
   
   const login = async ({id, nickname, accessToken}) => {
     if (await createUser({variables: {userId: id, nickname}})) {
@@ -57,7 +57,7 @@ function LoginScreen({navigation}) {
         await login({id: user, nickname, accessToken: identityToken});
       }
     } catch (error) {
-      if (!error.message.includes("The operation couldn’t be completed.")) {
+      if (!error.message.includes("1001")) {
         console.error(error);
       }
     }
