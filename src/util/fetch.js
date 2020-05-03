@@ -4,7 +4,7 @@ export const fetchPlacesAroundMe = async (keyword, {latitude, longitude}) => {
   try {
     const x = longitude.toString();
     const y = latitude.toString();
-    const response = await fetch(`${getPlacesByKeywordApi}?query=${keyword}&x=${x}&y=${y}&sort=distance`, {
+    const response = await fetch(`${getPlacesByKeywordApi}?query=${keyword}&x=${x}&y=${y}`, {
       method: 'GET',
       headers: {
         Accept: 'application/json',
