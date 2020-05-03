@@ -3,9 +3,10 @@ import gql from 'graphql-tag';
 import {useLazyQuery} from '@apollo/react-hooks';
 import Geolocation from 'react-native-geolocation-service';
 import {Button, Icon} from 'react-native-elements';
-import {Modal, StyleSheet, View} from 'react-native';
+import {Modal, SafeAreaView, StyleSheet, View} from 'react-native';
 import useMyInfo from '../../util/useMyInfo';
 import MapView, {Marker} from 'react-native-maps';
+import WebView from "react-native-webview";
 import SearchFriends from "./SearchFriends";
 
 const GET_RECORDS_BY_MAP = gql`
@@ -33,7 +34,15 @@ function MapScreen() {
   const {id: userId} = useMyInfo();
   
   const mapEl = useRef();
+  // 지도에 셋팅할 좌표
   const [region, setRegion] = useState({
+    latitude: 37.288701,
+    longitude: 127.051681,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+  // 지도가 이동된 좌표
+  const currentRegion = useRef({
     latitude: 37.288701,
     longitude: 127.051681,
     latitudeDelta: 0.0922,
@@ -46,6 +55,9 @@ function MapScreen() {
   
   const [isVisibleFriendSearchForm, setIsVisibleFriendSearchForm] = useState(false);
   const [friendId, setFriendId] = useState('');
+  
+  const [placeUrl, setPlaceUrl] = useState('');
+  const [isVisiblePlaceDetail, setIsVisiblePlaceDetail] = useState(false);
   
   const [scoreIndexList, setScoreIndexList] = useState([]);
   
@@ -89,9 +101,9 @@ function MapScreen() {
         },
       });
       setRegion({
-        ...region,
+        ...currentRegion.current,
         latitude: (yMin + yMax) / 2,
-        longitude: (xMin + xMax) / 2
+        longitude: (xMin + xMax) / 2,
       });
       setIsMoved(false);
     };
@@ -105,12 +117,14 @@ function MapScreen() {
   
   useEffect(() => {
     if (data && data.mapRecords) {
-      setPlaces(data.mapRecords.map(({_id, placeName, x, y, score}) => ({
+      setPlaces(data.mapRecords.map(({_id, placeName, x, y, score, url, count}) => ({
         id: _id,
         name: placeName,
         latitude: parseFloat(y),
         longitude: parseFloat(x),
-        score: score || 0,
+        score,
+        url,
+        count,
       })));
     }
   }, [data]);
@@ -222,24 +236,29 @@ function MapScreen() {
         ref={mapEl}
         style={{flex: 1}}
         region={region}
+        onRegionChangeComplete={region => currentRegion.current = region}
         onTouchStart={() => setIsMoved(true)}
         showsUserLocation
       >
         {
           places
             .filter(({score}) => {
-              const unit = Math.floor(score);
+              const grade = Math.floor(score);
               
               return !scoreIndexList.length
-                || scoreIndexList.findIndex(target => (target + 1) === unit) > -1;
+                || scoreIndexList.findIndex(target => (target + 1) === grade) > -1;
             })
-            .map(({id, name, latitude, longitude, score}) =>
+            .map(({id, name, latitude, longitude, score, url, count}) =>
               <Marker
                 key={id}
                 title={name}
-                description={`평점: ${score}점`}
+                description={score ? `평점: ${score}점  /  방문 횟수: ${count}회` : `방문 횟수: ${count}회`}
                 coordinate={{latitude, longitude}}
                 pinColor={friendId ? '#11D050' : '#FA5858'}
+                onCalloutPress={() => {
+                  setPlaceUrl(url);
+                  setIsVisiblePlaceDetail(true);
+                }}
               />
             )
         }
@@ -254,6 +273,27 @@ function MapScreen() {
           setFriendId={setFriendId}
           close={() => setIsVisibleFriendSearchForm(false)}
         />
+      </Modal>
+      
+      <Modal animationType='slide' visible={isVisiblePlaceDetail}>
+        <SafeAreaView>
+          <View style={{paddingHorizontal: 20, paddingVertical: 10}}>
+            <View style={{alignItems: 'flex-end', marginHorizontal: 10}}>
+              <Icon
+                type='antdesign'
+                name='close'
+                size={25}
+                onPress={() => setIsVisiblePlaceDetail(false)}
+              />
+            </View>
+            <View style={{width: '100%', height: '100%'}}>
+              <WebView
+                source={{uri: placeUrl}}
+                style={{marginTop: -35, marginBottom: 30}}
+              />
+            </View>
+          </View>
+        </SafeAreaView>
       </Modal>
     </View>
   );

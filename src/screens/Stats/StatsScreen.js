@@ -52,6 +52,12 @@ function StatsScreen() {
     return <SafeAreaView><Text> 통계 정보 가져오다 에러 발생 !! {error.toString()}</Text></SafeAreaView>;
   }
   
+  const goToNextMonth = () => moment(now)
+      .startOf('month')
+      .isBefore(moment().startOf('month'))
+    && setNow(moment(now).add(1, 'month'));
+  const goToPrevMonth = () => setNow(moment(now).subtract(1, 'month'));
+  
   const {myLover, spending: {total, dutch}, recordsByScore, recordsByCount} = data;
   
   return (
@@ -67,22 +73,20 @@ function StatsScreen() {
         {
           !isTotal && now && (
             <View style={styles.month}>
-              <Icon name='md-arrow-dropleft' type='ionicon' size={30}
-                    onPress={() => setNow(moment(now).subtract(1, 'month'))}/>
+              <Icon name='md-arrow-dropleft' type='ionicon' size={30} onPress={goToPrevMonth}/>
               <Text style={{fontSize: 24}}>{now.month() + 1}월</Text>
-              <Icon name='md-arrow-dropright' type='ionicon' size={30}
-                    onPress={() => moment(now).startOf('month').isBefore(moment().startOf('month')) && setNow(moment(now).add(1, 'month'))}/>
+              <Icon name='md-arrow-dropright' type='ionicon' size={30} onPress={goToNextMonth}/>
             </View>
           )
         }
       </View>
       <ScrollView style={{height: height - 200}} showsVerticalScrollIndicator={false}>
         <GestureRecognizer
-          onSwipeLeft={() => moment(now).startOf('month').isBefore(moment().startOf('month')) && setNow(moment(now).add(1, 'month'))}
-          onSwipeRight={() => setNow(moment(now).subtract(1, 'month'))}
+          onSwipeLeft={goToNextMonth}
+          onSwipeRight={goToPrevMonth}
           config={{
-            velocityThreshold: 0.3,
-            directionalOffsetThreshold: 80,
+            velocityThreshold: 0.5,
+            directionalOffsetThreshold: 100,
           }}
         >
           {
