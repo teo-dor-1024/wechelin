@@ -245,14 +245,17 @@ function MapScreen() {
             .filter(({score}) => {
               const grade = Math.floor(score);
               
-              return !scoreIndexList.length
-                || scoreIndexList.findIndex(target => (target + 1) === grade) > -1;
+              // 친구기록이면 평가 한 것만 + 점수 체크 한 것만
+              return (!friendId || score) && (
+                !scoreIndexList.length
+                || scoreIndexList.findIndex(target => (target + 1) === grade) > -1
+              );
             })
             .map(({id, name, latitude, longitude, score, url, count}) =>
               <Marker
                 key={id}
                 title={name}
-                description={score ? `평점: ${score}점  /  방문 횟수: ${count}회` : `방문 횟수: ${count}회`}
+                description={score ? `평점: ${parseFloat(score).toFixed(1)}점  /  방문 횟수: ${count}회` : `방문 횟수: ${count}회`}
                 coordinate={{latitude, longitude}}
                 pinColor={friendId ? '#11D050' : '#FA5858'}
                 onCalloutPress={() => {

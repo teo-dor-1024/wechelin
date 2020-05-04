@@ -59,12 +59,15 @@ function SortedByVisitedDate({data, onPressMoreView, onPressModify, onPressDelet
                 title={placeName}
                 titleStyle={{fontWeight: 'bold'}}
                 rightElement={
-                  <View>
-                    <Icon name='star' type='antdesign' color='#FACC2E'/>
-                    <Text>
-                      <Text style={{fontWeight: 'bold', color: '#FACC2E', fontSize: 20}}>{score}</Text> / 5
-                    </Text>
-                  </View>
+                  score ?
+                    <View>
+                      <Icon name='star' type='antdesign' color='#FACC2E'/>
+                      <Text>
+                        <Text style={{fontWeight: 'bold', color: '#FACC2E', fontSize: 20}}>{score}</Text> / 5
+                      </Text>
+                    </View>
+                    :
+                    null
                 }
                 subtitle={
                   <View>
