@@ -3,15 +3,16 @@ import moment from 'moment';
 import gql from 'graphql-tag';
 import {useQuery} from '@apollo/react-hooks';
 import {Dimensions, SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
-import {CheckBox, Divider, Icon, Text} from 'react-native-elements';
+import {ButtonGroup, Divider, Icon, Text} from 'react-native-elements';
 import GestureRecognizer from 'react-native-swipe-gestures';
-import RankedByVisits from './RankedByVisits';
-import RankedByScore from './RankedByScore';
 import useMyInfo from '../../util/useMyInfo';
 import {convertMoney} from '../../util/StringUtils';
+import RankedByVisits from './RankedByVisits';
+import RankedByScore from './RankedByScore';
+import MonthlySpending from "./MonthlySpending";
 
 const GET_STATS = gql`
-  query Stats($userId: String!, $now: Date) {
+  query Stats($userId: String!, $now: Date, $count: Int) {
     myLover(userId: $userId) {
       nickname
     }
@@ -27,22 +28,28 @@ const GET_STATS = gql`
       placeName
       count
     }
+    monthlySpending(userId: $userId, now: $now, count: $count) {
+      label
+      spending
+    }
   }
 `;
 
 export const RANKING_COUNT = 5;
 
+export const MONTHLY_TREND_COUNT = 4;
+
 function StatsScreen() {
   const {height} = Dimensions.get('window');
-  const [isTotal, setIsTotal] = useState(false);
-  const [now, setNow] = useState(null);
+  const [tab, setTab] = useState(1);
+  const [now, setNow] = useState(undefined);
   
-  const {id} = useMyInfo();
-  const {loading, error, data} = useQuery(GET_STATS, {variables: {userId: id, now}});
+  const {id, nickName} = useMyInfo();
+  const {loading, error, data} = useQuery(GET_STATS, {variables: {userId: id, now, count: MONTHLY_TREND_COUNT}});
   
   useEffect(() => {
-    setNow(isTotal ? null : moment());
-  }, [isTotal]);
+    setNow(!tab ? undefined : moment());
+  }, [tab]);
   
   if (loading) {
     return <SafeAreaView><Text> 통계 정보 계산하는 중 ... </Text></SafeAreaView>;
@@ -52,35 +59,35 @@ function StatsScreen() {
     return <SafeAreaView><Text> 통계 정보 가져오다 에러 발생 !! {error.toString()}</Text></SafeAreaView>;
   }
   
-  const goToNextMonth = () => moment(now)
-      .startOf('month')
-      .isBefore(moment().startOf('month'))
-    && setNow(moment(now).add(1, 'month'));
+  const goToNextMonth = () => setNow(moment(now).add(1, 'month'));
   const goToPrevMonth = () => setNow(moment(now).subtract(1, 'month'));
   
-  const {myLover, spending: {total, dutch}, recordsByScore, recordsByCount} = data;
+  const {myLover, spending: {total, dutch}, recordsByScore, recordsByCount, monthlySpending} = data;
   
   return (
     <SafeAreaView>
-      <View style={styles.header}>
-        <CheckBox
-          right
-          containerStyle={styles.totalCheckBox}
-          title='전체 통계'
-          checked={isTotal}
-          onPress={() => setIsTotal(!isTotal)}
-        />
-        {
-          !isTotal && now && (
-            <View style={styles.month}>
-              <Icon name='md-arrow-dropleft' type='ionicon' size={30} onPress={goToPrevMonth}/>
-              <Text style={{fontSize: 24}}>{now.month() + 1}월</Text>
-              <Icon name='md-arrow-dropright' type='ionicon' size={30} onPress={goToNextMonth}/>
-            </View>
-          )
-        }
-      </View>
-      <ScrollView style={{height: height - 200}} showsVerticalScrollIndicator={false}>
+      <ScrollView style={{height: height - 130}} showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <ButtonGroup
+            buttons={['전체', '월간']}
+            onPress={index => setTab(index)}
+            selectedIndex={tab}
+          />
+          <Text style={styles.title}>{nickName}님의 {tab ? '월간' : '전체'} 리포트</Text>
+          {
+            !!tab && now && (
+              <View style={styles.month}>
+                <Icon name='md-arrow-dropleft' type='ionicon' size={30} onPress={goToPrevMonth}/>
+                <Text style={{fontSize: 24, marginHorizontal: 15}}>{now.month() + 1}월</Text>
+                {
+                  moment(now).startOf('month')
+                    .isBefore(moment().startOf('month')) &&
+                  <Icon name='md-arrow-dropright' type='ionicon' size={30} onPress={goToNextMonth}/>
+                }
+              </View>
+            )
+          }
+        </View>
         <GestureRecognizer
           onSwipeLeft={goToNextMonth}
           onSwipeRight={goToPrevMonth}
@@ -93,15 +100,27 @@ function StatsScreen() {
             total ?
               <>
                 <View style={{marginHorizontal: 20}}>
-                  <Text style={{fontSize: 24}}>총 금액: {convertMoney(total)}원</Text>
+                  <Text style={{fontSize: 20, fontWeight: 'bold', textAlign: 'center'}}>
+                    {tab ? '이번 달 총' : '전체'} 지출 금액은{'\n'}
+                    {convertMoney(total)}
+                    원입니다.
+                  </Text>
                   {
-                    myLover && !isTotal && (
-                      <Text style={styles.dutchPay}>
-                        더치페이: {convertMoney(dutch)}원
+                    myLover && !!tab && (
+                      <Text style={{marginTop: 15, fontSize: 16, color: '#6E6E6E'}}>
+                        {`더치 금액은 ${convertMoney(dutch)}원입니다.`}
                       </Text>
                     )
                   }
                 </View>
+                {
+                  !tab && (
+                    <>
+                      <Divider style={styles.divider}/>
+                      <MonthlySpending monthlySpending={monthlySpending} total={total}/>
+                    </>
+                  )
+                }
                 <Divider style={styles.divider}/>
                 <RankedByVisits recordsByCount={recordsByCount}/>
                 <Divider style={styles.divider}/>
@@ -120,21 +139,16 @@ function StatsScreen() {
 
 const styles = StyleSheet.create({
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     marginVertical: 20,
   },
-  totalCheckBox: {
-    marginLeft: 20,
-    backgroundColor: '#F2F2F2',
-    borderWidth: 0,
-    padding: 0,
-    width: 100,
+  title: {
+    marginVertical: 10,
+    fontSize: 24,
+    fontWeight: 'bold',
   },
   month: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     marginRight: 20,
     width: 80,

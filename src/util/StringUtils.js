@@ -26,8 +26,9 @@ export const convertDate = strFullDate => {
     ampm = '오전';
   }
   
-  
   const min = fullDate.getMinutes();
   
   return `${year}. ${month}. ${date}. ${ampm} ${hour}:${min ? min : '00'}`;
 };
+
+export const calcAvg = list => (list.reduce((sum, val) => isNaN(val) ? sum : sum + Number(val), 0) / list.length).toFixed(0);
