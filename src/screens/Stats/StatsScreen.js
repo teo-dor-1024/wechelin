@@ -37,15 +37,13 @@ const GET_STATS = gql`
 
 export const RANKING_COUNT = 5;
 
-export const MONTHLY_TREND_COUNT = 4;
-
 function StatsScreen() {
   const {height} = Dimensions.get('window');
   const [tab, setTab] = useState(1);
   const [now, setNow] = useState(undefined);
   
   const {id, nickName} = useMyInfo();
-  const {loading, error, data} = useQuery(GET_STATS, {variables: {userId: id, now, count: MONTHLY_TREND_COUNT}});
+  const {loading, error, data} = useQuery(GET_STATS, {variables: {userId: id, now}});
   
   useEffect(() => {
     setNow(!tab ? undefined : moment());
@@ -117,7 +115,7 @@ function StatsScreen() {
                   !tab && (
                     <>
                       <Divider style={styles.divider}/>
-                      <MonthlySpending monthlySpending={monthlySpending} total={total}/>
+                      <MonthlySpending monthlySpending={monthlySpending}/>
                     </>
                   )
                 }
