@@ -27,10 +27,14 @@ function MonthlySpending({monthlySpending}) {
       <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 20, marginBottom: 10}}>
         월 평균 {convertMoney(calcAvg(monthlySpending.map(({spending}) => spending)))}원 지출했어요!
       </Text>
-      <Text style={{fontSize: 15, marginLeft: 20}}>
-        지난 3달 평균 {convertMoney(prevAvg)}원 보다 {convertMoney(Math.abs(diffPrevAndTarget))}원
-        {diffPrevAndTarget > 0 ? ' 더 쓰셨네요.' : ' 아꼈네요.'}
-      </Text>
+      {
+        !!diffPrevAndTarget && (
+          <Text style={{fontSize: 15, marginLeft: 20}}>
+            지난 3달 평균 {convertMoney(prevAvg)}원 보다 {convertMoney(Math.abs(diffPrevAndTarget))}원
+            {diffPrevAndTarget > 0 ? ' 더 쓰셨네요.' : ' 아꼈네요.'}
+          </Text>
+        )
+      }
       <View style={{alignItems: 'center', marginTop: 15}}>
         <BarChart
           data={data}
