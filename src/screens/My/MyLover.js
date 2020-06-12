@@ -27,7 +27,7 @@ function MyLover({myLover, crushedName, openSearchForm, breakUp}) {
             />
         }
       </View>
-      <View style={{...myStyles.titleContainer, marginBottom: 20}}>
+      <View style={{...myStyles.titleContainer, marginBottom: 40}}>
         {
           myLover ?
             <>

@@ -174,13 +174,7 @@ function MyScreen() {
   
   return (
     <SafeAreaView style={{marginHorizontal: 20}}>
-      <View style={{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingTop: 10,
-        paddingBottom: 30
-      }}>
+      <View style={{...myStyles.titleContainer, paddingVertical: 15}}>
         <Text style={{fontSize: 24, fontWeight: 'bold'}}>
           {nickName || 'Guest'}님
         </Text>
@@ -193,7 +187,7 @@ function MyScreen() {
         />
       </View>
       
-      <View style={{marginBottom: 20}}>
+      <View style={{marginBottom: 40}}>
         <View style={myStyles.titleContainer}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Icon type='antdesign' name='idcard' size={25}/>
@@ -211,7 +205,7 @@ function MyScreen() {
         <Text style={{fontSize: 18}}>{id}</Text>
       </View>
       
-      <View style={{marginBottom: 20}}>
+      <View style={{marginBottom: 40}}>
         <View style={myStyles.titleContainer}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Icon type='material-community' name='bell-outline' size={25}/>
