@@ -6,7 +6,7 @@ import {myStyles} from "./MyScreen";
 function MyFriends({myFriends, openSearchForm, unFollow}) {
   return (
     <>
-      <View style={myStyles.userItem}>
+      <View style={myStyles.titleContainer}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Icon type='feather' name='users' size={25}/>
           <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 5}}>
@@ -26,7 +26,7 @@ function MyFriends({myFriends, openSearchForm, unFollow}) {
         {
           myFriends.length ?
             myFriends.map(({userId, nickname}) => (
-              <View key={userId} style={myStyles.userItem}>
+              <View key={userId} style={myStyles.titleContainer}>
                 <Text style={{fontWeight: 'bold', fontSize: 18}}>
                   {nickname}
                 </Text>

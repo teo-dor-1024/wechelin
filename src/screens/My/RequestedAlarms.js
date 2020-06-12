@@ -12,7 +12,7 @@ const OFF_ALARM = gql`
   }
 `;
 
-function RequestedAlarms({requestedAlarms = [], refetch}) {
+function RequestedAlarms({requestedAlarms = []}) {
   const [alarms, setAlarms] = useState(requestedAlarms);
   
   const [offAlarm] = useMutation(OFF_ALARM);
@@ -29,10 +29,6 @@ function RequestedAlarms({requestedAlarms = [], refetch}) {
     
     offAlarmId && off();
   }, [offAlarmId]);
-  
-  useEffect(() => {
-    !alarms.length && refetch();
-  }, [alarms.length]);
   
   return (
     <View>

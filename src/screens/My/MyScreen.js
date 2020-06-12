@@ -17,7 +17,7 @@ export const myStyles = {
     marginBottom: 5,
     paddingVertical: 10,
   },
-  userItem: {
+  titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
@@ -174,7 +174,13 @@ function MyScreen() {
   
   return (
     <SafeAreaView style={{marginHorizontal: 20}}>
-      <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 10, paddingBottom: 30}}>
+      <View style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingTop: 10,
+        paddingBottom: 30
+      }}>
         <Text style={{fontSize: 24, fontWeight: 'bold'}}>
           {nickName || 'Guest'}님
         </Text>
@@ -188,7 +194,7 @@ function MyScreen() {
       </View>
       
       <View style={{marginBottom: 20}}>
-        <View style={{flexDirection: 'row', marginBottom: 10, alignItems: 'center', justifyContent: 'space-between'}}>
+        <View style={myStyles.titleContainer}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Icon type='antdesign' name='idcard' size={25}/>
             <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 5}}>
@@ -206,14 +212,23 @@ function MyScreen() {
       </View>
       
       <View style={{marginBottom: 20}}>
-        <View style={{flexDirection: 'row', marginBottom: 10, alignItems: 'center'}}>
-          <Icon type='material-community' name='bell-outline' size={25}/>
-          <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 5}}>
-            알림
-          </Text>
+        <View style={myStyles.titleContainer}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Icon type='material-community' name='bell-outline' size={25}/>
+            <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 5}}>
+              알림
+            </Text>
+          </View>
+          <Icon
+            name='md-refresh'
+            type='ionicon'
+            size={25}
+            containerStyle={{marginRight: 10}}
+            onPress={() => refetch()}
+          />
         </View>
-        <ReceivedAlarms myId={id} receivedAlarms={receivedAlarms} refetch={refetch}/>
-        <RequestedAlarms requestedAlarms={requestedOnAlarm} refetch={refetch}/>
+        <ReceivedAlarms myId={id} receivedAlarms={receivedAlarms}/>
+        <RequestedAlarms requestedAlarms={requestedOnAlarm}/>
         {
           (receivedAlarms.length || requestedOnAlarm.length) ?
             null

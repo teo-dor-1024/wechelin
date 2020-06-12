@@ -159,7 +159,7 @@ function MapScreen() {
               ...styles.btnMapToolLeft,
               backgroundColor: getBackgroundColor(scoreIndexList, 0),
             }}
-            icon={<Icon type="material-community" name="numeric-1" size={33} color="black" />}
+            icon={<Icon type="material-community" name="numeric-1" size={30} color="black" />}
             onPress={() => clickScore(0)}
           />
           <Button
@@ -167,7 +167,7 @@ function MapScreen() {
               ...styles.btnMapToolMid,
               backgroundColor: getBackgroundColor(scoreIndexList, 1),
             }}
-            icon={<Icon type="material-community" name="numeric-2" size={33} color="black" />}
+            icon={<Icon type="material-community" name="numeric-2" size={30} color="black" />}
             onPress={() => clickScore(1)}
           />
           <Button
@@ -175,7 +175,7 @@ function MapScreen() {
               ...styles.btnMapToolMid,
               backgroundColor: getBackgroundColor(scoreIndexList, 2),
             }}
-            icon={<Icon type="material-community" name="numeric-3" size={33} color="black" />}
+            icon={<Icon type="material-community" name="numeric-3" size={30} color="black" />}
             onPress={() => clickScore(2)}
           />
           <Button
@@ -183,7 +183,7 @@ function MapScreen() {
               ...styles.btnMapToolMid,
               backgroundColor: getBackgroundColor(scoreIndexList, 3),
             }}
-            icon={<Icon type="material-community" name="numeric-4" size={33} color="black" />}
+            icon={<Icon type="material-community" name="numeric-4" size={30} color="black" />}
             onPress={() => clickScore(3)}
           />
           <Button
@@ -191,7 +191,7 @@ function MapScreen() {
               ...styles.btnMapToolRight,
               backgroundColor: getBackgroundColor(scoreIndexList, 4),
             }}
-            icon={<Icon type="material-community" name="numeric-5" size={33} color="black" />}
+            icon={<Icon type="material-community" name="numeric-5" size={30} color="black" />}
             onPress={() => clickScore(4)}
           />
         </View>
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
     borderRightWidth: 0,
     borderColor: '#D8D8D8',
     borderWidth: 1,
-    width: 45,
+    width: 40,
   },
   btnMapToolMid: {
     paddingVertical: 0,
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
     borderRightWidth: 0,
     borderColor: '#D8D8D8',
     borderWidth: 1,
-    width: 45,
+    width: 40,
   },
   btnMapToolRight: {
     backgroundColor: '#FAFAFA',
@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 14,
     borderColor: '#D8D8D8',
     borderWidth: 1,
-    width: 45,
+    width: 40,
   },
 });
 

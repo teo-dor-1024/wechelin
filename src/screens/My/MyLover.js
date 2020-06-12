@@ -6,7 +6,7 @@ import {myStyles} from "./MyScreen";
 function MyLover({myLover, crushedName, openSearchForm, breakUp}) {
   return (
     <>
-      <View style={myStyles.userItem}>
+      <View style={myStyles.titleContainer}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Icon type='material-community' name='account-heart' size={25}/>
           <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 5}}>
@@ -27,7 +27,7 @@ function MyLover({myLover, crushedName, openSearchForm, breakUp}) {
             />
         }
       </View>
-      <View style={{...myStyles.userItem, marginBottom: 20}}>
+      <View style={{...myStyles.titleContainer, marginBottom: 20}}>
         {
           myLover ?
             <>

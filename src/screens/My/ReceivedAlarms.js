@@ -24,7 +24,7 @@ const DECIDE_ALARM = gql`
 
 const initDecideInfo = {_id: '', result: '', myId: '', applicantId: '', type: ''};
 
-function ReceivedAlarms({myId, receivedAlarms = [], refetch}) {
+function ReceivedAlarms({myId, receivedAlarms = []}) {
   const [alarms, setAlarms] = useState(receivedAlarms);
   
   const [decideAlarm] = useMutation(DECIDE_ALARM);
@@ -42,10 +42,6 @@ function ReceivedAlarms({myId, receivedAlarms = [], refetch}) {
     
     decideInfo._id && decide();
   }, [decideInfo._id]);
-  
-  useEffect(() => {
-    !alarms.length && refetch();
-  }, [alarms.length]);
   
   return (
     <View>
