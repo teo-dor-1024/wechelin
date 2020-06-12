@@ -27,6 +27,11 @@ function SearchFriends({userId, close, setFriendId}) {
     <UserSearchForm
       close={close}
       title='친구 핀 추가하기'
+      description={
+        <Text style={{marginTop: 10, fontSize: 16, paddingHorizontal: 10, color: '#FA5858', fontWeight: 'bold'}}>
+          친구의 기록은 한 명씩만 볼 수 있습니다.
+        </Text>
+      }
       setKeyword={setKeyword}
     >
       {

@@ -9,58 +9,69 @@ import RecordScreen from './screens/Record/RecordScreen';
 import StatsScreen from './screens/Stats/StatsScreen';
 import MapScreen from './screens/Map/MapScreen';
 import MyScreen from './screens/My/MyScreen';
+import {Text} from "react-native";
+
+const makeTabBarLabel = title => ({focused}) =>
+  <Text style={{color: focused ? '#000' : '#A4A4A4', fontSize: 11}}>
+    {title}
+  </Text>;
 
 const Tab = createBottomTabNavigator();
 
 function TabNavigator() {
   return (
     <Tab.Navigator
-      screenOptions={({route}) => ({
-        tabBarIcon({focused}) {
-          let type = 'ionicon';
-          let name;
-          switch (route.name) {
-            case 'List':
-              name = 'ios-list';
-              break;
-            case 'Map':
-              type = 'material-community';
-              name = 'map-outline';
-              break;
-            case 'Record':
-              name = 'ios-add-circle-outline';
-              break;
-            case 'Stats':
-              name = 'ios-stats';
-              break;
-            case 'My':
-              type = 'feather';
-              name = 'user';
-              break;
-            default:
-              console.error('없는 탭 이름 입니다.');
-          }
-          
-          return (
-            <Icon
-              type={type}
-              name={name}
-              size={32}
-              color={focused ? '#2E2E2E' : '#BDBDBD'}
-            />
-          );
-        },
-      })}
+      screenOptions={
+        ({route}) => ({
+          tabBarIcon({focused}) {
+            let type = 'ionicon';
+            let name;
+            switch (route.name) {
+              case 'List':
+                name = 'ios-list';
+                break;
+              case 'Map':
+                type = 'material-community';
+                name = 'map-outline';
+                break;
+              case 'Record':
+                name = 'ios-add-circle-outline';
+                break;
+              case 'Stats':
+                name = 'ios-stats';
+                break;
+              case 'My':
+                type = 'feather';
+                name = 'user';
+                break;
+              default:
+                console.error('없는 탭 이름 입니다.');
+            }
+            
+            return (
+              <Icon
+                type={type}
+                name={name}
+                size={30}
+                color={focused ? '#000' : '#A4A4A4'}
+              />
+            );
+          },
+        })
+      }
       tabBarOptions={{
-        showLabel: false,
+        style: {
+          backgroundColor: '#F2F2F2',
+          borderColor: '#F2F2F2',
+        }
       }}
       initialRouteName='Record'
     >
-      <Tab.Screen name='List' component={ListScreen}/>
-      <Tab.Screen name='Map' component={MapScreen}/>
-      <Tab.Screen name='Record' component={RecordScreen}/>
-      <Tab.Screen name='Stats' component={StatsScreen}/>
-      <Tab.Screen name='My' component={MyScreen}/>
+      <Tab.Screen name='List' component={ListScreen} options={{tabBarLabel: makeTabBarLabel('목록')}}/>
+      <Tab.Screen name='Map' component={MapScreen} options={{tabBarLabel: makeTabBarLabel('지도')}}/>
+      <Tab.Screen name='Record' component={RecordScreen} options={{tabBarLabel: makeTabBarLabel('등록')}}/>
+      <Tab.Screen name='Stats' component={StatsScreen} options={{tabBarLabel: makeTabBarLabel('통계')}}/>
+      <Tab.Screen name='My' component={MyScreen} options={{tabBarLabel: makeTabBarLabel('내정보')}}/>
     </Tab.Navigator>
   );
 }

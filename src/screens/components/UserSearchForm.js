@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Dimensions, SafeAreaView, ScrollView, View} from "react-native";
 import {Icon, SearchBar, Text} from "react-native-elements";
 
-function UserSearchForm({close, title, setKeyword, children, placeholder = '검색'}) {
+function UserSearchForm({close, title, description, setKeyword, children, placeholder = '검색'}) {
   const {height} = Dimensions.get('window');
   const [text, setText] = useState('');
   
@@ -23,6 +23,9 @@ function UserSearchForm({close, title, setKeyword, children, placeholder = '검�
             {title}
           </Text>
         </View>
+        {
+          description
+        }
         <SearchBar
           platform='ios'
           containerStyle={{backgroundColor: '#FFF'}}

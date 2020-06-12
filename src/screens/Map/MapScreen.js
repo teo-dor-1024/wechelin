@@ -59,6 +59,7 @@ function MapScreen() {
   const [placeUrl, setPlaceUrl] = useState('');
   const [isVisiblePlaceDetail, setIsVisiblePlaceDetail] = useState(false);
   
+  const [isOpenStartFilter, setIsOpenStarFilter] = useState(false);
   const [scoreIndexList, setScoreIndexList] = useState([]);
   
   const clickScore = selectedIndex => {
@@ -150,13 +151,78 @@ function MapScreen() {
         }
       </View>
       
+      {
+        isOpenStartFilter &&
+        <View style={{...styles.toolContainer, bottom: 140, flexDirection: 'row'}}>
+          <Button
+            buttonStyle={{
+              ...styles.btnMapToolLeft,
+              backgroundColor: getBackgroundColor(scoreIndexList, 0),
+            }}
+            icon={<Icon type="material-community" name="numeric-1" size={33} color="black" />}
+            onPress={() => clickScore(0)}
+          />
+          <Button
+            buttonStyle={{
+              ...styles.btnMapToolMid,
+              backgroundColor: getBackgroundColor(scoreIndexList, 1),
+            }}
+            icon={<Icon type="material-community" name="numeric-2" size={33} color="black" />}
+            onPress={() => clickScore(1)}
+          />
+          <Button
+            buttonStyle={{
+              ...styles.btnMapToolMid,
+              backgroundColor: getBackgroundColor(scoreIndexList, 2),
+            }}
+            icon={<Icon type="material-community" name="numeric-3" size={33} color="black" />}
+            onPress={() => clickScore(2)}
+          />
+          <Button
+            buttonStyle={{
+              ...styles.btnMapToolMid,
+              backgroundColor: getBackgroundColor(scoreIndexList, 3),
+            }}
+            icon={<Icon type="material-community" name="numeric-4" size={33} color="black" />}
+            onPress={() => clickScore(3)}
+          />
+          <Button
+            buttonStyle={{
+              ...styles.btnMapToolRight,
+              backgroundColor: getBackgroundColor(scoreIndexList, 4),
+            }}
+            icon={<Icon type="material-community" name="numeric-5" size={33} color="black" />}
+            onPress={() => clickScore(4)}
+          />
+        </View>
+      }
       <Button
-        containerStyle={styles.toolContainer}
+        containerStyle={{
+          ...styles.toolContainer,
+          bottom: 95,
+        }}
         buttonStyle={{
-          ...styles.btnMapToolTop,
+          ...styles.btnMapToolAlone,
+          backgroundColor: scoreIndexList.length ? '#E6E6E6' : '#FAFAFA'
+        }}
+        icon={<Icon type='feather' name='star' size={20}/>}
+        title={'별점 필터 걸기'}
+        titleStyle={{color: '#000', marginLeft: 8, fontSize: 16, fontWeight: 'bold'}}
+        onPress={() => setIsOpenStarFilter(!isOpenStartFilter)}
+      />
+      
+      <Button
+        containerStyle={{
+          ...styles.toolContainer,
+          bottom: 45,
+        }}
+        buttonStyle={{
+          ...styles.btnMapToolAlone,
           backgroundColor: friendId ? '#E6E6E6' : '#FAFAFA'
         }}
-        icon={<Icon type='feather' name='user-plus' size={23}/>}
+        icon={<Icon type='feather' name={friendId ? 'user-minus' : 'user-plus'} size={20}/>}
+        title={friendId ? '내 기록 보기' : '친구 기록 보기'}
+        titleStyle={{color: '#000', marginLeft: 8, fontSize: 16, fontWeight: 'bold'}}
         onPress={() => {
           friendId ?
             setFriendId('')
@@ -164,72 +230,12 @@ function MapScreen() {
             setIsVisibleFriendSearchForm(true);
         }}
       />
-      <Button
-        containerStyle={{...styles.toolContainer, top: 86}}
-        buttonStyle={styles.btnMapToolBottom}
-        icon={<Icon type='feather' name='navigation' size={23}/>}
-        onPress={() => setGoUserPosition(true)}
-      />
       
       <Button
-        containerStyle={{...styles.toolContainer, top: 200}}
-        buttonStyle={{
-          ...styles.btnMapToolTop,
-          backgroundColor: getBackgroundColor(scoreIndexList, 0),
-          paddingHorizontal: 8,
-          width: 45,
-        }}
-        title='1점'
-        titleStyle={{color: 'black'}}
-        onPress={() => clickScore(0)}
-      />
-      <Button
-        containerStyle={{...styles.toolContainer, top: 240}}
-        buttonStyle={{
-          ...styles.btnMapToolMid,
-          backgroundColor: getBackgroundColor(scoreIndexList, 1),
-          paddingHorizontal: 8,
-          width: 45,
-        }}
-        title='2점'
-        titleStyle={{color: 'black'}}
-        onPress={() => clickScore(1)}
-      />
-      <Button
-        containerStyle={{...styles.toolContainer, top: 280}}
-        buttonStyle={{
-          ...styles.btnMapToolMid,
-          backgroundColor: getBackgroundColor(scoreIndexList, 2),
-          paddingHorizontal: 8,
-          width: 45,
-        }}
-        title='3점'
-        titleStyle={{color: 'black'}}
-        onPress={() => clickScore(2)}
-      />
-      <Button
-        containerStyle={{...styles.toolContainer, top: 320}}
-        buttonStyle={{
-          ...styles.btnMapToolMid,
-          backgroundColor: getBackgroundColor(scoreIndexList, 3),
-          paddingHorizontal: 8,
-          width: 45,
-        }}
-        title='4점'
-        titleStyle={{color: 'black'}}
-        onPress={() => clickScore(3)}
-      />
-      <Button
-        containerStyle={{...styles.toolContainer, top: 360}}
-        buttonStyle={{
-          ...styles.btnMapToolBottom,
-          backgroundColor: getBackgroundColor(scoreIndexList, 4),
-          paddingHorizontal: 8,
-          width: 45,
-        }}
-        title='5점'
-        titleStyle={{color: 'black'}}
-        onPress={() => clickScore(4)}
+        containerStyle={{...styles.toolContainer, top: 86}}
+        buttonStyle={styles.btnMapToolAlone}
+        icon={<Icon type='feather' name='navigation' size={23}/>}
+        onPress={() => setGoUserPosition(true)}
       />
       
       <MapView
@@ -306,12 +312,13 @@ const styles = StyleSheet.create({
   reFetchContainer: {
     position: 'absolute',
     zIndex: 1000,
-    left: 130,
-    top: 50,
-    width: 120,
+    left: '50%',
+    top: 100,
+    transform: [{translate: ['-50%', '-50%']}],
     height: 30,
   },
   btnReFetch: {
+    width: 120,
     paddingTop: 5,
     paddingBottom: 5,
     borderRadius: 20,
@@ -323,35 +330,44 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 99,
     right: 15,
-    top: 45
   },
-  btnMapToolTop: {
+  btnMapToolAlone: {
     backgroundColor: '#FAFAFA',
     paddingVertical: 8,
     paddingHorizontal: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderBottomWidth: 0,
+    borderRadius: 10,
     borderColor: '#D8D8D8',
     borderWidth: 1,
+  },
+  btnMapToolLeft: {
+    backgroundColor: '#FAFAFA',
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+    borderTopLeftRadius: 14,
+    borderBottomLeftRadius: 14,
+    borderRightWidth: 0,
+    borderColor: '#D8D8D8',
+    borderWidth: 1,
+    width: 45,
   },
   btnMapToolMid: {
-    paddingVertical: 8,
-    paddingHorizontal: 10,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
     borderRadius: 0,
+    borderRightWidth: 0,
     borderColor: '#D8D8D8',
     borderWidth: 1,
+    width: 45,
   },
-  btnMapToolBottom: {
+  btnMapToolRight: {
     backgroundColor: '#FAFAFA',
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+    borderTopRightRadius: 14,
+    borderBottomRightRadius: 14,
     borderColor: '#D8D8D8',
     borderWidth: 1,
+    width: 45,
   },
 });
 

@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {RecordContext} from './RecordScreen';
-import {Icon, ListItem, SearchBar} from 'react-native-elements';
-import {ScrollView} from 'react-native';
+import {Icon, ListItem} from 'react-native-elements';
+import {ScrollView, Text, TextInput, View} from 'react-native';
 import {convertDistance} from '../../util/StringUtils';
 import {fetchPlacesAroundMe} from '../../util/fetch';
 import {
@@ -26,7 +26,7 @@ function SearchForm({setAllowDrag, setTab, slideRef}) {
       
       dispatch([FETCH_PLACES, fetchResult]);
     };
-  
+    
     !places.length && fetchPlaces(keyword, region);
   }, [keyword]);
   
@@ -42,22 +42,22 @@ function SearchForm({setAllowDrag, setTab, slideRef}) {
     <>
       {
         !keyword ?
-          <SearchBar
-            platform='ios'
-            placeholder='장소 또는 주소 검색'
-            cancelButtonTitle='취소'
-            showCancel={false}
-            containerStyle={{backgroundColor: '#FFFFFF', borderRadius: 20, paddingRight: 5, paddingTop: 25}}
-            inputContainerStyle={{backgroundColor: '#F2F2F2', height: 10}}
-            inputStyle={{fontSize: 15}}
-            cancelButtonProps={{buttonTextStyle: {fontSize: 15, paddingTop: 20}}}
-            value={text}
-            onChangeText={text => setText(text)}
-            onSubmitEditing={() => {
-              dispatch([WRITE_KEYWORD, text]);
-              slideRef.current.show(SLIDE_MIDDLE);
-            }}
-          />
+          <View style={{padding: 20}}>
+            <View style={{marginVertical: 15}}>
+              <Text style={{fontSize: 22, fontWeight: 'bold'}}>등록할 장소는</Text>
+              <Text style={{fontSize: 22, fontWeight: 'bold', marginTop: 3}}>어디인가요?</Text>
+            </View>
+            <TextInput
+              style={{height: 40, borderBottomColor: '#E6E6E6', borderBottomWidth: 2, fontSize: 18, marginTop: 10}}
+              value={text}
+              onChangeText={text => setText(text)}
+              onSubmitEditing={() => {
+                dispatch([WRITE_KEYWORD, text]);
+                slideRef.current.show(SLIDE_MIDDLE);
+              }}
+              placeholder="가게 이름 또는 주소"
+            />
+          </View>
           :
           <>
             <ListItem
@@ -65,7 +65,10 @@ function SearchForm({setAllowDrag, setTab, slideRef}) {
               titleStyle={{fontSize: 22, fontWeight: 'bold'}}
               subtitle={`근처 ${places.length} 개의 검색결과`}
               subtitleStyle={{color: '#424242'}}
-              onPress={({nativeEvent}) => nativeEvent.stopImmediatePropagation && nativeEvent.stopImmediatePropagation()}
+              onPress={
+                ({nativeEvent}) =>
+                  nativeEvent.stopImmediatePropagation && nativeEvent.stopImmediatePropagation()
+              }
               rightIcon={
                 <Icon
                   type='ionicon'
@@ -75,7 +78,7 @@ function SearchForm({setAllowDrag, setTab, slideRef}) {
                   onPress={() => {
                     dispatch([CLEAR_SEARCH_LIST]);
                     setText('');
-                    slideRef.current.show(SLIDE_BOTTOM);
+                    slideRef.current.show(SLIDE_MIDDLE);
                   }}
                 />
               }

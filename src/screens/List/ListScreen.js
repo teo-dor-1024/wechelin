@@ -49,7 +49,7 @@ function ListScreen({route: {params}}) {
   const [deletingId, setDeletingId] = useState('');
   
   const {
-    loading, error, data, fetchMore, refetch,
+    loading, error, data, fetchMore, refetch, networkStatus,
   } = useQuery(GET_RECORDS, {variables: {userId}});
   const [deleteRecord] = useMutation(DELETE_RECORD);
   
@@ -66,14 +66,16 @@ function ListScreen({route: {params}}) {
     }
     
     const {records: {cursor, hasMore}} = data;
-    shouldFetchMore && hasMore && fetchMore({
-      variables: {cursor, keyword},
-      updateQuery(prev, {fetchMoreResult}) {
-        return fetchMoreResult ? fetchMoreResult : prev;
-      },
-    });
-    
-    setShouldFetchMore(false);
+    hasMore ?
+      fetchMore({
+        variables: {cursor, keyword},
+        updateQuery(prev, {fetchMoreResult}) {
+          setShouldFetchMore(false);
+          return fetchMoreResult ? fetchMoreResult : prev;
+        },
+      })
+      :
+      setShouldFetchMore(false);
   }, [shouldFetchMore]);
   
   useEffect(() => {
@@ -116,7 +118,7 @@ function ListScreen({route: {params}}) {
       />
       <View style={{height: 700, paddingHorizontal: 20, paddingBottom: 70}}>
         {
-          loading ?
+          !shouldFetchMore && (loading || networkStatus === 2) ?
             <Text> 기록 가져오는 중 ...</Text>
             :
             error ?
@@ -125,6 +127,7 @@ function ListScreen({route: {params}}) {
               <SortedByVisitedDate
                 data={data.records}
                 onPressMoreView={() => setShouldFetchMore(true)}
+                shouldFetchMore={shouldFetchMore}
                 onPressModify={modify => navigation.navigate('Record', {modify})}
                 onPressDelete={key => setDeletingId(key)}
               />

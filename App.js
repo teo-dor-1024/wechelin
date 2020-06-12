@@ -12,9 +12,11 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
   defaultOptions: {
     watchQuery: {
+      notifyOnNetworkStatusChange: true,
       fetchPolicy: 'network-only',
     },
     query: {
+      notifyOnNetworkStatusChange: true,
       fetchPolicy: 'network-only',
     },
   },

@@ -6,7 +6,7 @@ import RecordForm from './RecordForm';
 import PlaceDetail from './PlaceDetail';
 import ManualAddForm from './ManualAddForm';
 
-export const SLIDE_BOTTOM = 80;
+export const SLIDE_BOTTOM = 120;
 export const SLIDE_MIDDLE = 300;
 
 const containerStyle = {
@@ -46,6 +46,10 @@ function SearchPanel({modifyInfo}) {
     setTab('RecordForm');
     slideRef.current.show(SLIDE_TOP);
   }, [modifyInfo]);
+  
+  useEffect(() => {
+    slideRef.current.show(SLIDE_MIDDLE);
+  }, []);
   
   return (
     <SlidingUpPanel
