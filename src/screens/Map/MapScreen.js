@@ -3,9 +3,9 @@ import gql from 'graphql-tag';
 import {useLazyQuery} from '@apollo/react-hooks';
 import Geolocation from 'react-native-geolocation-service';
 import {Button, Icon} from 'react-native-elements';
-import {Modal, SafeAreaView, StyleSheet, View} from 'react-native';
+import {Dimensions, Modal, Platform, SafeAreaView, StyleSheet, View} from 'react-native';
 import useMyInfo from '../../util/useMyInfo';
-import MapView, {Marker} from 'react-native-maps';
+import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import WebView from "react-native-webview";
 import SearchFriends from "./SearchFriends";
 
@@ -244,6 +244,7 @@ function MapScreen() {
         region={region}
         onRegionChangeComplete={region => currentRegion.current = region}
         onTouchStart={() => setIsMoved(true)}
+        provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : null}
         showsUserLocation
       >
         {
@@ -312,9 +313,9 @@ const styles = StyleSheet.create({
   reFetchContainer: {
     position: 'absolute',
     zIndex: 1000,
-    left: '50%',
-    top: 100,
-    transform: [{translate: ['-50%', '-50%']}],
+    left: (Dimensions.get('window').width - 120) / 2,
+    top: 50,
+    width: 120,
     height: 30,
   },
   btnReFetch: {

@@ -3,7 +3,7 @@ import {useNavigation} from '@react-navigation/native';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import {SearchBar} from 'react-native-elements';
-import {SafeAreaView, Text, View} from 'react-native';
+import {Dimensions, Platform, SafeAreaView, Text, View} from 'react-native';
 import useMyInfo from '../../util/useMyInfo';
 import SortedByVisitedDate from './SortedByVisitedDate';
 
@@ -97,10 +97,19 @@ function ListScreen({route: {params}}) {
     setDeletingId('');
   }, [deletingId]);
   
+  const isAndroid = Platform.OS === 'android';
+  const viewHeight = Dimensions.get('window').height;
+  
   return (
-    <SafeAreaView style={{backgroundColor: '#FFFFFF'}}>
+    <SafeAreaView style={{
+      backgroundColor: '#FFFFFF',
+      ...(isAndroid && {
+        height: viewHeight,
+        paddingTop: 30,
+      }),
+    }}>
       <SearchBar
-        platform='ios'
+        platform={Platform.OS}
         containerStyle={{
           backgroundColor: '#FFFFFF',
           paddingHorizontal: 10,
@@ -116,7 +125,7 @@ function ListScreen({route: {params}}) {
         cancelButtonTitle='취소'
         cancelButtonProps={{buttonStyle: {marginRight: 10, height: 45}}}
       />
-      <View style={{height: 700, paddingHorizontal: 20, paddingBottom: 70}}>
+      <View style={{height: isAndroid ? viewHeight - 100 : 700, paddingHorizontal: 20, paddingBottom: 70}}>
         {
           !shouldFetchMore && (loading || networkStatus === 2) ?
             <Text> 기록 가져오는 중 ...</Text>

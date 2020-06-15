@@ -53,20 +53,7 @@ public class MainApplication extends Application implements ReactApplication {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this); // Remove this line if you don't want Flipper enabled
-      try {
-          PackageInfo info = getPackageManager().getPackageInfo(
-                  "com.rn_social_login",
-                  PackageManager.GET_SIGNATURES);
-          for (Signature signature : info.signatures) {
-              MessageDigest md = MessageDigest.getInstance("SHA");
-              md.update(signature.toByteArray());
-              Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-          }
-      } catch (PackageManager.NameNotFoundException e) {
-
-      } catch (NoSuchAlgorithmException e) {
-
-      }
+    getHashKey();
   }
 
   /**
@@ -94,4 +81,25 @@ public class MainApplication extends Application implements ReactApplication {
       }
     }
   }
+
+    private void getHashKey(){
+        PackageInfo packageInfo = null;
+        try {
+            packageInfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        if (packageInfo == null)
+            Log.e("KeyHash", "KeyHash:null");
+
+        for (Signature signature : packageInfo.signatures) {
+            try {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            } catch (NoSuchAlgorithmException e) {
+                Log.e("KeyHash", "Unable to get MessageDigest. signature=" + signature, e);
+            }
+        }
+    }
 }

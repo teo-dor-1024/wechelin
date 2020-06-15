@@ -56,6 +56,7 @@ function SearchForm({setAllowDrag, setTab, slideRef}) {
                 slideRef.current.show(SLIDE_MIDDLE);
               }}
               placeholder="가게 이름 또는 주소"
+              disableFullscreenUI={true}
             />
           </View>
           :

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Dimensions, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Platform, Dimensions, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {Button, Icon} from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useMutation} from '@apollo/react-hooks';
@@ -88,14 +88,17 @@ function LoginScreen({navigation}) {
       </Text>
       <Text style={styles.desc}>위슐랭, 우리만의 맛집 지도 만들기</Text>
       <View style={{marginTop: height > 830 ? 330 : height > 660 ? 250 : 170}}>
-        <Button
-          title='Apple로 로그인'
-          titleStyle={{color: 'black', fontWeight: 'bold', marginLeft: 5}}
-          icon={<Icon type='ionicon' name='logo-apple' size={20}/>}
-          buttonStyle={styles.btnLogin}
-          containerStyle={{marginBottom: 10}}
-          onPress={onClickApple}
-        />
+        {
+          Platform.OS === 'ios' &&
+          <Button
+            title='Apple로 로그인'
+            titleStyle={{color: 'black', fontWeight: 'bold', marginLeft: 5}}
+            icon={<Icon type='ionicon' name='logo-apple' size={20}/>}
+            buttonStyle={styles.btnLogin}
+            containerStyle={{marginBottom: 10}}
+            onPress={onClickApple}
+          />
+        }
         <Button
           title='Kakao로 로그인'
           titleStyle={{color: '#513302', fontWeight: 'bold', marginLeft: 5}}

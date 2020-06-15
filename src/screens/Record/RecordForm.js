@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import {useMutation} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import {useNavigation} from '@react-navigation/native';
-import {Dimensions, ScrollView, View} from 'react-native';
+import {Platform, Dimensions, ScrollView, TouchableOpacity, View} from 'react-native';
 import {Button, CheckBox, Icon, Input, ListItem, Text} from 'react-native-elements';
 import StarRating from 'react-native-star-rating';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -10,7 +10,7 @@ import {RecordContext} from './RecordScreen';
 import {CLEAR_SEARCH_LIST} from '../../reducers/searchReducer';
 import useMyInfo from '../../util/useMyInfo';
 import {convertMoney} from '../../util/StringUtils';
-import {SLIDE_BOTTOM} from './SearchPanel';
+import {SLIDE_MIDDLE} from './SearchPanel';
 
 const CREATE_RECORD = gql`
   mutation ($input: NewRecord!) {
@@ -99,7 +99,8 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
         });
         
         if (result) {
-          slideRef.current.show(SLIDE_BOTTOM);
+          setAllowDrag(true);
+          slideRef.current.show(SLIDE_MIDDLE);
           dispatch([CLEAR_SEARCH_LIST]);
         } else {
           alert('기록 저장 실패!');
@@ -141,7 +142,7 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
                 dispatch([CLEAR_SEARCH_LIST]);
                 setTab('SearchForm');
                 setAllowDrag(true);
-                slideRef.current.show(SLIDE_BOTTOM);
+                slideRef.current.show(SLIDE_MIDDLE);
               } else {
                 setTab('PlaceDetail');
                 setAllowDrag(true);
@@ -162,17 +163,25 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
             onPress={() => setFormData({...formData, isDutch: !isDutch})}
           />
         </View>
-        <Input
-          ref={menuRef}
-          label='날짜'
-          containerStyle={{marginTop: 20}}
-          inputStyle={{color: '#000000'}}
-          placeholderTextColor='#BDBDBD'
-          placeholder='날짜를 선택하세요'
-          disabled
-          value={visitedDate.toLocaleString()}
-          onTouchStart={() => setIsDateOpen(true)}
-        />
+        <TouchableOpacity onPress={() => setIsDateOpen(true)}>
+          <Input
+            ref={menuRef}
+            label='날짜'
+            containerStyle={{marginTop: 20}}
+            inputStyle={{color: '#000000'}}
+            placeholderTextColor='#BDBDBD'
+            placeholder='날짜를 선택하세요'
+            disabled
+            value={visitedDate.toLocaleString()}
+            {
+              ...Platform.OS === 'ios' && {
+                onTouchStart: () => {
+                  setIsDateOpen(true)
+                }
+              }
+            }
+          />
+        </TouchableOpacity>
         <Input
           ref={menuRef}
           containerStyle={{marginTop: 20}}
@@ -255,6 +264,15 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
         confirmTextIOS='완료'
         minimumDate={new Date(2010, 0, 1)}
         locale='ko_KO'
+        date={new Date(visitedDate)}
+        {
+          ...Platform.OS === 'android' && {
+            onChange: (_, visitedDate) => {
+              setFormData({...formData, visitedDate});
+              setIsDateOpen(false);
+            }
+          }
+        }
       />
     </>
   );
