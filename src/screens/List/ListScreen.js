@@ -3,9 +3,10 @@ import {useNavigation} from '@react-navigation/native';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import {SearchBar} from 'react-native-elements';
-import {Dimensions, Platform, SafeAreaView, Text, View} from 'react-native';
+import {Platform, SafeAreaView, Text, View} from 'react-native';
 import useMyInfo from '../../util/useMyInfo';
 import SortedByVisitedDate from './SortedByVisitedDate';
+import {viewHeight} from "../../../App";
 
 const GET_RECORDS = gql`
   query ($userId: String!, $keyword: String, $cursor: Int) {
@@ -97,13 +98,10 @@ function ListScreen({route: {params}}) {
     setDeletingId('');
   }, [deletingId]);
   
-  const isAndroid = Platform.OS === 'android';
-  const viewHeight = Dimensions.get('window').height;
-  
   return (
     <SafeAreaView style={{
       backgroundColor: '#FFFFFF',
-      ...(isAndroid && {
+      ...(Platform.OS === 'android' && {
         height: viewHeight,
         paddingTop: 30,
       }),
@@ -125,7 +123,7 @@ function ListScreen({route: {params}}) {
         cancelButtonTitle='취소'
         cancelButtonProps={{buttonStyle: {marginRight: 10, height: 45}}}
       />
-      <View style={{height: isAndroid ? viewHeight - 100 : 700, paddingHorizontal: 20, paddingBottom: 70}}>
+      <View style={{height: Platform.OS === 'android' ? viewHeight - 100 : 700, paddingHorizontal: 20, paddingBottom: 70}}>
         {
           !shouldFetchMore && (loading || networkStatus === 2) ?
             <Text> 기록 가져오는 중 ...</Text>

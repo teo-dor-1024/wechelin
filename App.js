@@ -4,7 +4,9 @@ import {InMemoryCache} from 'apollo-cache-inmemory';
 import {createHttpLink} from 'apollo-link-http';
 import {ApolloProvider} from '@apollo/react-hooks';
 import Navigator from './src/Navigator';
-import {StatusBar} from 'react-native';
+import {Dimensions, StatusBar} from 'react-native';
+
+export const viewHeight = Dimensions.get('window').height;
 
 const client = new ApolloClient({
   link: createHttpLink({uri: 'http://api.doeatrecord.com/graphql'}),

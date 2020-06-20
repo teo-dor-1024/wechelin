@@ -3,7 +3,7 @@ import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import {Alert, Clipboard, Modal, SafeAreaView, View} from 'react-native';
+import {Alert, Clipboard, Modal, SafeAreaView, TouchableOpacity, View} from 'react-native';
 import {Button, Icon, Text} from 'react-native-elements';
 import useMyInfo from '../../util/useMyInfo';
 import ReceivedAlarms from './ReceivedAlarms';
@@ -22,6 +22,10 @@ export const myStyles = {
     alignItems: 'center',
     marginBottom: 10,
     justifyContent: 'space-between'
+  },
+  toolContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 };
 
@@ -189,37 +193,41 @@ function MyScreen() {
       
       <View style={{marginBottom: 40}}>
         <View style={myStyles.titleContainer}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={myStyles.toolContainer}>
             <Icon type='antdesign' name='idcard' size={25}/>
             <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 5}}>
               아이디
             </Text>
           </View>
-          <Icon
-            type='material-community'
-            name='content-copy'
-            underlayColor={'#F2F2F2'}
-            onPress={() => Clipboard.setString(id)}
-          />
+          <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => Clipboard.setString(id)}>
+            <Icon
+              type='material-community'
+              name='content-copy'
+              size={20}
+            />
+            <Text style={{marginLeft: 5, color: '#585858', fontWeight: 'bold'}}>복사하기</Text>
+          </TouchableOpacity>
         </View>
         <Text style={{fontSize: 18}}>{id}</Text>
       </View>
       
       <View style={{marginBottom: 40}}>
         <View style={myStyles.titleContainer}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={myStyles.toolContainer}>
             <Icon type='material-community' name='bell-outline' size={25}/>
             <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 5}}>
               알림
             </Text>
           </View>
-          <Icon
-            name='md-refresh'
-            type='ionicon'
-            size={25}
-            containerStyle={{marginRight: 10}}
-            onPress={() => refetch()}
-          />
+          <TouchableOpacity style={myStyles.toolContainer} onPress={() => refetch()}>
+            <Icon
+              name='md-refresh'
+              type='ionicon'
+              size={20}
+            />
+            <Text style={{marginLeft: 5, color: '#585858', fontWeight: 'bold'}}>새로고침</Text>
+          </TouchableOpacity>
+          
         </View>
         <ReceivedAlarms myId={id} receivedAlarms={receivedAlarms}/>
         <RequestedAlarms requestedAlarms={requestedOnAlarm}/>

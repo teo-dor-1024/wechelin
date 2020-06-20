@@ -15,7 +15,7 @@ function MonthlySpending({monthlySpending}) {
   const trendSpending = trendList.map(({spending}) => spending);
   const data = {
     labels: trendList.map(({label}) => `${label}월`),
-    datasets: [{data: trendSpending.map(spending => Math.floor(spending / 1000))}],
+    datasets: [{data: trendSpending.map(spending => Math.floor(spending / 10000))}],
   };
   
   const prevAvg = calcAvg(trendSpending.slice(0, MONTHLY_TREND_COUNT - 1));
@@ -38,17 +38,19 @@ function MonthlySpending({monthlySpending}) {
       <View style={{alignItems: 'center', marginTop: 15}}>
         <BarChart
           data={data}
-          width={Dimensions.get("window").width - 40}
+          width={Dimensions.get("window").width - 20}
           height={220}
           chartConfig={{
             backgroundGradientFromOpacity: 0,
             backgroundGradientToOpacity: 0,
-            color: (opacity = 1) => `rgb(0, 102, 255, 1)`,
+            color: (opacity = 1) => `rgb(0, 102, 255, ${opacity})`,
             barPercentage: 1,
-            decimalPlaces: 1,
+            decimalPlaces: 0.1,
           }}
           withInnerLines={false}
           fromZero={true}
+          yAxisLabel={''}
+          yAxisSuffix={'만원'}
         />
       </View>
     </View>

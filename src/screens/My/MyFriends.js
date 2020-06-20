@@ -1,5 +1,5 @@
 import React from 'react';
-import {Alert, ScrollView, View} from "react-native";
+import {Alert, ScrollView, TouchableOpacity, View} from "react-native";
 import {Button, Icon, Text} from "react-native-elements";
 import {myStyles} from "./MyScreen";
 
@@ -13,14 +13,15 @@ function MyFriends({myFriends, openSearchForm, unFollow}) {
             친구들
           </Text>
         </View>
-        <Icon
-          name='md-add'
-          type='ionicon'
-          size={25}
-          containerStyle={{marginRight: 10}}
-          color='#0080FF'
-          onPress={openSearchForm}
-        />
+        <TouchableOpacity style={myStyles.toolContainer} onPress={openSearchForm}>
+          <Icon
+            name='md-add'
+            type='ionicon'
+            size={20}
+            color='#0080FF'
+          />
+          <Text style={{marginLeft: 5, color: '#0080FF', fontWeight: 'bold'}}>친구찾기</Text>
+        </TouchableOpacity>
       </View>
       <ScrollView style={{paddingBottom: 70}}>
         {

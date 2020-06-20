@@ -49,35 +49,40 @@ function SearchUnMatched({userId, setTargetInfo, searchType, setIsVisibleModal})
           error ?
             <Text> 유저 찾다가 에러 발생!! {error.toString()}</Text>
             :
-            data.unMatchedUsers.map(({userId, nickname}) => {
-              const requestedInfo = data.requestedAlarms.find(matching => matching.targetId === userId);
-              if (requestedInfo && requestedInfo.type !== searchType) {
-                return null;
-              }
-              
-              return (
-                <ListItem
-                  key={userId}
-                  title={nickname || '게스트'}
-                  containerStyle={{paddingVertical: 10, paddingHorizontal: 5}}
-                  rightElement={
-                    requestedInfo ?
-                      <Text style={{height: 25, lineHeight: 25}}>요청 수락 대기중</Text>
-                      :
-                      <Button
-                        title={`${typeKorName} 요청`}
-                        titleStyle={{fontSize: 14, fontWeight: 'bold'}}
-                        buttonStyle={{
-                          height: 25,
-                          paddingVertical: 0,
-                          backgroundColor: typeKorName === '커플' ? '#F5A9D0' : '#58ACFA',
-                        }}
-                        onPress={() => setTargetInfo(userId, nickname)}
-                      />
-                  }
-                />
-              );
-            })
+            data.unMatchedUsers.length ?
+              data.unMatchedUsers.map(({userId, nickname}) => {
+                const requestedInfo = data.requestedAlarms.find(matching => matching.targetId === userId);
+                if (requestedInfo && requestedInfo.type !== searchType) {
+                  return null;
+                }
+                
+                return (
+                  <ListItem
+                    key={userId}
+                    title={nickname || '게스트'}
+                    containerStyle={{paddingVertical: 10, paddingHorizontal: 5}}
+                    rightElement={
+                      requestedInfo ?
+                        <Text style={{height: 25, lineHeight: 25}}>요청 수락 대기중</Text>
+                        :
+                        <Button
+                          title={`${typeKorName} 요청`}
+                          titleStyle={{fontSize: 14, fontWeight: 'bold'}}
+                          buttonStyle={{
+                            height: 25,
+                            paddingVertical: 0,
+                            backgroundColor: typeKorName === '커플' ? '#F5A9D0' : '#58ACFA',
+                          }}
+                          onPress={() => setTargetInfo(userId, nickname)}
+                        />
+                    }
+                  />
+                );
+              })
+              :
+              <Text>
+                검색된 유저가 없습니다.
+              </Text>
       }
     </UserSearchForm>
   );

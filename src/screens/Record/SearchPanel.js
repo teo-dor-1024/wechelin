@@ -1,18 +1,18 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Platform, Dimensions, View} from 'react-native';
+import {Platform, View} from 'react-native';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import SearchForm from './SearchForm';
 import RecordForm from './RecordForm';
 import PlaceDetail from './PlaceDetail';
 import ManualAddForm from './ManualAddForm';
+import {viewHeight} from "../../../App";
 
-const {height} = Dimensions.get('window');
 // iPhone Height: 896 / 812 / 736 / 667 / 568
-export const SLIDE_TOP = height - (
-  height > 800 ?
+export const SLIDE_TOP = viewHeight - (
+  viewHeight > 800 ?
     150
     :
-    height > 700 ?
+    viewHeight > 700 ?
       90
       :
       80

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Platform, Dimensions, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Platform, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {Button, Icon} from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useMutation} from '@apollo/react-hooks';
@@ -11,6 +11,7 @@ import appleAuth, {
   AppleAuthRequestScope
 } from '@invertase/react-native-apple-authentication';
 import RegisterForm from "./RegisterForm";
+import {viewHeight} from "../../../App";
 
 const ENROLL_USER = gql`
   mutation ($userId: String!, $nickname: String) {
@@ -19,7 +20,6 @@ const ENROLL_USER = gql`
 `;
 
 function LoginScreen({navigation}) {
-  const {height} = Dimensions.get('window');
   const [isVisible, setIsVisible] = useState(false);
   const [createUser] = useMutation(ENROLL_USER);
   
@@ -81,13 +81,13 @@ function LoginScreen({navigation}) {
       <Text
         style={{
           ...styles.title,
-          marginTop: height > 750 ? 120 : 80,
+          marginTop: viewHeight > 750 ? 120 : 80,
         }}
       >
         Wechelin!
       </Text>
       <Text style={styles.desc}>위슐랭, 우리만의 맛집 지도 만들기</Text>
-      <View style={{marginTop: height > 830 ? 330 : height > 660 ? 250 : 170}}>
+      <View style={{marginTop: viewHeight > 830 ? 330 : viewHeight > 660 ? 250 : 170}}>
         {
           Platform.OS === 'ios' &&
           <Button

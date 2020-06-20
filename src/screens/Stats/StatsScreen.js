@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import moment from 'moment';
 import gql from 'graphql-tag';
 import {useQuery} from '@apollo/react-hooks';
-import {Dimensions, SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
+import {Platform, SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
 import {ButtonGroup, Divider, Icon, Text} from 'react-native-elements';
 import GestureRecognizer from 'react-native-swipe-gestures';
 import useMyInfo from '../../util/useMyInfo';
@@ -10,6 +10,7 @@ import {convertMoney} from '../../util/StringUtils';
 import RankedByVisits from './RankedByVisits';
 import RankedByScore from './RankedByScore';
 import MonthlySpending from "./MonthlySpending";
+import {viewHeight} from "../../../App";
 
 const GET_STATS = gql`
   query Stats($userId: String!, $now: Date, $count: Int) {
@@ -38,7 +39,6 @@ const GET_STATS = gql`
 export const RANKING_COUNT = 5;
 
 function StatsScreen() {
-  const {height} = Dimensions.get('window');
   const [tab, setTab] = useState(1);
   const [now, setNow] = useState(undefined);
   
@@ -57,14 +57,21 @@ function StatsScreen() {
     return <SafeAreaView><Text> 통계 정보 가져오다 에러 발생 !! {error.toString()}</Text></SafeAreaView>;
   }
   
-  const goToNextMonth = () => setNow(moment(now).add(1, 'month'));
-  const goToPrevMonth = () => setNow(moment(now).subtract(1, 'month'));
+  const isNotThisMonth = moment(now).startOf('month').isBefore(moment().startOf('month'));
+  const goToNextMonth = () => tab &&isNotThisMonth && setNow(moment(now).add(1, 'month'));
+  const goToPrevMonth = () => tab && setNow(moment(now).subtract(1, 'month'));
   
   const {myLover, spending: {total, dutch}, recordsByScore, recordsByCount, monthlySpending} = data;
   
   return (
-    <SafeAreaView>
-      <ScrollView style={{height: height - 130}} showsVerticalScrollIndicator={false}>
+    <SafeAreaView style={{
+      ...(Platform.OS === 'android' && {
+        height: viewHeight,
+        paddingTop: 10,
+        paddingBottom: 80,
+      }),
+    }}>
+      <ScrollView style={{height: viewHeight - 130}} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <ButtonGroup
             buttons={['전체', '월간']}
@@ -78,8 +85,7 @@ function StatsScreen() {
                 <Icon name='md-arrow-dropleft' type='ionicon' size={30} onPress={goToPrevMonth}/>
                 <Text style={{fontSize: 24, marginHorizontal: 15}}>{now.month() + 1}월</Text>
                 {
-                  moment(now).startOf('month')
-                    .isBefore(moment().startOf('month')) &&
+                  isNotThisMonth &&
                   <Icon name='md-arrow-dropright' type='ionicon' size={30} onPress={goToNextMonth}/>
                 }
               </View>
