@@ -3,10 +3,11 @@ import {useNavigation} from '@react-navigation/native';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import {SearchBar} from 'react-native-elements';
-import {Platform, SafeAreaView, Text, View} from 'react-native';
+import {Dimensions, Platform, SafeAreaView, Text, View} from 'react-native';
 import useMyInfo from '../../util/useMyInfo';
 import SortedByVisitedDate from './SortedByVisitedDate';
-import {viewHeight} from "../../../App";
+
+const viewHeight = Dimensions.get('window').height;
 
 const GET_RECORDS = gql`
   query ($userId: String!, $keyword: String, $cursor: Int) {

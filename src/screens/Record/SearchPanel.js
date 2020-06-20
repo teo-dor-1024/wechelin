@@ -1,12 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Platform, View} from 'react-native';
+import {Dimensions, Platform, View} from 'react-native';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import SearchForm from './SearchForm';
 import RecordForm from './RecordForm';
 import PlaceDetail from './PlaceDetail';
 import ManualAddForm from './ManualAddForm';
-import {viewHeight} from "../../../App";
 
+const viewHeight = Dimensions.get('window').height;
 // iPhone Height: 896 / 812 / 736 / 667 / 568
 export const SLIDE_TOP = viewHeight - (
   viewHeight > 800 ?
@@ -57,9 +57,10 @@ function SearchPanel({modifyInfo}) {
     <SlidingUpPanel
       ref={slideRef}
       draggableRange={{bottom: SLIDE_BOTTOM, top: slideTop}}
-      snappingPoints={[SLIDE_BOTTOM, SLIDE_MIDDLE, SLIDE_TOP]}
+      snappingPoints={[SLIDE_BOTTOM, slideTop]}
       allowDragging={allowDrag}
       containerStyle={{zIndex: 100}}
+      friction={1.5}
     >
       <View style={containerStyle}>
         {

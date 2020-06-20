@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Platform, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Dimensions, Platform, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {Button, Icon} from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useMutation} from '@apollo/react-hooks';
@@ -11,8 +11,8 @@ import appleAuth, {
   AppleAuthRequestScope
 } from '@invertase/react-native-apple-authentication';
 import RegisterForm from "./RegisterForm";
-import {viewHeight} from "../../../App";
 
+const viewHeight = Dimensions.get('window').height;
 const ENROLL_USER = gql`
   mutation ($userId: String!, $nickname: String) {
     createUser(userId: $userId, nickname: $nickname)

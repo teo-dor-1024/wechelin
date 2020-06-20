@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import moment from 'moment';
 import gql from 'graphql-tag';
 import {useQuery} from '@apollo/react-hooks';
-import {Platform, SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
+import {Dimensions, Platform, SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
 import {ButtonGroup, Divider, Icon, Text} from 'react-native-elements';
 import GestureRecognizer from 'react-native-swipe-gestures';
 import useMyInfo from '../../util/useMyInfo';
@@ -10,7 +10,8 @@ import {convertMoney} from '../../util/StringUtils';
 import RankedByVisits from './RankedByVisits';
 import RankedByScore from './RankedByScore';
 import MonthlySpending from "./MonthlySpending";
-import {viewHeight} from "../../../App";
+
+const viewHeight = Dimensions.get('window').height;
 
 const GET_STATS = gql`
   query Stats($userId: String!, $now: Date, $count: Int) {
