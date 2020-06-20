@@ -2,8 +2,9 @@ import React, {useContext} from 'react';
 import {Button, Icon, ListItem} from 'react-native-elements';
 import {WebView} from 'react-native-webview';
 import {RecordContext} from './RecordScreen';
+import {SLIDE_TOP, slideShowFormat} from "./SearchPanel";
 
-function PlaceDetail({setAllowDrag, setTab, SLIDE_TOP, slideRef}) {
+function PlaceDetail({setAllowDrag, setTab, slideRef}) {
   const {state: {places, selectedIndex}} = useContext(RecordContext);
   const {name, url} = places[selectedIndex];
   
@@ -29,7 +30,7 @@ function PlaceDetail({setAllowDrag, setTab, SLIDE_TOP, slideRef}) {
         titleStyle={{fontWeight: 'bold'}}
         onPress={() => {
           setTab('RecordForm');
-          slideRef.current.show(SLIDE_TOP);
+          slideRef.current.show(slideShowFormat(SLIDE_TOP));
           setAllowDrag(false);
         }}
       />

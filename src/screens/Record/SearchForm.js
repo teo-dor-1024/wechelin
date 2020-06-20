@@ -11,11 +11,17 @@ import {
   SET_ADD_PIN_MODE,
   WRITE_KEYWORD,
 } from '../../reducers/searchReducer';
-import {SLIDE_BOTTOM, SLIDE_MIDDLE} from './SearchPanel';
+import {SLIDE_BOTTOM, SLIDE_MIDDLE, SLIDE_TOP, slideShowFormat} from './SearchPanel';
 
-function SearchForm({setAllowDrag, setTab, slideRef}) {
+function SearchForm({setAllowDrag, setTab, slideRef, setSlideTop}) {
   const {state: {region, keyword, places}, dispatch} = useContext(RecordContext);
   const [text, setText] = useState('');
+  
+  useEffect(() => {
+    const slideTop = places.length ? SLIDE_TOP : SLIDE_MIDDLE;
+    setSlideTop(slideTop);
+    slideRef.current.show(slideShowFormat(slideTop));
+  }, [places.length]);
   
   useEffect(() => {
     const fetchPlaces = async (keyword, region) => {
@@ -31,11 +37,11 @@ function SearchForm({setAllowDrag, setTab, slideRef}) {
   }, [keyword]);
   
   const onClickManual = () => {
-    setTab('ManualAddForm');
     dispatch([CLEAR_SEARCH_LIST]);
     dispatch([SET_ADD_PIN_MODE, true]);
     setAllowDrag(false);
-    slideRef.current.show(SLIDE_BOTTOM);
+    slideRef.current.show(slideShowFormat(SLIDE_BOTTOM));
+    setTab('ManualAddForm');
   };
   
   return (
@@ -53,7 +59,7 @@ function SearchForm({setAllowDrag, setTab, slideRef}) {
               onChangeText={text => setText(text)}
               onSubmitEditing={() => {
                 dispatch([WRITE_KEYWORD, text]);
-                slideRef.current.show(SLIDE_MIDDLE);
+                slideRef.current.show(slideShowFormat(SLIDE_MIDDLE));
               }}
               placeholder="가게 이름 또는 주소"
               disableFullscreenUI={true}
@@ -79,7 +85,7 @@ function SearchForm({setAllowDrag, setTab, slideRef}) {
                   onPress={() => {
                     dispatch([CLEAR_SEARCH_LIST]);
                     setText('');
-                    slideRef.current.show(SLIDE_MIDDLE);
+                    slideRef.current.show(slideShowFormat(SLIDE_MIDDLE));
                   }}
                 />
               }

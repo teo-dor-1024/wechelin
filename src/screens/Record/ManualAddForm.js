@@ -4,7 +4,7 @@ import {Button, Input, Text} from 'react-native-elements';
 import RNPickerSelect from 'react-native-picker-select';
 import {RecordContext} from './RecordScreen';
 import {SET_ADD_PIN_INFO, SET_ADD_PIN_MODE} from '../../reducers/searchReducer';
-import {SLIDE_BOTTOM, SLIDE_MIDDLE} from './SearchPanel';
+import {SLIDE_BOTTOM, SLIDE_MIDDLE, SLIDE_TOP, slideShowFormat} from './SearchPanel';
 
 const styles = {
   descContainer: {
@@ -43,7 +43,7 @@ const category2Items = [
   {label: '기타', value: '기타', level1: '기타'},
 ];
 
-function ManualAddForm({setAllowDrag, setTab, SLIDE_TOP, slideRef}) {
+function ManualAddForm({setAllowDrag, setTab, slideRef}) {
   const {state: {addPinInfo}, dispatch} = useContext(RecordContext);
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
@@ -52,7 +52,7 @@ function ManualAddForm({setAllowDrag, setTab, SLIDE_TOP, slideRef}) {
   const addressEl = useRef();
   
   useEffect(() => {
-    addPinInfo.latitude && slideRef.current.show(SLIDE_MIDDLE);
+    addPinInfo.latitude && slideRef.current.show(slideShowFormat(SLIDE_MIDDLE));
   }, [addPinInfo.latitude]);
   
   useEffect(() => {
@@ -72,7 +72,10 @@ function ManualAddForm({setAllowDrag, setTab, SLIDE_TOP, slideRef}) {
   
   return (
     <View style={styles.descContainer}>
-      <Text style={styles.description} onPress={() => slideRef.current.show(SLIDE_MIDDLE)}>
+      <Text
+        style={styles.description}
+        onPress={() => slideRef.current.show(slideShowFormat(SLIDE_MIDDLE))}
+      >
         {
           addPinInfo.latitude ?
             '아래 정보를 입력 후 등록을 누르세요.'
@@ -118,10 +121,16 @@ function ManualAddForm({setAllowDrag, setTab, SLIDE_TOP, slideRef}) {
                     padding: 10,
                     color: '#000000',
                   },
+                  inputAndroid: {
+                    fontSize: 16,
+                    width: 200,
+                    textAlign: 'center',
+                    padding: 10,
+                    color: '#000000',
+                  }
                 }}
                 placeholder={{label: '대분류 선택하세요', value: ' '}}
                 doneText='완료'
-                // value={category1}
                 onValueChange={value => setCategory1(value)}
                 items={category1Items}
                 onDonePress={onPickCategory}
@@ -139,6 +148,14 @@ function ManualAddForm({setAllowDrag, setTab, SLIDE_TOP, slideRef}) {
                     marginLeft: 10,
                     color: '#000000',
                   },
+                  inputAndroid: {
+                    fontSize: 16,
+                    width: 200,
+                    textAlign: 'center',
+                    padding: 10,
+                    color: '#000000',
+                    marginLeft: 20,
+                  }
                 }}
                 placeholder={{label: '소분류 선택하세요', value: ' '}}
                 doneText='완료'
@@ -160,7 +177,7 @@ function ManualAddForm({setAllowDrag, setTab, SLIDE_TOP, slideRef}) {
             setAllowDrag(true);
             setTab('SearchForm');
             dispatch([SET_ADD_PIN_MODE, false]);
-            slideRef.current.show(SLIDE_BOTTOM);
+            slideRef.current.show(slideShowFormat(SLIDE_BOTTOM));
           }}
         />
         <Button
@@ -168,7 +185,7 @@ function ManualAddForm({setAllowDrag, setTab, SLIDE_TOP, slideRef}) {
           type='clear'
           disabled={!addPinInfo.latitude || !name}
           onPress={() => {
-            slideRef.current.show(SLIDE_TOP);
+            slideRef.current.show(slideShowFormat(SLIDE_TOP));
             setTab('RecordForm');
           }}
         />

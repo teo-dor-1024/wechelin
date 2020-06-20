@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 99,
     right: 15,
-    top: 70,
+    top: 80,
   },
   btnGoUser: {
     backgroundColor: '#FAFAFA',

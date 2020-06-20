@@ -1,13 +1,24 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Dimensions, View} from 'react-native';
+import {Platform, Dimensions, View} from 'react-native';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import SearchForm from './SearchForm';
 import RecordForm from './RecordForm';
 import PlaceDetail from './PlaceDetail';
 import ManualAddForm from './ManualAddForm';
 
+const {height} = Dimensions.get('window');
+// iPhone Height: 896 / 812 / 736 / 667 / 568
+export const SLIDE_TOP = height - (
+  height > 800 ?
+    150
+    :
+    height > 700 ?
+      90
+      :
+      80
+);
 export const SLIDE_BOTTOM = 120;
-export const SLIDE_MIDDLE = 300;
+export const SLIDE_MIDDLE = 430;
 
 const containerStyle = {
   zIndex: 1,
@@ -19,21 +30,12 @@ const containerStyle = {
   paddingLeft: 10,
 };
 
+export const slideShowFormat = toValue => Platform.OS === 'android' ? {toValue, velocity: 2} : toValue;
+
 function SearchPanel({modifyInfo}) {
-  const {height} = Dimensions.get('window');
-  // iPhone Height: 896 / 812 / 736 / 667 / 568
-  const SLIDE_TOP = height - (
-    height > 800 ?
-      150
-      :
-      height > 700 ?
-        90
-        :
-        80
-  );
-  
   const [tab, setTab] = useState('SearchForm');
   const [allowDrag, setAllowDrag] = useState(true);
+  const [slideTop, setSlideTop] = useState(SLIDE_MIDDLE);
   
   const slideRef = useRef(null);
   
@@ -44,17 +46,17 @@ function SearchPanel({modifyInfo}) {
     
     setAllowDrag(false);
     setTab('RecordForm');
-    slideRef.current.show(SLIDE_TOP);
+    slideRef.current.show(slideShowFormat(SLIDE_TOP));
   }, [modifyInfo]);
   
   useEffect(() => {
-    slideRef.current.show(SLIDE_MIDDLE);
+    slideRef.current.show(slideShowFormat(slideTop));
   }, []);
   
   return (
     <SlidingUpPanel
       ref={slideRef}
-      draggableRange={{bottom: SLIDE_BOTTOM, top: SLIDE_TOP}}
+      draggableRange={{bottom: SLIDE_BOTTOM, top: slideTop}}
       snappingPoints={[SLIDE_BOTTOM, SLIDE_MIDDLE, SLIDE_TOP]}
       allowDragging={allowDrag}
       containerStyle={{zIndex: 100}}
@@ -66,6 +68,7 @@ function SearchPanel({modifyInfo}) {
               setAllowDrag={setAllowDrag}
               setTab={setTab}
               slideRef={slideRef}
+              setSlideTop={setSlideTop}
             />
           )
         }
@@ -74,7 +77,6 @@ function SearchPanel({modifyInfo}) {
             <ManualAddForm
               setAllowDrag={setAllowDrag}
               setTab={setTab}
-              SLIDE_TOP={SLIDE_TOP}
               slideRef={slideRef}
             />
           )
@@ -84,7 +86,6 @@ function SearchPanel({modifyInfo}) {
             <PlaceDetail
               setAllowDrag={setAllowDrag}
               setTab={setTab}
-              SLIDE_TOP={SLIDE_TOP}
               slideRef={slideRef}
             />
           )

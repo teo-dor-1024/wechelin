@@ -10,7 +10,7 @@ import {RecordContext} from './RecordScreen';
 import {CLEAR_SEARCH_LIST} from '../../reducers/searchReducer';
 import useMyInfo from '../../util/useMyInfo';
 import {convertMoney} from '../../util/StringUtils';
-import {SLIDE_MIDDLE} from './SearchPanel';
+import {SLIDE_MIDDLE, slideShowFormat} from './SearchPanel';
 
 const CREATE_RECORD = gql`
   mutation ($input: NewRecord!) {
@@ -100,7 +100,7 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
         
         if (result) {
           setAllowDrag(true);
-          slideRef.current.show(SLIDE_MIDDLE);
+          slideRef.current.show(slideShowFormat(SLIDE_MIDDLE));
           dispatch([CLEAR_SEARCH_LIST]);
         } else {
           alert('기록 저장 실패!');
@@ -142,7 +142,7 @@ function RecordForm({setAllowDrag, setTab, slideRef}) {
                 dispatch([CLEAR_SEARCH_LIST]);
                 setTab('SearchForm');
                 setAllowDrag(true);
-                slideRef.current.show(SLIDE_MIDDLE);
+                slideRef.current.show(slideShowFormat(SLIDE_MIDDLE));
               } else {
                 setTab('PlaceDetail');
                 setAllowDrag(true);
