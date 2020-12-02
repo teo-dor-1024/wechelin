@@ -2,12 +2,10 @@ import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import {SearchBar} from 'react-native-elements';
-import {Dimensions, Platform, SafeAreaView, Text, View} from 'react-native';
+import {Button, SearchBar} from 'react-native-elements';
+import {SafeAreaView, Text, View} from 'react-native';
 import useMyInfo from '../../util/useMyInfo';
 import SortedByVisitedDate from './SortedByVisitedDate';
-
-const viewHeight = Dimensions.get('window').height;
 
 const GET_RECORDS = gql`
   query ($userId: String!, $keyword: String, $cursor: Int) {
@@ -100,37 +98,40 @@ function ListScreen({route: {params}}) {
   }, [deletingId]);
   
   return (
-    <SafeAreaView style={{
-      backgroundColor: '#FFFFFF',
-      ...(Platform.OS === 'android' && {
-        height: viewHeight,
-        paddingTop: 30,
-      }),
-    }}>
-      <SearchBar
-        platform={Platform.OS}
-        containerStyle={{
-          backgroundColor: '#FFFFFF',
-          paddingHorizontal: 10,
-          paddingBottom: 10,
-          paddingTop: 0,
-        }}
-        inputContainerStyle={{backgroundColor: '#E6E6E6'}}
-        placeholder='검색'
-        value={keyword}
-        onChangeText={keyword => setKeyword(keyword)}
-        onSubmitEditing={() => setKeywordFetch(true)}
-        onClear={() => setKeywordFetch(true)}
-        cancelButtonTitle='취소'
-        cancelButtonProps={{buttonStyle: {marginRight: 10, height: 45}}}
-      />
-      <View style={{height: Platform.OS === 'android' ? viewHeight - 100 : 700, paddingHorizontal: 20, paddingBottom: 70}}>
+    <SafeAreaView style={{backgroundColor: '#FFFFFF'}}>
+      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+        <SearchBar
+          platform="ios"
+          containerStyle={{
+            backgroundColor: '#FFFFFF',
+            width: '80%',
+          }}
+          inputContainerStyle={{backgroundColor: '#FFFFFF'}}
+          inputStyle={{fontSize: 14}}
+          leftIconContainerStyle={{marginRight: 10}}
+          cancelButtonTitle='취소'
+          cancelButtonProps={{
+            buttonStyle: {},
+            buttonTextStyle: {color: '#000000', fontSize: 15},
+          }}
+          value={keyword}
+          onChangeText={keyword => setKeyword(keyword)}
+          onSubmitEditing={() => setKeywordFetch(true)}
+        />
+        <Button
+          containerStyle={{width: 50, marginRight: 15}}
+          buttonStyle={{padding: 5}}
+          titleStyle={{fontSize: 14}}
+          title="전체"
+        />
+      </View>
+      <View style={{height: 700, paddingBottom: 70}}>
         {
           !shouldFetchMore && (loading || networkStatus === 2) ?
-            <Text> 기록 가져오는 중 ...</Text>
+            <Text style={{padding: 20}}> 기록 가져오는 중 ...</Text>
             :
             error ?
-              <Text> 기록 찾다가 에러 발생!! {error.toString()}</Text>
+              <Text style={{padding: 20}}> 기록 찾다가 에러 발생!! {error.toString()}</Text>
               :
               <SortedByVisitedDate
                 data={data.records}

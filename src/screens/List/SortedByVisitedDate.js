@@ -1,34 +1,27 @@
 import React from 'react';
-import {Button, Icon, ListItem} from 'react-native-elements';
+import {Button, Icon} from 'react-native-elements';
 import {Alert, Text, TouchableOpacity, View} from 'react-native';
-import {convertDate, convertMoney} from '../../util/StringUtils';
 import {SwipeListView} from 'react-native-swipe-list-view';
+import ListItem from './ListItem';
 
 const styles = {
-  listItem: {
-    backgroundColor: '#FFF',
-    borderBottomColor: '#D8D8D8',
-    borderBottomWidth: 0.4,
-    height: 100,
-  },
   hiddenItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   optionButton: {
-    width: 80,
-    height: 100,
-    paddingTop: 30,
-    paddingBottom: 30,
-    paddingLeft: 25,
-    paddingRight: 25,
+    width: 60,
+    height: 80,
+    paddingVertical: 15,
+    paddingHorizontal: 10,
     backgroundColor: '#FFBF00',
   },
-  buttonText: {
-    fontSize: 15,
+  optionButtonText: {
+    fontSize: 14,
     fontWeight: 'bold',
     marginTop: 5,
     color: '#FFFFFF',
+    textAlign: 'center'
   },
 };
 
@@ -43,7 +36,7 @@ function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, onPressMod
         showsVerticalScrollIndicator={false}
         data={hasMore ? recordsWithKey.concat([{moreBtn: true, key: 'moreBtn'}]) : recordsWithKey}
         renderItem={({item}) => {
-          const {moreBtn, placeName, visitedDate, menus = [], money, score} = item;
+          const {moreBtn} = item;
           
           return moreBtn ?
             <Button
@@ -55,30 +48,7 @@ function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, onPressMod
               disabled={shouldFetchMore}
             />
             :
-            <View style={styles.listItem}>
-              <ListItem
-                title={placeName}
-                titleStyle={{fontWeight: 'bold'}}
-                rightElement={
-                  score ?
-                    <View>
-                      <Icon name='star' type='antdesign' color='#FACC2E'/>
-                      <Text>
-                        <Text style={{fontWeight: 'bold', color: '#FACC2E', fontSize: 20}}>{score}</Text> / 5
-                      </Text>
-                    </View>
-                    :
-                    null
-                }
-                subtitle={
-                  <View>
-                    <Text style={{fontWeight: 'bold'}}>{convertDate(visitedDate)}</Text>
-                    <Text numberOfLines={1}>{menus.join(',')}</Text>
-                    <Text>{convertMoney(money)} 원</Text>
-                  </View>
-                }
-              />
-            </View>;
+            <ListItem {...item}/>;
         }}
         renderHiddenItem={({item: {key, moreBtn, ...rest}}) => !moreBtn && (
           <View style={styles.hiddenItem}>
@@ -87,7 +57,7 @@ function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, onPressMod
               onPress={() => onPressModify({key, ...rest})}
             >
               <Icon name='edit' type='material' color='#FFFFFF' style={{margin: 0, padding: 0}}/>
-              <Text style={styles.buttonText}>수정</Text>
+              <Text style={styles.optionButtonText}>수정</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={{...styles.optionButton, backgroundColor: '#DF3A01'}}
@@ -99,14 +69,14 @@ function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, onPressMod
                   {
                     text: '삭제',
                     onPress: () => onPressDelete(key),
-                    style: 'destructive'
+                    style: 'destructive',
                   },
                 ],
-                {cancelable: true}
+                {cancelable: true},
               )}
             >
               <Icon name='delete' type='antdesign' color='#FFFFFF'/>
-              <Text style={styles.buttonText}>삭제</Text>
+              <Text style={styles.optionButtonText}>삭제</Text>
             </TouchableOpacity>
           </View>
         )}
