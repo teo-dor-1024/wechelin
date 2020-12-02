@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import {Button, SearchBar} from 'react-native-elements';
+import {SearchBar} from 'react-native-elements';
 import {SafeAreaView, Text, View} from 'react-native';
 import useMyInfo from '../../util/useMyInfo';
 import SortedByVisitedDate from './SortedByVisitedDate';
@@ -98,50 +98,41 @@ function ListScreen({route: {params}}) {
   }, [deletingId]);
   
   return (
-    <SafeAreaView style={{backgroundColor: '#FFFFFF'}}>
-      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-        <SearchBar
-          platform="ios"
-          containerStyle={{
-            backgroundColor: '#FFFFFF',
-            width: '80%',
-          }}
-          inputContainerStyle={{backgroundColor: '#FFFFFF'}}
-          inputStyle={{fontSize: 14}}
-          leftIconContainerStyle={{marginRight: 10}}
-          cancelButtonTitle='취소'
-          cancelButtonProps={{
-            buttonStyle: {},
-            buttonTextStyle: {color: '#000000', fontSize: 15},
-          }}
-          value={keyword}
-          onChangeText={keyword => setKeyword(keyword)}
-          onSubmitEditing={() => setKeywordFetch(true)}
-        />
-        <Button
-          containerStyle={{width: 50, marginRight: 15}}
-          buttonStyle={{padding: 5}}
-          titleStyle={{fontSize: 14}}
-          title="전체"
-        />
-      </View>
-      <View style={{height: 700, paddingBottom: 70}}>
-        {
-          !shouldFetchMore && (loading || networkStatus === 2) ?
-            <Text style={{padding: 20}}> 기록 가져오는 중 ...</Text>
+    <SafeAreaView style={{backgroundColor: '#FFFFFF', height: '100%'}}>
+      {
+        !shouldFetchMore && (loading || networkStatus === 2) ?
+          <Text style={{padding: 20}}> 기록 가져오는 중 ...</Text>
+          :
+          error ?
+            <Text style={{padding: 20}}> 기록 찾다가 에러 발생!! {error.toString()}</Text>
             :
-            error ?
-              <Text style={{padding: 20}}> 기록 찾다가 에러 발생!! {error.toString()}</Text>
-              :
-              <SortedByVisitedDate
-                data={data.records}
-                onPressMoreView={() => setShouldFetchMore(true)}
-                shouldFetchMore={shouldFetchMore}
-                onPressModify={modify => navigation.navigate('Record', {modify})}
-                onPressDelete={key => setDeletingId(key)}
+            <>
+              <SearchBar
+                platform="ios"
+                containerStyle={{backgroundColor: '#FFFFFF'}}
+                inputContainerStyle={{backgroundColor: '#FFFFFF'}}
+                inputStyle={{fontSize: 14}}
+                leftIconContainerStyle={{marginRight: 10}}
+                cancelButtonTitle='취소'
+                cancelButtonProps={{
+                  buttonStyle: {marginRight: 10},
+                  buttonTextStyle: {color: '#000000', fontSize: 15},
+                }}
+                value={keyword}
+                onChangeText={keyword => setKeyword(keyword)}
+                onSubmitEditing={() => setKeywordFetch(true)}
               />
-        }
-      </View>
+              <View style={{height: 700, paddingBottom: 70}}>
+                <SortedByVisitedDate
+                  data={data.records}
+                  onPressMoreView={() => setShouldFetchMore(true)}
+                  shouldFetchMore={shouldFetchMore}
+                  onPressModify={modify => navigation.navigate('Record', {modify})}
+                  onPressDelete={key => setDeletingId(key)}
+                />
+              </View>
+            </>
+      }
     </SafeAreaView>
   );
 }

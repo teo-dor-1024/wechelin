@@ -25,12 +25,9 @@ function ListItem({visitedDate, placeName, category, money, isDutch}) {
           </View>
         </View>
         <View style={{alignItems: 'flex-end'}}>
-          <Text style={{fontWeight: 'bold', fontSize: 16}}>{convertMoney(money)}원</Text>
-          {
-            isDutch && (
-              <Text style={{fontWeight: 'bold', fontSize: 14, color: '#DF7401'}}>{convertMoney(money / 2)}원</Text>
-            )
-          }
+          <Text style={{fontWeight: 'bold', fontSize: 16, color: isDutch ? '#DF7401' : 'black'}}>
+            {convertMoney(isDutch ? money / 2 : money)}원
+          </Text>
         </View>
       </View>
     </View>

@@ -42,7 +42,7 @@ function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, onPressMod
             <Button
               title={shouldFetchMore ? ' 기록 가져오는 중 ...' : '더보기'}
               type='clear'
-              containerStyle={{backgroundColor: '#FFFFFF', height: 60, padding: 10}}
+              containerStyle={{backgroundColor: '#FFFFFF', height: 60, marginBottom: 10}}
               titleStyle={{color: '#585858'}}
               onPress={onPressMoreView}
               disabled={shouldFetchMore}

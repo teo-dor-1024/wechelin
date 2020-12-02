@@ -65,13 +65,7 @@ function StatsScreen() {
   const {myLover, spending: {total, dutch}, recordsByScore, recordsByCount, monthlySpending} = data;
   
   return (
-    <SafeAreaView style={{
-      ...(Platform.OS === 'android' && {
-        height: viewHeight,
-        paddingTop: 10,
-        paddingBottom: 80,
-      }),
-    }}>
+    <SafeAreaView>
       <ScrollView style={{height: viewHeight - 130}} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <ButtonGroup
