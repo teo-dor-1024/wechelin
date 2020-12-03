@@ -1,36 +1,35 @@
 import React from 'react';
-import {Text, View} from 'react-native';
-import moment from 'moment';
+import {Text, TouchableOpacity, View} from 'react-native';
 import {convertMoney} from '../../util/StringUtils';
 
 const styles = {
   container: {
     backgroundColor: '#FFF',
-    borderTopColor: '#D8D8D8',
-    borderTopWidth: 0.4,
-    height: 80,
+    height: 70,
     paddingHorizontal: 15,
   },
 };
 
-function ListItem({visitedDate, placeName, category, money, isDutch}) {
+function ListItem(props) {
+  const {onPressModify, ...item} = props;
+  const {placeName, category, money, isDutch} = item;
+  
   return (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={() => onPressModify(item)}>
       <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 20}}>
-        <View style={{flexDirection: 'row', width: '65%'}}>
-          <Text style={{color: '#848484', fontSize: 13}}>{moment(visitedDate).format('MM.DD')}</Text>
+        <View style={{flexDirection: 'row', width: '75%'}}>
           <View style={{marginHorizontal: 15}}>
             <Text style={{fontSize: 16}} numberOfLines={1}>{placeName}</Text>
-            <Text style={{marginTop: 3, color: '#2E64FE', fontSize: 12}} numberOfLines={1}>{category}</Text>
+            <Text style={{marginTop: 3, color: '#222', fontSize: 12}} numberOfLines={1}>{category}</Text>
           </View>
         </View>
         <View style={{alignItems: 'flex-end'}}>
-          <Text style={{fontWeight: 'bold', fontSize: 16, color: isDutch ? '#DF7401' : 'black'}}>
+          <Text style={{fontWeight: 'bold', fontSize: 16, color: isDutch ? '#d23669' : '#222'}}>
             {convertMoney(isDutch ? money / 2 : money)}원
           </Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 

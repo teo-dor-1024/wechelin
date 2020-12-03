@@ -109,20 +109,21 @@ function ListScreen({route: {params}}) {
             <>
               <SearchBar
                 platform="ios"
-                containerStyle={{backgroundColor: '#FFFFFF'}}
-                inputContainerStyle={{backgroundColor: '#FFFFFF'}}
-                inputStyle={{fontSize: 14}}
-                leftIconContainerStyle={{marginRight: 10}}
+                containerStyle={{backgroundColor: '#FFFFFF', paddingHorizontal: 10}}
+                inputContainerStyle={{backgroundColor: '#F2F2F2'}}
+                inputStyle={{fontSize: 16}}
+                leftIconContainerStyle={{marginRight: 5}}
                 cancelButtonTitle='취소'
                 cancelButtonProps={{
                   buttonStyle: {marginRight: 10},
-                  buttonTextStyle: {color: '#000000', fontSize: 15},
+                  buttonTextStyle: {fontSize: 16},
                 }}
+                placeholder="검색"
                 value={keyword}
                 onChangeText={keyword => setKeyword(keyword)}
                 onSubmitEditing={() => setKeywordFetch(true)}
               />
-              <View style={{height: 700, paddingBottom: 70}}>
+              <View style={{height: 700, paddingBottom: 80}}>
                 <SortedByVisitedDate
                   data={data.records}
                   onPressMoreView={() => setShouldFetchMore(true)}

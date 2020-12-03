@@ -3,12 +3,12 @@ import {ApolloClient} from 'apollo-client';
 import {InMemoryCache} from 'apollo-cache-inmemory';
 import {createHttpLink} from 'apollo-link-http';
 import {ApolloProvider} from '@apollo/react-hooks';
-import Navigator from './src/Navigator';
 import {StatusBar} from 'react-native';
+import Navigator from './src/Navigator';
 
 const client = new ApolloClient({
-  link: createHttpLink({uri: 'http://api.doeatrecord.com/graphql'}),
-  // link: createHttpLink({uri: 'http://localhost:4000/graphql'}),
+  // link: createHttpLink({uri: 'http://api.doeatrecord.com/graphql'}),
+  link: createHttpLink({uri: 'http://localhost:4000/graphql'}),
   cache: new InMemoryCache(),
   defaultOptions: {
     watchQuery: {

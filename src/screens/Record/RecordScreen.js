@@ -48,13 +48,12 @@ function RecordScreen({route: {params}}) {
       return;
     }
     
-    const {key, x, y, placeId, placeName, ...rest} = modifyInfo;
+    const {x, y, placeId, placeName, ...rest} = modifyInfo;
     const latitude = parseFloat(y);
     const longitude = parseFloat(x);
     
     dispatch([FETCH_PLACES, [{
       ...rest,
-      _id: key,
       id: placeId,
       name: placeName,
       latitude,

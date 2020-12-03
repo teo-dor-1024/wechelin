@@ -9,7 +9,7 @@ import RecordScreen from './screens/Record/RecordScreen';
 import StatsScreen from './screens/Stats/StatsScreen';
 import MapScreen from './screens/Map/MapScreen';
 import MyScreen from './screens/My/MyScreen';
-import {Text} from "react-native";
+import {Text} from 'react-native';
 
 const makeTabBarLabel = title => ({focused}) =>
   <Text style={{color: focused ? '#000' : '#A4A4A4', fontSize: 11}}>
@@ -59,12 +59,7 @@ function TabNavigator() {
           },
         })
       }
-      tabBarOptions={{
-        style: {
-          backgroundColor: '#F2F2F2',
-          borderColor: '#F2F2F2',
-        }
-      }}
+      tabBarOptions={{style: {backgroundColor: '#FAFAFA'}}}
       initialRouteName='Record'
     >
       <Tab.Screen name='List' component={ListScreen} options={{tabBarLabel: makeTabBarLabel('목록')}}/>
