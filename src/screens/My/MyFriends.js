@@ -23,7 +23,7 @@ function MyFriends({myFriends, openSearchForm, unFollow}) {
           <Text style={{marginLeft: 5, color: '#0080FF', fontWeight: 'bold'}}>친구찾기</Text>
         </TouchableOpacity>
       </View>
-      <ScrollView style={{paddingBottom: 70}}>
+      <ScrollView style={{paddingBottom: 70}} showsVerticalScrollIndicator={false}>
         {
           myFriends.length ?
             myFriends.map(({userId, nickname}) => (

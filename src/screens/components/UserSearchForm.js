@@ -42,7 +42,7 @@ function UserSearchForm({close, title, description, setKeyword, children, placeh
           cancelButtonTitle='취소'
           cancelButtonProps={{buttonStyle: {marginLeft: 10, height: 35}}}
         />
-        <ScrollView style={{marginHorizontal: 10, height: height - 230}}>
+        <ScrollView style={{marginHorizontal: 10, height: height - 230}} showsVerticalScrollIndicator={false}>
           {
             children
           }

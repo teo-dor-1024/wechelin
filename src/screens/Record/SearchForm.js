@@ -100,6 +100,7 @@ function SearchForm({setAllowDrag, setTab, slideRef, setSlideTop}) {
               bottomDivider
             />
             <ScrollView
+              showsVerticalScrollIndicator={false}
               onTouchStart={() => setAllowDrag(false)}
               onTouchEnd={() => setAllowDrag(true)}
               onTouchCancel={() => setAllowDrag(true)}

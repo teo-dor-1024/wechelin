@@ -1,19 +1,47 @@
 import React from 'react';
-import {Dimensions, View} from "react-native";
-import {Text} from "react-native-elements";
-import {calcAvg, convertMoney} from "../../util/StringUtils";
-import {BarChart} from "react-native-chart-kit";
+import {Dimensions, View} from 'react-native';
+import {Text} from 'react-native-elements';
+import {BarChart} from 'react-native-chart-kit';
+import {useQuery} from '@apollo/react-hooks';
+import gql from 'graphql-tag';
+import {calcAvg, convertMoney} from '../../util/StringUtils';
+import useMyInfo from '../../util/useMyInfo';
 
 const MONTHLY_TREND_COUNT = 4;
+const GET_MONTHLY_SPENDING = gql`
+  query ($userId: String!, $now: Date, $count: Int) {
+    monthlySpending(userId: $userId, now: $now, count: $count) {
+      label
+      spending
+    }
+  }
+`;
 
-function MonthlySpending({monthlySpending}) {
+function MonthlySpending() {
+  const {id} = useMyInfo();
+  const {loading, error, data} = useQuery(GET_MONTHLY_SPENDING, {
+    variables: {
+      userId: id, count: MONTHLY_TREND_COUNT,
+    },
+  });
+  
+  if (loading) {
+    return <Text> 통계 정보 계산하는 중 ... </Text>;
+  }
+  
+  if (error) {
+    return <Text> 통계 정보 가져오다 에러 발생 !! {error.toString()}</Text>;
+  }
+  
+  const {monthlySpending} = data;
+  
   if (monthlySpending.length < 4) {
     return null;
   }
   
   const trendList = monthlySpending.slice(-(MONTHLY_TREND_COUNT));
   const trendSpending = trendList.map(({spending}) => spending);
-  const data = {
+  const chartData = {
     labels: trendList.map(({label}) => `${label}월`),
     datasets: [{data: trendSpending.map(spending => Math.floor(spending / 10000))}],
   };
@@ -23,22 +51,22 @@ function MonthlySpending({monthlySpending}) {
   const diffPrevAndTarget = targetSpending - prevAvg;
   
   return (
-    <View>
-      <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 20, marginBottom: 10}}>
-        월 평균 {convertMoney(calcAvg(monthlySpending.map(({spending}) => spending)))}원 지출했어요!
+    <>
+      <Text style={{fontSize: 16, fontWeight: 'bold'}}>
+        월 평균 {convertMoney(calcAvg(monthlySpending.map(({spending}) => spending)))}원 지출했어요
       </Text>
       {
         !!diffPrevAndTarget && (
-          <Text style={{fontSize: 15, marginLeft: 20}}>
+          <Text style={{fontSize: 15}}>
             지난 3달 평균 {convertMoney(prevAvg)}원 보다 {convertMoney(Math.abs(diffPrevAndTarget))}원
-            {diffPrevAndTarget > 0 ? ' 더 쓰셨네요.' : ' 아꼈네요.'}
+            {diffPrevAndTarget > 0 ? ' 더 쓰셨네요' : ' 아꼈네요'}
           </Text>
         )
       }
       <View style={{alignItems: 'center', marginTop: 15}}>
         <BarChart
-          data={data}
-          width={Dimensions.get("window").width - 20}
+          data={chartData}
+          width={Dimensions.get('window').width - 20}
           height={220}
           chartConfig={{
             backgroundGradientFromOpacity: 0,
@@ -53,7 +81,7 @@ function MonthlySpending({monthlySpending}) {
           yAxisSuffix={'만원'}
         />
       </View>
-    </View>
+    </>
   );
 }
 

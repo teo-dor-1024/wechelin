@@ -25,7 +25,7 @@ function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, onPressMod
   let prevDate = null;
   
   return (
-    <ScrollView>
+    <ScrollView showsVerticalScrollIndicator={false}>
       {
         records.map(({_id, visitedDate, ...rest}) => {
           const yyyymmdd = visitedDate.substring(0, 10);
