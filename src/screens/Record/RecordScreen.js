@@ -3,6 +3,7 @@ import Geolocation from 'react-native-geolocation-service';
 import searchReducer, {FETCH_PLACES, FOCUS_PLACE, MOVE_MAP} from '../../reducers/searchReducer';
 import SearchPanel from './SearchPanel';
 import Map from './Map';
+import WriteForm from './WriteForm';
 
 export const RecordContext = createContext();
 const {Provider} = RecordContext;
@@ -64,8 +65,7 @@ function RecordScreen({route: {params}}) {
   
   return (
     <Provider value={{state, dispatch}}>
-      <Map setGoUserPosition={setGoUserPosition}/>
-      <SearchPanel modifyInfo={modifyInfo}/>
+      <WriteForm setGoUserPosition={setGoUserPosition}/>
     </Provider>
   );
 }

@@ -45,6 +45,7 @@ export default function (state, [type, payload]) {
         selectedIndex: payload.index,
       };
     case FETCH_PLACES:
+      console.log('페이로드', payload);
       return {
         ...state,
         places: payload,

@@ -4,13 +4,13 @@ import gql from 'graphql-tag';
 import {useQuery} from '@apollo/react-hooks';
 import {Dimensions, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Badge, Icon, Text} from 'react-native-elements';
-import RBSheet from 'react-native-raw-bottom-sheet';
 import {PieChart} from 'react-native-chart-kit';
 import useMyInfo from '../../util/useMyInfo';
 import {convertMoney} from '../../util/StringUtils';
 import MonthOption from './MonthOption';
 import MonthlySpending from './MonthlySpending';
 import RankedByVisits from './RankedByVisits';
+import BottomSelect from '../components/BottomSelect';
 
 const PIE_COLORS = ['#ffa7c4', '#6E6E6E', '#A4A4A4', '#D8D8D8', '#F2F2F2'];
 
@@ -139,27 +139,13 @@ function StatsScreen() {
         }
       </ScrollView>
       
-      <RBSheet
-        ref={monthSelector}
-        closeOnDragDown={false}
-        height={Dimensions.get('window').height - 300}
-        customStyles={{container: styles.modalContainer}}
-      >
-        <View style={styles.modalHeader}>
-          <Text style={styles.modalTitle}>월 선택하기</Text>
-          <Icon
-            type='ionicon' name='ios-close' color='#A4A4A4' size={30}
-            onPress={() => monthSelector.current.close()}
-          />
-        </View>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          {
-            MONTH_OPTIONS.map(date => (
-              <MonthOption key={date} date={date} now={now} setNow={setNow}/>
-            ))
-          }
-        </ScrollView>
-      </RBSheet>
+      <BottomSelect slide={monthSelector} title='월 선택하기'>
+        {
+          MONTH_OPTIONS.map(date => (
+            <MonthOption key={date} date={date} now={now} setNow={setNow}/>
+          ))
+        }
+      </BottomSelect>
     </SafeAreaView>
   );
 }
@@ -175,16 +161,6 @@ const styles = StyleSheet.create({
   spending: {fontSize: 22, fontWeight: 'bold', marginBottom: 10},
   settlement: {fontSize: 16, color: '#d23669'},
   monthlyPie: {flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10},
-  modalContainer: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingVertical: 20,
-    paddingHorizontal: 30,
-  },
-  modalHeader: {
-    marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-  },
-  modalTitle: {fontSize: 18, fontWeight: 'bold'},
 });
 
 export default StatsScreen;

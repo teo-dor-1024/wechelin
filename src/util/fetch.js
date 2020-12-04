@@ -2,9 +2,15 @@ const getPlacesByKeywordApi = 'https://dapi.kakao.com/v2/local/search/keyword.js
 
 export const fetchPlacesAroundMe = async (keyword, {latitude, longitude}) => {
   try {
-    const x = longitude.toString();
-    const y = latitude.toString();
-    const response = await fetch(`${getPlacesByKeywordApi}?query=${keyword}&x=${x}&y=${y}`, {
+    let queryString = `?query=${keyword}`;
+    if (latitude && longitude) {
+      const x = longitude.toString();
+      const y = latitude.toString();
+      
+      queryString += `&x=${x}&y=${y}`
+    }
+    
+    const response = await fetch(`${getPlacesByKeywordApi}${queryString}`, {
       method: 'GET',
       headers: {
         Accept: 'application/json',
