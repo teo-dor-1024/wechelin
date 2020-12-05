@@ -20,19 +20,24 @@ import StarRating from 'react-native-star-rating';
 import KakaoMapSearch from './KakaoMapSearch';
 
 const getColor = cond => cond ? '#d23669' : '#E6E6E6';
+const INIT_FORM_DATA = {
+  isDutch: false,
+  money: 0,
+  category: '식비',
+  placeName: '',
+  visitedDate: new Date(),
+  score: 0,
+};
 
-function WriteForm({setGoUserPosition}) {
+function WriteForm() {
+  // 현재 입력 중인 창
   const [focusInput, setFocusInput] = useState('');
+  // 날짜 선택 팝업
   const [isDateOpen, setIsDateOpen] = useState(false);
+  // 카카오맵 검색 팝업
   const [isMapOpen, setIsMapOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    isDutch: false,
-    money: 0,
-    category: '식비',
-    placeName: '',
-    visitedDate: new Date(),
-    score: 0,
-  });
+  // 입력 데이터
+  const [formData, setFormData] = useState(INIT_FORM_DATA);
   
   const categorySelector = useRef();
   const scoreSelector = useRef();
@@ -166,7 +171,7 @@ function WriteForm({setGoUserPosition}) {
         }
       </BottomSelect>
       
-      <BottomSelect slide={scoreSelector} title='평점 선택하기' height={250}>
+      <BottomSelect slide={scoreSelector} title='평점 선택하기' height={220}>
         <View style={styles.scoreSelector}>
           <StarRating
             emptyStarColor='#FACC2E' fullStarColor='#FACC2E'
@@ -205,8 +210,7 @@ const styles = StyleSheet.create({
   confirmButtonBox: {alignItems: 'center', paddingHorizontal: 10},
   confirmButton: {height: 50, borderRadius: 10, backgroundColor: '#d23669'},
   confirmButtonTitle: {fontSize: 18, fontWeight: 'bold'},
-  scoreSelector: {marginTop: 20, alignItems: 'center'},
-  
+  scoreSelector: {marginTop: 25, alignItems: 'center'},
 });
 
 export default WriteForm;

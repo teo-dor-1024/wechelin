@@ -1,86 +1,82 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Button, SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
-import {Icon, SearchBar} from 'react-native-elements';
+import React, {useEffect, useRef, useState} from 'react';
+import Geolocation from 'react-native-geolocation-service';
+import {debounce} from 'lodash';
+import {Modal, SafeAreaView} from 'react-native';
+import {WebView} from 'react-native-webview';
 import {fetchPlacesAroundMe} from '../../util/fetch';
-import {FETCH_PLACES} from '../../reducers/searchReducer';
-import {RecordContext} from './RecordScreen';
+import ModalHeader from '../components/ModalHeader';
+import Map from './Map';
+import SearchResults from './SearchResults';
+
+const INIT_REGION = {
+  latitude: 37.78825,
+  longitude: -122.4324,
+  latitudeDelta: 0.0922,
+  longitudeDelta: 0.0421,
+};
 
 function KakaoMapSearch({setIsMapOpen, placeName}) {
-  const {state: {region, places}, dispatch} = useContext(RecordContext);
+  // 검색어
   const [text, setText] = useState(placeName);
-  const [isFetch, setIsFetch] = useState(false);
+  // 현재 위치
+  const [region, setRegion] = useState(INIT_REGION);
+  const [goUser, setGoUser] = useState(false);
+  // 상세 팝업
+  const [url, setUrl] = useState('');
+  // 검색한 카카오맵 장소 목록
+  const [places, setPlaces] = useState([]);
+  // 검색 API
+  const fetchPlaces = useRef(debounce(async (keyword, region) => {
+    setPlaces(keyword ? await fetchPlacesAroundMe(keyword, region) : []);
+  }, 500));
   
+  // 현재 위치 입력
   useEffect(() => {
-    if (!text) {
-      console.log(text);
-      dispatch(FETCH_PLACES, []);
-      setIsFetch(false);
-      return;
+    if (goUser) {
+      Geolocation.getCurrentPosition(
+        ({coords: {latitude, longitude}}) => setRegion({...region, latitude, longitude}),
+        error => console.log(error.code, error.message),
+        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+      );
+      
+      setGoUser(false);
     }
-    
-    const fetchPlaces = async (keyword, region) => {
-      dispatch([FETCH_PLACES, await fetchPlacesAroundMe(keyword, region)]);
-      setIsFetch(false);
-    };
-    
-    fetchPlaces(text, region);
-  }, [isFetch]);
+  }, [Geolocation, goUser]);
+  
+  // 카카오맵 검색 API 호출
+  useEffect(() => {
+    console.log(text, region);
+    fetchPlaces.current(text, region);
+  }, [text]);
   
   return (
-    <SafeAreaView>
-      <View style={styles.searchModalHeader}>
-        <Icon type='font-awesome-5' name='chevron-left' size={20} onPress={() => setIsMapOpen(false)}/>
-        <Text style={{fontSize: 18, fontWeight: 'bold'}}>카카오맵으로 검색</Text>
-        <View style={{width: 20}}/>
-      </View>
-      <SearchBar
-        platform="ios"
-        containerStyle={{backgroundColor: '#FFFFFF', paddingHorizontal: 10}}
-        inputContainerStyle={{backgroundColor: '#F2F2F2'}}
-        inputStyle={{fontSize: 16}}
-        leftIconContainerStyle={{marginRight: 5}}
-        cancelButtonTitle='취소'
-        cancelButtonProps={{
-          buttonStyle: {marginRight: 10},
-          buttonTextStyle: {fontSize: 16},
-        }}
-        placeholder="검색"
-        value={text}
-        onChangeText={text => setText(text)}
-        onSubmitEditing={() => setIsFetch(true)}
+    <>
+      <SafeAreaView>
+        <ModalHeader title='카카오맵으로 검색' close={() => setIsMapOpen(false)}/>
+        <Map
+          region={region}
+          setRegion={setRegion}
+          setGoUser={setGoUser}
+          places={places}
+        />
+        
+        <Modal animationType="slide" visible={!!url}>
+          <SafeAreaView style={{flex: 1}}>
+            <ModalHeader title='상세 정보' close={() => setUrl('')}/>
+            <WebView source={{uri: url}}/>
+          </SafeAreaView>
+        </Modal>
+      </SafeAreaView>
+      
+      <SearchResults
+        placeName={placeName}
+        text={text}
+        setText={setText}
+        places={places}
+        setUrl={setUrl}
       />
-      <ScrollView>
-        {
-          places.length ?
-            places.map(({id, name, category, address, latitude, longitude, url}) => {
-              
-              return (
-                <View key={id}>
-                  <Text>{name}</Text>
-                  <Text>{address}</Text>
-                </View>
-              );
-            })
-            :
-            <View style={styles.manualAdd}>
-              <Text style={styles.manualInfo}>카카오맵에 등록된 장소가 없습니다.</Text>
-            </View>
-        }
-      </ScrollView>
-    </SafeAreaView>
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  searchModalHeader: {
-    paddingHorizontal: 20,
-    marginVertical: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  manualAdd: {marginTop: 20, paddingHorizontal: 20},
-  manualInfo: {fontSize: 16},
-});
 
 export default KakaoMapSearch;

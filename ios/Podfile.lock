@@ -314,10 +314,10 @@ PODS:
     - React
   - RNDeviceInfo (5.5.3):
     - React
-  - RNGestureHandler (1.5.6):
-    - React
-  - RNReanimated (1.7.0):
-    - React
+  - RNGestureHandler (1.9.0):
+    - React-Core
+  - RNReanimated (1.13.2):
+    - React-Core
   - RNScreens (2.0.0-beta.2):
     - React
   - RNSVG (12.1.0):
@@ -517,8 +517,8 @@ SPEC CHECKSUMS:
   RNCMaskedView: e5b99bc191945f157adeede68da9d424462de177
   RNDateTimePicker: 1e20e91177ab5e885aa645666c5490ad99e9a839
   RNDeviceInfo: 67607dfe9cfbed105838144c40187a8392aa404d
-  RNGestureHandler: 911d3b110a7a233a34c4f800e7188a84b75319c6
-  RNReanimated: 031fe8d9ea93c2bd689a40f05320ef9d96f74d7f
+  RNGestureHandler: 9b7e605a741412e20e13c512738a31bd1611759b
+  RNReanimated: e03f7425cb7a38dcf1b644d680d1bfc91c3337ad
   RNScreens: 5e4758109c6d35f9a009ce72af873df907548020
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4

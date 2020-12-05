@@ -1,78 +1,64 @@
-import React, {useContext} from 'react';
+import React, {useEffect} from 'react';
 import MapView, {Marker} from 'react-native-maps';
 import {Button, Icon} from 'react-native-elements';
-import {RecordContext} from './RecordScreen';
-import {FOCUS_PLACE, SET_ADD_PIN_INFO} from '../../reducers/searchReducer';
-import {StyleSheet} from "react-native";
+import {Dimensions, StyleSheet, View} from 'react-native';
 
-function Map({setGoUserPosition}) {
-  const {
-    state: {
-      region, places, addPinMode, addPinInfo,
-    },
-    dispatch,
-  } = useContext(RecordContext);
+function Map({region, setRegion, setGoUser, places}) {
+  useEffect(() => {
+    if (!places?.length) {
+      return;
+    }
+    
+    setRegion({
+      ...region,
+      latitude: places[0].latitude,
+      longitude: places[0].longitude,
+    });
+  }, [places]);
   
   return (
-    <>
+    <View style={styles.container}>
       <Button
-        containerStyle={styles.toolContainer}
-        buttonStyle={styles.btnGoUser}
-        icon={<Icon type='feather' name='navigation' size={23}/>}
-        onPress={() => setGoUserPosition(true)}
+        containerStyle={styles.goToUserContainer}
+        buttonStyle={styles.userButton}
+        icon={<Icon type='font-awesome-5' name='location-arrow' size={18} color='#d23669'/>}
+        onPress={() => setGoUser(true)}
       />
       <MapView
-        style={{flex: 1}}
+        style={{...Dimensions.get('window')}}
         region={region}
-        onPress={({nativeEvent: {coordinate}}) => addPinMode && dispatch([SET_ADD_PIN_INFO, {...coordinate}])}
         showsUserLocation
       >
         {
-          places.map(({id, name, latitude, longitude}, index) =>
+          places.map(({id, name, latitude, longitude}) => (
             <Marker
-              key={id}
-              title={name}
+              key={id} title={name}
               coordinate={{latitude, longitude}}
-              onPress={
-                ({
-                   nativeEvent: {
-                     coordinate: {latitude, longitude},
-                   },
-                 }) => dispatch([FOCUS_PLACE, {
-                  index,
-                  latitude,
-                  longitude,
-                }])
-              }
-            />,
-          )
-        }
-        {
-          addPinInfo.latitude ?
-            <Marker coordinate={{...addPinInfo}}/>
-            :
-            null
+              onPress={() => setRegion({...region, latitude, longitude})}
+            />
+          ))
         }
       </MapView>
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  toolContainer: {
+  container: {width: '100%', height: '100%'},
+  goToUserContainer: {
+    backgroundColor: '#FFF',
+    borderRadius: 50,
     position: 'absolute',
     zIndex: 99,
-    right: 15,
-    top: 80,
+    right: 10,
+    top: 60,
   },
-  btnGoUser: {
-    backgroundColor: '#FAFAFA',
-    paddingTop: 10,
-    paddingBottom: 8,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-    borderColor: '#D8D8D8',
-    borderWidth: 1,
+  userButton: {
+    backgroundColor: '#FFF',
+    width: 45,
+    height: 45,
+    borderRadius: 50,
+    borderWidth: 0,
   },
 });
 
