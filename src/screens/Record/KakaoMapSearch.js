@@ -15,9 +15,9 @@ const INIT_REGION = {
   longitudeDelta: 0.0421,
 };
 
-function KakaoMapSearch({setIsMapOpen, placeName}) {
+function KakaoMapSearch({setIsMapOpen, initKeyword, setPlace}) {
   // 검색어
-  const [text, setText] = useState(placeName);
+  const [text, setText] = useState(initKeyword);
   // 현재 위치
   const [region, setRegion] = useState(INIT_REGION);
   const [goUser, setGoUser] = useState(false);
@@ -29,6 +29,7 @@ function KakaoMapSearch({setIsMapOpen, placeName}) {
   const fetchPlaces = useRef(debounce(async (keyword, region) => {
     setPlaces(keyword ? await fetchPlacesAroundMe(keyword, region) : []);
   }, 500));
+  
   
   // 현재 위치 입력
   useEffect(() => {
@@ -45,19 +46,21 @@ function KakaoMapSearch({setIsMapOpen, placeName}) {
   
   // 카카오맵 검색 API 호출
   useEffect(() => {
-    console.log(text, region);
     fetchPlaces.current(text, region);
   }, [text]);
+  
+  const close = () => setIsMapOpen(false);
   
   return (
     <>
       <SafeAreaView>
-        <ModalHeader title='카카오맵으로 검색' close={() => setIsMapOpen(false)}/>
+        <ModalHeader title='카카오맵으로 검색' close={close}/>
         <Map
           region={region}
           setRegion={setRegion}
           setGoUser={setGoUser}
           places={places}
+          setUrl={setUrl}
         />
         
         <Modal animationType="slide" visible={!!url}>
@@ -69,11 +72,11 @@ function KakaoMapSearch({setIsMapOpen, placeName}) {
       </SafeAreaView>
       
       <SearchResults
-        placeName={placeName}
         text={text}
         setText={setText}
         places={places}
-        setUrl={setUrl}
+        setPlace={setPlace}
+        close={close}
       />
     </>
   );

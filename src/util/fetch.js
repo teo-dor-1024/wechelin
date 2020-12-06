@@ -18,7 +18,7 @@ export const fetchPlacesAroundMe = async (keyword, {latitude, longitude}) => {
         'Content-Type': 'application/json',
       },
     });
-    const {documents} = await response.json();
+    const {documents, ...rest} = await response.json();
     
     return documents.map((
       {
@@ -32,8 +32,8 @@ export const fetchPlacesAroundMe = async (keyword, {latitude, longitude}) => {
         y,
         distance,
       }) => ({
-        id,
-        name: place_name,
+        placeId: id,
+        placeName: place_name,
         url: place_url,
         address: road_address_name || address_name,
         category: category_name,
