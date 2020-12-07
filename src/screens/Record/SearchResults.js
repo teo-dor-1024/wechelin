@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Divider, Icon, SearchBar} from 'react-native-elements';
 import BottomSheet from 'reanimated-bottom-sheet';
+import {mappingCategory} from '../../util/Category';
 
 const TOP = Dimensions.get('window').height - 250;
 
@@ -13,8 +14,8 @@ function SearchResults({text, setText, places, setPlace, close}) {
     setIsEnter(false);
   };
   
-  const selectPlace = place => {
-    setPlace(place);
+  const selectPlace = ({categoryGroup, ...rest}) => {
+    setPlace({...rest, category: mappingCategory(categoryGroup)});
     close();
   };
   
@@ -22,8 +23,8 @@ function SearchResults({text, setText, places, setPlace, close}) {
     <BottomSheet
       snapPoints={[TOP, 120]}
       enabledContentGestureInteraction={false}
-      onOpenStart={() => setIsTop(true)}
-      onCloseStart={() => setIsTop(false)}
+      onOpenEnd={() => setIsTop(true)}
+      onCloseEnd={() => setIsTop(false)}
       renderHeader={() => (
         <View style={styles.header}>
           <Icon type='font-awesome-5' name='window-minimize'/>

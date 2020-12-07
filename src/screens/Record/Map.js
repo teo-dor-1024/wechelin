@@ -4,7 +4,9 @@ import {Button, Icon} from 'react-native-elements';
 import {Dimensions, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {debounce} from 'lodash';
 
-function Map({region, setRegion, setGoUser, places, setUrl}) {
+const {height, width} = Dimensions.get('window');
+
+function Map({region, setRegion, setGoUser, places, setUrl, setRect}) {
   const map = useRef();
   const fitToMarkers = useRef(debounce(ids => {
     map.current.fitToSuppliedMarkers(ids);
@@ -16,13 +18,14 @@ function Map({region, setRegion, setGoUser, places, setUrl}) {
   const handleMove = () => {
     console.log('touch end');
     if (!isMoved) {
-      setIsMoved(true)
+      setIsMoved(true);
     }
   };
   
   const handleClickHere = async () => {
-    const {} = await map.current.getMapBoundaries();
-    setRegion();
+    const {northEast, southWest} = await map.current.getMapBoundaries();
+    console.log(northEast, southWest);
+    setRect(`${southWest.longitude},${southWest.latitude},${northEast.longitude},${southWest.latitude}`);
   };
   
   useEffect(() => {
@@ -35,15 +38,9 @@ function Map({region, setRegion, setGoUser, places, setUrl}) {
       latitude: places[0].latitude,
       longitude: places[0].longitude,
     });
-  }, [places]);
-  
-  useEffect(() => {
-    if (!places.length) {
-      return;
-    }
     
     fitToMarkers.current(places.map(({placeId}) => placeId));
-  });
+  }, [places]);
   
   return (
     <View style={styles.container}>
@@ -66,7 +63,7 @@ function Map({region, setRegion, setGoUser, places, setUrl}) {
       />
       <MapView
         ref={map}
-        style={{...Dimensions.get('window')}}
+        style={{height, width}}
         region={region}
         onTouchEnd={handleMove}
         showsUserLocation
@@ -98,7 +95,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 99,
     top: 10,
-    left: (Dimensions.get('window').width - 100) / 2
+    left: (Dimensions.get('window').width - 100) / 2,
   },
   reSearchHereButton: {
     backgroundColor: '#FFF',
@@ -109,7 +106,7 @@ const styles = StyleSheet.create({
   reSearchTitle: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#d23669'
+    color: '#d23669',
   },
   goToUserContainer: {
     backgroundColor: '#FFF',
@@ -127,7 +124,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
   },
   markerTitle: {marginRight: 5, fontSize: 16, marginBottom: 3},
-  markerLink: {color: '#0080FF'}
+  markerLink: {color: '#0080FF'},
 });
 
 export default Map;

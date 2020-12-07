@@ -21,6 +21,8 @@ function KakaoMapSearch({setIsMapOpen, initKeyword, setPlace}) {
   // 현재 위치
   const [region, setRegion] = useState(INIT_REGION);
   const [goUser, setGoUser] = useState(false);
+  // 현재 반경
+  const [rect, setRect] = useState('');
   // 상세 팝업
   const [url, setUrl] = useState('');
   // 검색한 카카오맵 장소 목록
@@ -46,8 +48,9 @@ function KakaoMapSearch({setIsMapOpen, initKeyword, setPlace}) {
   
   // 카카오맵 검색 API 호출
   useEffect(() => {
-    fetchPlaces.current(text, region);
-  }, [text]);
+    // 검색어가 바뀌거나, 지도의 반경이 바뀔 때만 새로 호출
+    fetchPlaces.current(text, region, rect);
+  }, [text, rect]);
   
   const close = () => setIsMapOpen(false);
   
@@ -61,6 +64,7 @@ function KakaoMapSearch({setIsMapOpen, initKeyword, setPlace}) {
           setGoUser={setGoUser}
           places={places}
           setUrl={setUrl}
+          setRect={setRect}
         />
         
         <Modal animationType="slide" visible={!!url}>

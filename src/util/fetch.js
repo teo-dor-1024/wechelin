@@ -1,13 +1,15 @@
 const getPlacesByKeywordApi = 'https://dapi.kakao.com/v2/local/search/keyword.json';
 
-export const fetchPlacesAroundMe = async (keyword, {latitude, longitude}) => {
+export const fetchPlacesAroundMe = async (keyword, {latitude, longitude}, rect) => {
   try {
     let queryString = `?query=${keyword}`;
-    if (latitude && longitude) {
+    if (rect) {
+      queryString += `&rect=${rect}`;
+    } else if (latitude && longitude) {
       const x = longitude.toString();
       const y = latitude.toString();
       
-      queryString += `&x=${x}&y=${y}`
+      queryString += `&x=${x}&y=${y}&radius=20000`;
     }
     
     const response = await fetch(`${getPlacesByKeywordApi}${queryString}`, {
@@ -18,7 +20,7 @@ export const fetchPlacesAroundMe = async (keyword, {latitude, longitude}) => {
         'Content-Type': 'application/json',
       },
     });
-    const {documents, ...rest} = await response.json();
+    const {documents} = await response.json();
     
     return documents.map((
       {
@@ -27,6 +29,7 @@ export const fetchPlacesAroundMe = async (keyword, {latitude, longitude}) => {
         place_url,
         road_address_name,
         address_name,
+        category_group_name,
         category_name,
         x,
         y,
@@ -36,6 +39,7 @@ export const fetchPlacesAroundMe = async (keyword, {latitude, longitude}) => {
         placeName: place_name,
         url: place_url,
         address: road_address_name || address_name,
+        categoryGroup: category_group_name,
         category: category_name,
         latitude: parseFloat(y),
         longitude: parseFloat(x),
