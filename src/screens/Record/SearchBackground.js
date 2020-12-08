@@ -18,7 +18,9 @@ function SearchBackground({region, setRegion, setGoUser, places, setUrl, setRect
   
   const handleClickHere = async () => {
     const {northEast, southWest} = await map.current.getMapBoundaries();
-    console.log(northEast, southWest);
+    const {center: {latitude, longitude}} = await map.current.getCamera();
+    
+    setRegion({...region, latitude, longitude});
     setRect(`${southWest.longitude},${southWest.latitude},${northEast.longitude},${southWest.latitude}`);
   };
   
