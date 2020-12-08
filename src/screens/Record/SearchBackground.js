@@ -1,12 +1,10 @@
-import React, {useEffect, useRef, useState} from 'react';
-import MapView, {Callout, Marker} from 'react-native-maps';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Button, Icon} from 'react-native-elements';
-import {Dimensions, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Dimensions, StyleSheet, View} from 'react-native';
 import {debounce} from 'lodash';
+import SearchMap from './SearchMap';
 
-const {height, width} = Dimensions.get('window');
-
-function Map({region, setRegion, setGoUser, places, setUrl, setRect}) {
+function SearchBackground({region, setRegion, setGoUser, places, setUrl, setRect}) {
   const map = useRef();
   const fitToMarkers = useRef(debounce(ids => {
     map.current.fitToSuppliedMarkers(ids);
@@ -14,13 +12,9 @@ function Map({region, setRegion, setGoUser, places, setUrl, setRect}) {
   
   // 지도 위치 변경 여부
   const [isMoved, setIsMoved] = useState(false);
-  
-  const handleMove = () => {
-    console.log('touch end');
-    if (!isMoved) {
-      setIsMoved(true);
-    }
-  };
+  const handleMove = useCallback(() => {
+    setIsMoved(true);
+  }, []);
   
   const handleClickHere = async () => {
     const {northEast, southWest} = await map.current.getMapBoundaries();
@@ -61,30 +55,13 @@ function Map({region, setRegion, setGoUser, places, setUrl, setRect}) {
         icon={<Icon type='font-awesome-5' name='location-arrow' size={18} color='#d23669'/>}
         onPress={() => setGoUser(true)}
       />
-      <MapView
-        ref={map}
-        style={{height, width}}
+      <SearchMap
+        map={map}
         region={region}
-        onTouchEnd={handleMove}
-        showsUserLocation
-      >
-        {
-          places.map(({placeId, placeName, latitude, longitude, url}) => (
-            <Marker
-              key={placeId}
-              identifier={placeId}
-              coordinate={{latitude, longitude}}
-            >
-              <Callout tooltip={false}>
-                <Text style={styles.markerTitle}>{placeName}</Text>
-                <TouchableOpacity onPress={() => setUrl(url)}>
-                  <Text style={styles.markerLink}>상세보기</Text>
-                </TouchableOpacity>
-              </Callout>
-            </Marker>
-          ))
-        }
-      </MapView>
+        handleMove={handleMove}
+        places={places}
+        setUrl={setUrl}
+      />
     </View>
   );
 }
@@ -123,8 +100,6 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     borderWidth: 0,
   },
-  markerTitle: {marginRight: 5, fontSize: 16, marginBottom: 3},
-  markerLink: {color: '#0080FF'},
 });
 
-export default Map;
+export default SearchBackground;

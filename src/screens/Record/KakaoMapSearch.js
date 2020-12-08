@@ -5,7 +5,7 @@ import {Modal, SafeAreaView} from 'react-native';
 import {WebView} from 'react-native-webview';
 import {fetchPlacesAroundMe} from '../../util/fetch';
 import ModalHeader from '../components/ModalHeader';
-import Map from './Map';
+import SearchBackground from './SearchBackground';
 import SearchResults from './SearchResults';
 
 const INIT_REGION = {
@@ -58,7 +58,7 @@ function KakaoMapSearch({setIsMapOpen, initKeyword, setPlace}) {
     <>
       <SafeAreaView>
         <ModalHeader title='카카오맵으로 검색' close={close}/>
-        <Map
+        <SearchBackground
           region={region}
           setRegion={setRegion}
           setGoUser={setGoUser}
