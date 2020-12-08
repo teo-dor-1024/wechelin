@@ -1,36 +1,27 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Button, Divider} from 'react-native-elements';
-import {Alert, ScrollView, Text, View} from 'react-native';
+import {Modal, ScrollView, Text, View} from 'react-native';
 import {format} from 'date-fns';
 import ko from 'date-fns/locale/ko';
 import ListItem from './ListItem';
+import RecordDetail from './RecordDetail';
 
-function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, onPressModify, onPressDelete}) {
+
+function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, refetch}) {
   const {records, hasMore} = data;
   
-  const deleteRecord = id => Alert.alert(
-    '정말 삭제하시겠습니까?',
-    null,
-    [
-      {text: '취소', style: 'cancel'},
-      {
-        text: '삭제',
-        onPress: () => onPressDelete(id),
-        style: 'destructive',
-      },
-    ],
-    {cancelable: true},
-  );
+  const [detail, setDetail] = useState(null);
   
   let prevDate = null;
   
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       {
-        records.map(({_id, visitedDate, ...rest}) => {
+        records.map(record => {
+          const {_id, visitedDate} = record;
           const yyyymmdd = visitedDate.substring(0, 10);
           if (prevDate && prevDate === yyyymmdd) {
-            return <ListItem key={_id} {...rest} onPressModify={onPressModify}/>;
+            return <ListItem key={_id} {...record} setDetail={setDetail}/>;
           }
           
           prevDate = yyyymmdd;
@@ -40,7 +31,7 @@ function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, onPressMod
                 {format(new Date(visitedDate), 'M월 d일 EEEE', {locale: ko})}
               </Text>
               <Divider style={{marginHorizontal: 20}}/>
-              <ListItem {...rest} onPressModify={onPressModify}/>
+              <ListItem {...record} setDetail={setDetail}/>
             </View>
           );
         })
@@ -60,6 +51,9 @@ function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, onPressMod
       {
         !records.length && <Text>기록이 없습니다.</Text>
       }
+      <Modal animationType="slide" visible={!!detail}>
+        <RecordDetail detail={detail} setDetail={setDetail} refetch={refetch}/>
+      </Modal>
     </ScrollView>
   );
 }

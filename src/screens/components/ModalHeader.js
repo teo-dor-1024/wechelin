@@ -2,7 +2,7 @@ import React from 'react';
 import {Icon} from 'react-native-elements';
 import {StyleSheet, Text, View} from 'react-native';
 
-function ModalHeader({title, close}) {
+function ModalHeader({title, close, RightComponent}) {
   return (
     <View style={styles.container}>
       <Icon
@@ -12,7 +12,9 @@ function ModalHeader({title, close}) {
         onPress={close}
       />
       <Text style={styles.title}>{title}</Text>
-      <View style={styles.emptyRight}/>
+      {
+        RightComponent || <View style={styles.empty}/>
+      }
     </View>
   );
 }
@@ -27,7 +29,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   title: {fontSize: 18, fontWeight: 'bold'},
-  emptyRight: {width: 20},
+  empty: {width: 20},
 });
 
 export default ModalHeader;

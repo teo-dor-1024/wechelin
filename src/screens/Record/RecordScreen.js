@@ -24,7 +24,7 @@ const INIT_FORM_DATA = {
   isDutch: false,
   money: 0,
   placeName: '',
-  menu: [],
+  menus: [],
   category: '식비',
   visitedDate: new Date(),
   score: 0,
@@ -118,11 +118,11 @@ function RecordScreen() {
           <View style={styles.inputBox}>
             <Input
               inputStyle={styles.inputFont}
-              inputContainerStyle={{borderBottomColor: getColor(focusInput === 'menu')}}
-              onFocus={() => setFocusInput('menu')} onBlur={() => setFocusInput('')}
-              value={formData.menu.join(',')}
-              onChangeText={value => setPlaceByOne('menu', value.split(','))}
-              placeholder="상세내역을 입력하세요"
+              inputContainerStyle={{borderBottomColor: getColor(focusInput === 'menus')}}
+              onFocus={() => setFocusInput('menus')} onBlur={() => setFocusInput('')}
+              value={formData.menus.join(',')}
+              onChangeText={value => setPlaceByOne('menus', value.split(','))}
+              placeholder="지출내역을 입력하세요"
             />
           </View>
           
@@ -146,15 +146,19 @@ function RecordScreen() {
             </TouchableOpacity>
           </View>
           
-          <View style={styles.selectBox}>
-            <TouchableOpacity style={styles.selectButton} onPress={() => scoreSelector.current.open()}>
-              <Text style={styles.buttonLabel}>평점</Text>
-              <View style={styles.selectedOption}>
-                <Text style={styles.selectedValue}>{formData.score ? `${formData.score}점` : '미평가'}</Text>
-                <Icon type='ionicon' name='ios-arrow-forward' size={20}/>
+          {
+            formData.isDutch && (
+              <View style={styles.selectBox}>
+                <TouchableOpacity style={styles.selectButton} onPress={() => scoreSelector.current.open()}>
+                  <Text style={styles.buttonLabel}>평점</Text>
+                  <View style={styles.selectedOption}>
+                    <Text style={styles.selectedValue}>{formData.score ? `${formData.score}점` : '미평가'}</Text>
+                    <Icon type='ionicon' name='ios-arrow-forward' size={20}/>
+                  </View>
+                </TouchableOpacity>
               </View>
-            </TouchableOpacity>
-          </View>
+            )
+          }
         </View>
         
         <View style={styles.confirmButtonBox}>

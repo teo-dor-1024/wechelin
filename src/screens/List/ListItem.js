@@ -10,17 +10,16 @@ const styles = {
   },
 };
 
-function ListItem(props) {
-  const {onPressModify, ...item} = props;
-  const {placeName, category, money, isDutch} = item;
+function ListItem({setDetail, ...item}) {
+  const {placeName, category, money, menus, isDutch} = item;
   
   return (
-    <TouchableOpacity style={styles.container} onPress={() => onPressModify(item)}>
+    <TouchableOpacity style={styles.container} onPress={() => setDetail(item)}>
       <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 20}}>
         <View style={{flexDirection: 'row', width: '75%'}}>
           <View style={{marginHorizontal: 15}}>
             <Text style={{fontSize: 16}} numberOfLines={1}>{placeName}</Text>
-            <Text style={{marginTop: 3, color: '#222', fontSize: 12}} numberOfLines={1}>{category}</Text>
+            <Text style={{marginTop: 3, color: '#222', fontSize: 12}} numberOfLines={1}>{menus?.join(', ')}</Text>
           </View>
         </View>
         <View style={{alignItems: 'flex-end'}}>

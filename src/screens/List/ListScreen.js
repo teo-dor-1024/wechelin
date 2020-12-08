@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
-import {useMutation, useQuery} from '@apollo/react-hooks';
+import {useQuery} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import {SearchBar} from 'react-native-elements';
 import {SafeAreaView, Text, View} from 'react-native';
@@ -32,26 +31,18 @@ const GET_RECORDS = gql`
   }
 `;
 
-const DELETE_RECORD = gql`
-  mutation ($_id: ID!) {
-    deleteRecord(_id: $_id)
-  }
-`;
-
 function ListScreen({route: {params}}) {
   const reload = params ? params.reload : null;
-  const navigation = useNavigation();
   
   const {id: userId} = useMyInfo();
   const [shouldFetchMore, setShouldFetchMore] = useState(false);
   const [keywordFetch, setKeywordFetch] = useState(false);
   const [keyword, setKeyword] = useState('');
-  const [deletingId, setDeletingId] = useState('');
   
   const {
     loading, error, data, fetchMore, refetch, networkStatus,
   } = useQuery(GET_RECORDS, {variables: {userId}});
-  const [deleteRecord] = useMutation(DELETE_RECORD);
+  
   
   useEffect(() => {
     if (reload) {
@@ -87,16 +78,6 @@ function ListScreen({route: {params}}) {
     setKeywordFetch(false);
   }, [keywordFetch]);
   
-  useEffect(() => {
-    const doDelete = async () => {
-      const result = await deleteRecord({variables: {_id: deletingId}});
-      result ? refetch() : alert('삭제에 실패했습니다.');
-    };
-    deletingId && doDelete();
-    
-    setDeletingId('');
-  }, [deletingId]);
-  
   return (
     <SafeAreaView style={{backgroundColor: '#FFFFFF', height: '100%'}}>
       {
@@ -128,8 +109,7 @@ function ListScreen({route: {params}}) {
                   data={data.records}
                   onPressMoreView={() => setShouldFetchMore(true)}
                   shouldFetchMore={shouldFetchMore}
-                  onPressModify={modify => navigation.navigate('Record', {modify})}
-                  onPressDelete={key => setDeletingId(key)}
+                  refetch={refetch}
                 />
               </View>
             </>
