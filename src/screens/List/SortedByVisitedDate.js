@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Divider} from 'react-native-elements';
 import {Modal, ScrollView, Text, View} from 'react-native';
 import {format} from 'date-fns';
@@ -6,11 +6,18 @@ import ko from 'date-fns/locale/ko';
 import ListItem from './ListItem';
 import RecordDetail from './RecordDetail';
 
-
-function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, refetch}) {
+function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, refetch, reOpenDetail}) {
   const {records, hasMore} = data;
   
   const [detail, setDetail] = useState(null);
+  
+  useEffect(() => {
+    if (!reOpenDetail) {
+      return;
+    }
+    
+    setDetail(reOpenDetail);
+  }, [reOpenDetail]);
   
   let prevDate = null;
   
@@ -19,7 +26,7 @@ function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, refetch}) 
       {
         records.map(record => {
           const {_id, visitedDate} = record;
-          const yyyymmdd = visitedDate.substring(0, 10);
+          const yyyymmdd = visitedDate?.substring(0, 10);
           if (prevDate && prevDate === yyyymmdd) {
             return <ListItem key={_id} {...record} setDetail={setDetail}/>;
           }

@@ -1,58 +1,25 @@
-import React, {useEffect, useState} from 'react';
-import ModalHeader from '../components/ModalHeader';
-import {Alert, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import React from 'react';
+import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Divider} from 'react-native-elements';
-import Barcode from "react-native-barcode-builder";
-import {useMutation} from '@apollo/react-hooks';
-import gql from 'graphql-tag';
+import Barcode from 'react-native-barcode-builder';
+import {useNavigation} from '@react-navigation/native';
+import ModalHeader from '../components/ModalHeader';
 import {convertDate, convertMoney} from '../../util/StringUtils';
 
-const DELETE_RECORD = gql`
-  mutation ($_id: ID!) {
-    deleteRecord(_id: $_id)
-  }
-`;
-
-function RecordDetail({detail, setDetail, refetch}) {
-  const {placeId, placeName, category, money, menus, visitedDate, isDutch, score} = detail;
+function RecordDetail({detail, setDetail}) {
+  const {placeName, category, money, menus, visitedDate, isDutch, score} = detail;
   
-  const [deletingId, setDeletingId] = useState('');
-  const [deleteRecord] = useMutation(DELETE_RECORD);
-  
-  // 기록 삭제
-  useEffect(() => {
-    if (!deletingId) {
-      return;
-    }
-    
-    (async (deletingId) => {
-      const result = await deleteRecord({variables: {_id: deletingId}});
-      result ? refetch() : alert('삭제에 실패했습니다.');
-      setDeletingId('');
-    })(deletingId);
-  }, [deletingId]);
-  
-  // 삭제 핸들러
-  const handleDelete = id => Alert.alert(
-    '정말 삭제하시겠습니까?',
-    null,
-    [
-      {text: '취소', style: 'cancel'},
-      {
-        text: '삭제',
-        onPress: () => setDeletingId(id),
-        style: 'destructive',
-      },
-    ],
-    {cancelable: true},
-  );
+  const navigation = useNavigation();
   
   return (
     <SafeAreaView>
       <ModalHeader
         title='상세 내역'
         close={() => setDetail(null)}
-        RightComponent={<TouchableOpacity>
+        RightComponent={<TouchableOpacity onPress={() => {
+          navigation.navigate('Record', {modify: {...detail, visitedDate: new Date(visitedDate)}});
+          setDetail(null);
+        }}>
           <Text style={{fontSize: 16}}>수정</Text>
         </TouchableOpacity>}
       />
@@ -62,18 +29,24 @@ function RecordDetail({detail, setDetail, refetch}) {
         <Text style={styles.money}>{convertMoney(money)}원</Text>
         <Text style={styles.category}>{category}</Text>
         <Text style={styles.date}>{convertDate(visitedDate)}</Text>
-        <Divider style={styles.divider}/>
         {
-          menus.map(menu => (
-            <Text key={menu} style={styles.menu}>{menu}</Text>
-          ))
+          menus?.length && (
+            <>
+              <Divider style={styles.divider}/>
+              {
+                menus.map(menu => (
+                  <Text key={menu} style={styles.menu}>{menu}</Text>
+                ))
+              }
+            </>
+          )
         }
         <Divider style={styles.divider}/>
-        <Text style={styles.isDutch}>{isDutch ? '데이트 지출' : '개인 지출'}</Text>
-        {
-          score && <Text style={styles.score}>{score}</Text>
-        }
-        <Barcode value="Hello World" format="CODE128"/>
+        <View style={styles.hashInfo}>
+          <Text style={styles.isDutch}>#{isDutch ? '데이트 지출' : '개인 지출'}</Text>
+          <Text style={styles.score}>{score ? `#${score}점` : '#미평가'}</Text>
+        </View>
+        <Barcode value="fake barcode" format="CODE128"/>
       </ScrollView>
     </SafeAreaView>
   );
@@ -87,8 +60,9 @@ const styles = StyleSheet.create({
   date: {marginBottom: 15},
   divider: {marginBottom: 15},
   menu: {marginBottom: 15},
+  hashInfo: {flexDirection: 'row'},
   isDutch: {marginBottom: 15},
-  score: {marginBottom: 15},
+  score: {marginBottom: 15, marginLeft: 10},
 });
 
 export default RecordDetail;

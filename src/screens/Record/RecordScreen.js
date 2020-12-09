@@ -1,5 +1,6 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
+  Alert,
   InputAccessoryView,
   Keyboard,
   Modal,
@@ -10,14 +11,19 @@ import {
   View,
 } from 'react-native';
 import {Button, ButtonGroup, Icon, Input} from 'react-native-elements';
-import {convertMoney} from '../../util/StringUtils';
-import {format} from 'date-fns';
+import {format, getMonth, getYear} from 'date-fns';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import BottomSelect from '../components/BottomSelect';
-import {allCategories} from '../../util/Category';
-import CategoryOption from './CategoryOption';
 import StarRating from 'react-native-star-rating';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {useMutation} from '@apollo/react-hooks';
+import gql from 'graphql-tag';
+import {allCategories} from '../../util/Category';
+import BottomSelect from '../components/BottomSelect';
+import CategoryOption from './CategoryOption';
 import KakaoMapSearch from './KakaoMapSearch';
+import ModalHeader from '../components/ModalHeader';
+import useMyInfo from '../../util/useMyInfo';
+import {convertMoney} from '../../util/StringUtils';
 
 const getColor = cond => cond ? '#d23669' : '#E6E6E6';
 const INIT_FORM_DATA = {
@@ -30,8 +36,24 @@ const INIT_FORM_DATA = {
   score: 0,
 };
 
+const CREATE_RECORD = gql`
+  mutation ($input: NewRecord!) {
+    createRecord(input: $input)
+  }
+`;
+
+const DELETE_RECORD = gql`
+  mutation ($_id: ID!) {
+    deleteRecord(_id: $_id)
+  }
+`;
 
 function RecordScreen() {
+  const {params} = useRoute();
+  const navigation = useNavigation();
+  
+  const {id: userId} = useMyInfo();
+  
   // 현재 입력 중인 창
   const [focusInput, setFocusInput] = useState('');
   // 날짜 선택 팝업
@@ -40,6 +62,106 @@ function RecordScreen() {
   const [isMapOpen, setIsMapOpen] = useState(false);
   // 입력 데이터
   const [formData, setFormData] = useState(INIT_FORM_DATA);
+  
+  // 수정 여부
+  const [isModify, setIsModify] = useState(false);
+  // 수정할 데이터 동기화
+  useEffect(() => {
+    if (!params?.modify) {
+      return;
+    }
+    
+    setIsModify(true);
+  }, [params]);
+  // 수정 여부 동기화
+  useEffect(() => {
+    setFormData(isModify ? params.modify : INIT_FORM_DATA);
+  }, [isModify]);
+  
+  // 수정 또는 기록 처리
+  const [isWriteDone, setIsWriteDone] = useState(false);
+  const [createRecord] = useMutation(CREATE_RECORD);
+  useEffect(() => {
+    const record = async formData => {
+      try {
+        const {placeId, address, x, y, url, score, visitedDate} = formData;
+        console.log({
+          userId,
+          ...formData,
+          placeId: placeId || '',
+          address: address || '',
+          x: x?.toString() || '',
+          y: y?.toString() || '',
+          url: url || '',
+          score: score || 0,
+          visitedDate: new Date(visitedDate),
+          visitedYear: getYear(visitedDate),
+          visitedMonth: getMonth(visitedDate) + 1,
+        });
+        const {data: {createRecord: result}} = await createRecord({
+          variables: {
+            input: {
+              userId,
+              ...formData,
+              placeId: placeId || '',
+              address: address || '',
+              x: x?.toString() || '',
+              y: y?.toString() || '',
+              url: url || '',
+              score: score || 0,
+              visitedDate: new Date(visitedDate),
+              visitedYear: getYear(visitedDate),
+              visitedMonth: getMonth(visitedDate) + 1,
+            },
+          },
+        });
+        
+        if (result) {
+          navigation.navigate('List', {reload: true});
+        } else {
+          alert('기록 저장 실패!');
+        }
+      } catch (error) {
+        console.log(error.toString());
+        alert('기록 저장 실패!');
+      } finally {
+        setIsWriteDone(false);
+      }
+    };
+    
+    isWriteDone && record(formData);
+  }, [isWriteDone, userId]);
+  
+  // 삭제 처리
+  const [deletingId, setDeletingId] = useState('');
+  const [deleteRecord] = useMutation(DELETE_RECORD);
+  // 기록 삭제
+  useEffect(() => {
+    if (!deletingId) {
+      return;
+    }
+    
+    (async (deletingId) => {
+      const result = await deleteRecord({variables: {_id: deletingId}});
+      result ? refetch() : alert('삭제에 실패했습니다.');
+      setDeletingId('');
+    })(deletingId);
+  }, [deletingId]);
+  
+  // 삭제 핸들러
+  const handleDelete = id => Alert.alert(
+    '정말 삭제하시겠습니까?',
+    null,
+    [
+      {text: '취소', style: 'cancel'},
+      {
+        text: '삭제',
+        onPress: () => setDeletingId(id),
+        style: 'destructive',
+      },
+    ],
+    {cancelable: true},
+  );
   
   const categorySelector = useRef();
   const scoreSelector = useRef();
@@ -61,12 +183,26 @@ function RecordScreen() {
   };
   
   const inputAccessoryView = 'placeNameView';
+  const title = `${isModify ? '수정' : '기록'}하기`;
   
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>지출 기록하기</Text>
-      </View>
+      <ModalHeader
+        close={() => {
+          navigation.navigate('List', {detail: params?.modify});
+          setIsModify(false);
+        }}
+        title={`지출 ${title}`}
+        useLeft={isModify}
+        RightComponent={
+          isModify ?
+            <TouchableOpacity onPress={() => handleDelete(formData?._id)}>
+              <Text>삭제</Text>
+            </TouchableOpacity>
+            :
+            null
+        }
+      />
       
       <View style={styles.body}>
         <View>
@@ -89,7 +225,19 @@ function RecordScreen() {
               onFocus={() => setFocusInput('money')} onBlur={() => setFocusInput('')}
               keyboardType='number-pad' returnKeyType='done'
               value={`${convertMoney(formData.money)} 원`}
-              onChangeText={value => setPlaceByOne('money', value)}
+              onChangeText={value => {
+                // 숫자 입력인지 Backspace 인지
+                let next = value.replace(/\s+|원|^0원|,/g, '');
+                if (!value.includes('원')) {
+                  console.log(value);
+                  next = next.length === 1 ?
+                    0
+                    :
+                    next.substring(0, next.length - 1);
+                }
+                
+                setPlaceByOne('money', parseInt(next, 10));
+              }}
             />
           </View>
           
@@ -121,7 +269,7 @@ function RecordScreen() {
               inputContainerStyle={{borderBottomColor: getColor(focusInput === 'menus')}}
               onFocus={() => setFocusInput('menus')} onBlur={() => setFocusInput('')}
               value={formData.menus.join(',')}
-              onChangeText={value => setPlaceByOne('menus', value.split(','))}
+              onChangeText={value => setPlaceByOne('menus', value ? value.split(',') : [])}
               placeholder="지출내역을 입력하세요"
             />
           </View>
@@ -163,9 +311,10 @@ function RecordScreen() {
         
         <View style={styles.confirmButtonBox}>
           <Button
-            title='기록하기' containerStyle={{width: '100%'}}
+            title={title} containerStyle={{width: '100%'}}
             buttonStyle={styles.confirmButton}
             titleStyle={styles.confirmButtonTitle}
+            onPress={() => setIsWriteDone(true)}
           />
         </View>
       </View>
@@ -215,8 +364,6 @@ function RecordScreen() {
 
 const styles = StyleSheet.create({
   container: {backgroundColor: '#FFFFFF', height: '100%', paddingBottom: 80},
-  header: {alignItems: 'center', marginVertical: 20},
-  title: {fontSize: 18, fontWeight: 'bold'},
   body: {flex: 1, justifyContent: 'space-between', paddingBottom: 20, paddingHorizontal: 20},
   dutchContainer: {
     backgroundColor: '#F2F2F2', borderWidth: 0, borderRadius: 20, height: 45, padding: 5, marginBottom: 15,

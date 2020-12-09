@@ -3,6 +3,7 @@ import {useQuery} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import {SearchBar} from 'react-native-elements';
 import {SafeAreaView, Text, View} from 'react-native';
+import {useRoute} from '@react-navigation/native';
 import useMyInfo from '../../util/useMyInfo';
 import SortedByVisitedDate from './SortedByVisitedDate';
 
@@ -31,7 +32,8 @@ const GET_RECORDS = gql`
   }
 `;
 
-function ListScreen({route: {params}}) {
+function ListScreen() {
+  const {params} = useRoute();
   const reload = params ? params.reload : null;
   
   const {id: userId} = useMyInfo();
@@ -110,6 +112,7 @@ function ListScreen({route: {params}}) {
                   onPressMoreView={() => setShouldFetchMore(true)}
                   shouldFetchMore={shouldFetchMore}
                   refetch={refetch}
+                  reOpenDetail={params?.detail}
                 />
               </View>
             </>

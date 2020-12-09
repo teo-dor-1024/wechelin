@@ -7,7 +7,7 @@ import SearchMap from './SearchMap';
 function SearchBackground({region, setRegion, setGoUser, places, setUrl, setRect}) {
   const map = useRef();
   const fitToMarkers = useRef(debounce(ids => {
-    map.current.fitToSuppliedMarkers(ids);
+    map.current?.fitToSuppliedMarkers(ids);
   }, 1000));
   
   // 지도 위치 변경 여부
