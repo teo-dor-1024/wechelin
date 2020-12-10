@@ -3,8 +3,7 @@ import gql from 'graphql-tag';
 import {useMutation} from '@apollo/react-hooks';
 import {View} from 'react-native';
 import {Icon, ListItem} from 'react-native-elements';
-import {myStyles} from './MyScreen';
-import {getTypeKorName} from "./SearchUnMatched";
+import {getTypeKorName} from './SearchUnMatched';
 
 const OFF_ALARM = gql`
   mutation ($_id: ID!) {
@@ -37,7 +36,10 @@ function RequestedAlarms({requestedAlarms = []}) {
           i < 2 && (
             <ListItem
               key={_id}
-              containerStyle={myStyles.alarmItem}
+              containerStyle={{
+                marginBottom: 5,
+                paddingVertical: 10,
+              }}
               title={`${targetName}님이 ${getTypeKorName(type)} 요청을 ${result === 'reject' ? '거절' : '수락'}하셨습니다.`}
               titleStyle={{fontSize: 14}}
               rightIcon={

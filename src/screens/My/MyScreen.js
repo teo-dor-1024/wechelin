@@ -3,39 +3,17 @@ import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import {Alert, Clipboard, Modal, SafeAreaView, TouchableOpacity, View} from 'react-native';
-import {Button, Icon, Text} from 'react-native-elements';
+import {Alert, Clipboard, Modal, SafeAreaView, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Divider, Text} from 'react-native-elements';
 import useMyInfo from '../../util/useMyInfo';
 import ReceivedAlarms from './ReceivedAlarms';
 import RequestedAlarms from './RequestedAlarms';
 import SearchUnMatched from './SearchUnMatched';
-import MyLover from './MyLover';
-import MyFriends from './MyFriends';
-
-export const myStyles = {
-  alarmItem: {
-    marginBottom: 5,
-    paddingVertical: 10,
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-    justifyContent: 'space-between'
-  },
-  toolContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-};
+import ModalHeader from '../components/ModalHeader';
 
 const GET_MY_INFO = gql`
   query ($userId: String!) {
     myLover(userId: $userId) {
-      userId
-      nickname
-    }
-    myFriends(userId: $userId) {
       userId
       nickname
     }
@@ -116,7 +94,7 @@ function MyScreen() {
         Alert.alert(
           '요청 처리에 실패했습니다.',
           '다시 요청해주세요.',
-          {text: '확인'}
+          {text: '확인'},
         );
       }
     };
@@ -144,16 +122,6 @@ function MyScreen() {
     setTargetInfo(myLover.userId, myLover.nickname);
   };
   
-  const openFriendSearchForm = () => {
-    setIsVisibleModal(true);
-    setSearchType('friends');
-  };
-  
-  const unFollowFriend = (userId, nickname) => {
-    setSearchType('unFollow');
-    setTargetInfo(userId, nickname);
-  };
-  
   if (loading) {
     return (
       <SafeAreaView>
@@ -171,88 +139,91 @@ function MyScreen() {
     );
   }
   
-  const {receivedAlarms = [], requestedAlarms = [], myLover, myFriends = []} = data;
+  const {receivedAlarms = [], requestedAlarms = [], myLover} = data;
   const requestedOnAlarm = requestedAlarms.filter(({alarm}) => alarm);
   const alreadyRequestedInfo = requestedAlarms.find(({completed, type}) => !completed && type === 'couple');
   const crushedName = alreadyRequestedInfo ? alreadyRequestedInfo.targetName : '';
   
   return (
-    <SafeAreaView style={{marginHorizontal: 20}}>
-      <View style={{...myStyles.titleContainer, paddingVertical: 15}}>
-        <Text style={{fontSize: 24, fontWeight: 'bold'}}>
-          {nickName || 'Guest'}님
-        </Text>
-        <Button
-          type='clear'
-          title='로그아웃'
-          titleStyle={{color: '#1C1C1C'}}
-          icon={<Icon name='log-out' type='feather' size={20} containerStyle={{marginRight: 5}}/>}
-          onPress={logout}
-        />
-      </View>
-      
-      <View style={{marginBottom: 40}}>
-        <View style={myStyles.titleContainer}>
-          <View style={myStyles.toolContainer}>
-            <Icon type='antdesign' name='idcard' size={25}/>
-            <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 5}}>
-              아이디
-            </Text>
-          </View>
-          <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => Clipboard.setString(id)}>
-            <Icon
-              type='material-community'
-              name='content-copy'
-              size={20}
-            />
-            <Text style={{marginLeft: 5, color: '#585858', fontWeight: 'bold'}}>복사하기</Text>
-          </TouchableOpacity>
-        </View>
-        <Text style={{fontSize: 18}}>{id}</Text>
-      </View>
-      
-      <View style={{marginBottom: 40}}>
-        <View style={myStyles.titleContainer}>
-          <View style={myStyles.toolContainer}>
-            <Icon type='material-community' name='bell-outline' size={25}/>
-            <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 5}}>
-              알림
-            </Text>
-          </View>
-          <TouchableOpacity style={myStyles.toolContainer} onPress={() => refetch()}>
-            <Icon
-              name='md-refresh'
-              type='ionicon'
-              size={20}
-            />
-            <Text style={{marginLeft: 5, color: '#585858', fontWeight: 'bold'}}>새로고침</Text>
-          </TouchableOpacity>
-          
-        </View>
-        <ReceivedAlarms myId={id} receivedAlarms={receivedAlarms}/>
-        <RequestedAlarms requestedAlarms={requestedOnAlarm}/>
-        {
-          (receivedAlarms.length || requestedOnAlarm.length) ?
-            null
-            :
-            <Text style={{fontSize: 18}}>
-              수신된 알람이 없습니다.
-            </Text>
-        }
-      </View>
-      
-      <MyLover
-        myLover={myLover}
-        crushedName={crushedName}
-        openSearchForm={openCoupleSearchForm}
-        breakUp={coupleBreakUp}
+    <SafeAreaView style={styles.container}>
+      <ModalHeader
+        useLeft={false}
+        title={`${nickName || '게스트'}님 정보`}
+        RightComponent={<TouchableOpacity onPress={logout}>
+          <Text>로그아웃</Text>
+        </TouchableOpacity>}
       />
       
-      <MyFriends
-        myFriends={myFriends}
-        openSearchForm={openFriendSearchForm}
-        unFollow={unFollowFriend}
-      />
+      <View style={styles.boxInfo}>
+        <View style={styles.boxRow}>
+          <Text style={styles.generalText}>닉네임</Text>
+          <Text style={styles.generalText}>{nickName}</Text>
+        </View>
+        
+        <TouchableOpacity onPress={() => Clipboard.setString(id)}>
+          <View style={styles.boxRow}>
+            <Text style={styles.generalText}>아이디</Text>
+            <Text style={styles.generalText}>{id}</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+      
+      <View style={styles.boxHeader}>
+        <Text style={styles.boxTitle}>알림</Text>
+        <TouchableOpacity onPress={() => refetch()}><Text>새로고침</Text></TouchableOpacity>
+      </View>
+      <Divider style={styles.divider}/>
+      <ReceivedAlarms myId={id} receivedAlarms={receivedAlarms}/>
+      <RequestedAlarms requestedAlarms={requestedOnAlarm}/>
+      {
+        (receivedAlarms.length || requestedOnAlarm.length) ?
+          null
+          :
+          <Text style={styles.emptyAlarm}>
+            수신된 알림이 없습니다.
+          </Text>
+      }
+      
+      <Text style={styles.title}>커플</Text>
+      <Divider style={styles.divider}/>
+      {
+        !(myLover || crushedName) &&
+        <TouchableOpacity stye={styles.boxInfo} onPress={openCoupleSearchForm}>
+          <Text style={{color: '#0080FF', fontWeight: 'bold'}}>커플찾기</Text>
+        </TouchableOpacity>
+      }
+      
+      {
+        myLover ?
+          <View style={styles.boxInfo}>
+            <View style={styles.boxRow}>
+              <Text style={styles.generalText}>{myLover.nickname} 님</Text>
+              <TouchableOpacity
+                onPress={() => Alert.alert(
+                  '정말 연결을 끊으시겠습니까?',
+                  null,
+                  [
+                    {text: '취소', style: 'cancel'},
+                    {
+                      text: '해제',
+                      onPress: coupleBreakUp,
+                      style: 'destructive',
+                    },
+                  ],
+                  {cancelable: true},
+                )}
+              >
+                <Text style={styles.cancelButton}>연결 해제</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          :
+          <Text style={styles.emptyAlarm}>
+            {
+              crushedName ? `${crushedName}님의 수락을 기다리는 중입니다.` : '연결된 커플이 없습니다.'
+            }
+          </Text>
+      }
       
       <Modal animationType='slide' visible={isVisibleModal}>
         <SearchUnMatched
@@ -265,5 +236,24 @@ function MyScreen() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {backgroundColor: '#FFFFFF', height: '100%'},
+  boxInfo: {paddingHorizontal: 20},
+  boxHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    marginTop: 40,
+    marginBottom: 10,
+  },
+  boxTitle: {fontSize: 16, fontWeight: 'bold'},
+  boxRow: {flexDirection: 'row', justifyContent: 'space-between', marginTop: 25},
+  generalText: {fontSize: 16},
+  title: {paddingHorizontal: 20, marginTop: 40, marginBottom: 10, fontSize: 16, fontWeight: 'bold'},
+  divider: {marginHorizontal: 20},
+  emptyAlarm: {paddingHorizontal: 20, marginTop: 20, fontSize: 18},
+  cancelButton: {color: '#d23669'},
+});
 
 export default MyScreen;

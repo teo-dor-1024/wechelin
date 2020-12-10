@@ -49,6 +49,7 @@ function ListScreen() {
   useEffect(() => {
     if (reload) {
       data && refetch();
+      params.detail = null;
       params.reload = false;
     }
   }, [reload]);

@@ -7,7 +7,8 @@ import ModalHeader from '../components/ModalHeader';
 import {convertDate, convertMoney} from '../../util/StringUtils';
 
 function RecordDetail({detail, setDetail}) {
-  const {placeName, category, money, menus, visitedDate, isDutch, score} = detail;
+  const {__typename, ...placeInfo} = detail;
+  const {placeName, category, money, menus, visitedDate, isDutch, score} = placeInfo;
   
   const navigation = useNavigation();
   
@@ -17,7 +18,7 @@ function RecordDetail({detail, setDetail}) {
         title='상세 내역'
         close={() => setDetail(null)}
         RightComponent={<TouchableOpacity onPress={() => {
-          navigation.navigate('Record', {modify: {...detail, visitedDate: new Date(visitedDate)}});
+          navigation.navigate('Record', {modify: {...placeInfo, visitedDate: new Date(visitedDate)}});
           setDetail(null);
         }}>
           <Text style={{fontSize: 16}}>수정</Text>
@@ -30,7 +31,7 @@ function RecordDetail({detail, setDetail}) {
         <Text style={styles.category}>{category}</Text>
         <Text style={styles.date}>{convertDate(visitedDate)}</Text>
         {
-          menus?.length && (
+          menus?.length > 0 && (
             <>
               <Divider style={styles.divider}/>
               {

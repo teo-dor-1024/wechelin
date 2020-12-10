@@ -3,8 +3,7 @@ import {Alert, View} from 'react-native';
 import gql from 'graphql-tag';
 import {useMutation} from '@apollo/react-hooks';
 import {Button, ListItem} from 'react-native-elements';
-import {myStyles} from './MyScreen';
-import {getTypeKorName} from "./SearchUnMatched";
+import {getTypeKorName} from './SearchUnMatched';
 
 const styles = {
   alarmButton: {
@@ -13,7 +12,7 @@ const styles = {
     paddingRight: 5,
     paddingTop: 0,
     paddingBottom: 0,
-  }
+  },
 };
 
 const DECIDE_ALARM = gql`
@@ -50,7 +49,10 @@ function ReceivedAlarms({myId, receivedAlarms = []}) {
           i < 2 && (
             <ListItem
               key={_id}
-              containerStyle={myStyles.alarmItem}
+              containerStyle={{
+                marginBottom: 5,
+                paddingVertical: 10,
+              }}
               title={`${applicantName}님이 우리가 ${getTypeKorName(type)}이라는데요?`}
               titleStyle={{fontSize: 14}}
               rightElement={
@@ -68,10 +70,10 @@ function ReceivedAlarms({myId, receivedAlarms = []}) {
                         {
                           text: '수락',
                           onPress: () => setDecideInfo({_id, result: 'accept', myId, applicantId, type}),
-                          style: 'destructive'
+                          style: 'destructive',
                         },
                       ],
-                      {cancelable: true}
+                      {cancelable: true},
                     )}
                   />
                   <Button
@@ -86,10 +88,10 @@ function ReceivedAlarms({myId, receivedAlarms = []}) {
                         {
                           text: '거절',
                           onPress: () => setDecideInfo({_id, result: 'reject', myId, applicantId, type}),
-                          style: 'destructive'
+                          style: 'destructive',
                         },
                       ],
-                      {cancelable: true}
+                      {cancelable: true},
                     )}
                   />
                 </View>

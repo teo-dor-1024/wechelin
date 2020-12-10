@@ -14,8 +14,8 @@ function SearchResults({text, setText, places, setPlace, close}) {
     setIsEnter(false);
   };
   
-  const selectPlace = ({categoryGroup, ...rest}) => {
-    setPlace({...rest, category: mappingCategory(categoryGroup)});
+  const selectPlace = ({categoryGroup, latitude, longitude, distance, ...rest}) => {
+    setPlace({...rest, x: longitude, y: latitude, category: mappingCategory(categoryGroup)});
     close();
   };
   

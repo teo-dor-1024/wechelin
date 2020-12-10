@@ -38,7 +38,22 @@ const INIT_FORM_DATA = {
 
 const CREATE_RECORD = gql`
   mutation ($input: NewRecord!) {
-    createRecord(input: $input)
+    createRecord(input: $input) {
+      _id
+      userId
+      placeId
+      placeName
+      category
+      url
+      address
+      visitedDate
+      menus
+      money
+      score
+      isDutch
+      x
+      y
+    }
   }
 `;
 
@@ -85,19 +100,6 @@ function RecordScreen() {
     const record = async formData => {
       try {
         const {placeId, address, x, y, url, score, visitedDate} = formData;
-        console.log({
-          userId,
-          ...formData,
-          placeId: placeId || '',
-          address: address || '',
-          x: x?.toString() || '',
-          y: y?.toString() || '',
-          url: url || '',
-          score: score || 0,
-          visitedDate: new Date(visitedDate),
-          visitedYear: getYear(visitedDate),
-          visitedMonth: getMonth(visitedDate) + 1,
-        });
         const {data: {createRecord: result}} = await createRecord({
           variables: {
             input: {
@@ -117,12 +119,13 @@ function RecordScreen() {
         });
         
         if (result) {
-          navigation.navigate('List', {reload: true});
+          const {__typename, ...detail} = result;
+          setIsModify(false);
+          navigation.navigate('List', {reload: true, detail});
         } else {
           alert('기록 저장 실패!');
         }
       } catch (error) {
-        console.log(error.toString());
         alert('기록 저장 실패!');
       } finally {
         setIsWriteDone(false);
@@ -143,8 +146,13 @@ function RecordScreen() {
     
     (async (deletingId) => {
       const result = await deleteRecord({variables: {_id: deletingId}});
-      result ? refetch() : alert('삭제에 실패했습니다.');
-      setDeletingId('');
+      if (result) {
+        setDeletingId('');
+        setIsModify(false);
+        navigation.navigate('List', {reload: true});
+      } else {
+        alert('삭제에 실패했습니다.')
+      }
     })(deletingId);
   }, [deletingId]);
   
@@ -229,7 +237,6 @@ function RecordScreen() {
                 // 숫자 입력인지 Backspace 인지
                 let next = value.replace(/\s+|원|^0원|,/g, '');
                 if (!value.includes('원')) {
-                  console.log(value);
                   next = next.length === 1 ?
                     0
                     :

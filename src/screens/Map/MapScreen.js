@@ -6,8 +6,7 @@ import {Button, Icon} from 'react-native-elements';
 import {Dimensions, Modal, Platform, SafeAreaView, StyleSheet, View} from 'react-native';
 import useMyInfo from '../../util/useMyInfo';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import WebView from "react-native-webview";
-import SearchFriends from "./SearchFriends";
+import WebView from 'react-native-webview';
 
 const GET_RECORDS_BY_MAP = gql`
   query ($userId: String!, $xMin: String!, $xMax: String!, $yMin: String!, $yMax: String!) {
@@ -53,9 +52,6 @@ function MapScreen() {
   
   const [goUserPosition, setGoUserPosition] = useState(true);
   
-  const [isVisibleFriendSearchForm, setIsVisibleFriendSearchForm] = useState(false);
-  const [friendId, setFriendId] = useState('');
-  
   const [placeUrl, setPlaceUrl] = useState('');
   const [isVisiblePlaceDetail, setIsVisiblePlaceDetail] = useState(false);
   
@@ -94,7 +90,7 @@ function MapScreen() {
       
       getRecords({
         variables: {
-          userId: friendId || userId,
+          userId: userId,
           xMin: xMin.toString(),
           xMax: xMax.toString(),
           yMin: yMin.toString(),
@@ -114,7 +110,7 @@ function MapScreen() {
   
   useEffect(() => {
     onPressReFetch();
-  }, [userId, friendId]);
+  }, [userId]);
   
   useEffect(() => {
     if (data && data.mapRecords) {
@@ -132,24 +128,23 @@ function MapScreen() {
   
   return (
     <View style={{flex: 1}}>
-      <View style={styles.reFetchContainer}>
-        {
-          isMoved && (
-            <Button
-              title='이지역 재검색'
-              titleStyle={{fontSize: 13, color: '#2E64FE'}}
-              buttonStyle={styles.btnReFetch}
-              icon={{
-                type: 'material-community',
-                name: 'reload',
-                size: 17,
-                color: '#2E64FE'
-              }}
-              onPress={onPressReFetch}
-            />
-          )
-        }
-      </View>
+      {
+        isMoved && (
+          <Button
+            title='여기 검색'
+            containerStyle={styles.reSearchHereContainer}
+            buttonStyle={styles.reSearchHereButton}
+            titleStyle={styles.reSearchTitle}
+            onPress={onPressReFetch}
+          />
+        )
+      }
+      <Button
+        containerStyle={styles.goToUserContainer}
+        buttonStyle={styles.userButton}
+        icon={<Icon type='font-awesome-5' name='location-arrow' size={18} color='#d23669'/>}
+        onPress={() => setGoUserPosition(true)}
+      />
       
       {
         isOpenStartFilter &&
@@ -159,7 +154,7 @@ function MapScreen() {
               ...styles.btnMapToolLeft,
               backgroundColor: getBackgroundColor(scoreIndexList, 0),
             }}
-            icon={<Icon type="material-community" name="numeric-1" size={30} color="black" />}
+            icon={<Icon type="material-community" name="numeric-1" size={30} color="black"/>}
             onPress={() => clickScore(0)}
           />
           <Button
@@ -167,7 +162,7 @@ function MapScreen() {
               ...styles.btnMapToolMid,
               backgroundColor: getBackgroundColor(scoreIndexList, 1),
             }}
-            icon={<Icon type="material-community" name="numeric-2" size={30} color="black" />}
+            icon={<Icon type="material-community" name="numeric-2" size={30} color="black"/>}
             onPress={() => clickScore(1)}
           />
           <Button
@@ -175,7 +170,7 @@ function MapScreen() {
               ...styles.btnMapToolMid,
               backgroundColor: getBackgroundColor(scoreIndexList, 2),
             }}
-            icon={<Icon type="material-community" name="numeric-3" size={30} color="black" />}
+            icon={<Icon type="material-community" name="numeric-3" size={30} color="black"/>}
             onPress={() => clickScore(2)}
           />
           <Button
@@ -183,7 +178,7 @@ function MapScreen() {
               ...styles.btnMapToolMid,
               backgroundColor: getBackgroundColor(scoreIndexList, 3),
             }}
-            icon={<Icon type="material-community" name="numeric-4" size={30} color="black" />}
+            icon={<Icon type="material-community" name="numeric-4" size={30} color="black"/>}
             onPress={() => clickScore(3)}
           />
           <Button
@@ -191,7 +186,7 @@ function MapScreen() {
               ...styles.btnMapToolRight,
               backgroundColor: getBackgroundColor(scoreIndexList, 4),
             }}
-            icon={<Icon type="material-community" name="numeric-5" size={30} color="black" />}
+            icon={<Icon type="material-community" name="numeric-5" size={30} color="black"/>}
             onPress={() => clickScore(4)}
           />
         </View>
@@ -203,39 +198,12 @@ function MapScreen() {
         }}
         buttonStyle={{
           ...styles.btnMapToolAlone,
-          backgroundColor: scoreIndexList.length ? '#E6E6E6' : '#FAFAFA'
+          backgroundColor: scoreIndexList.length ? '#E6E6E6' : '#FAFAFA',
         }}
         icon={<Icon type='feather' name='star' size={20}/>}
         title={'별점 필터 걸기'}
         titleStyle={{color: '#000', marginLeft: 8, fontSize: 16, fontWeight: 'bold'}}
         onPress={() => setIsOpenStarFilter(!isOpenStartFilter)}
-      />
-      
-      <Button
-        containerStyle={{
-          ...styles.toolContainer,
-          bottom: 45,
-        }}
-        buttonStyle={{
-          ...styles.btnMapToolAlone,
-          backgroundColor: friendId ? '#E6E6E6' : '#FAFAFA'
-        }}
-        icon={<Icon type='feather' name={friendId ? 'user-minus' : 'user-plus'} size={20}/>}
-        title={friendId ? '내 기록 보기' : '친구 기록 보기'}
-        titleStyle={{color: '#000', marginLeft: 8, fontSize: 16, fontWeight: 'bold'}}
-        onPress={() => {
-          friendId ?
-            setFriendId('')
-            :
-            setIsVisibleFriendSearchForm(true);
-        }}
-      />
-      
-      <Button
-        containerStyle={{...styles.toolContainer, top: 86}}
-        buttonStyle={styles.btnMapToolAlone}
-        icon={<Icon type='feather' name='navigation' size={23}/>}
-        onPress={() => setGoUserPosition(true)}
       />
       
       <MapView
@@ -248,42 +216,21 @@ function MapScreen() {
         showsUserLocation
       >
         {
-          places
-            .filter(({score}) => {
-              const grade = Math.floor(score);
-              
-              // 친구기록이면 평가 한 것만 + 점수 체크 한 것만
-              return (!friendId || score) && (
-                !scoreIndexList.length
-                || scoreIndexList.findIndex(target => (target + 1) === grade) > -1
-              );
-            })
-            .map(({id, name, latitude, longitude, score, url, count}) =>
-              <Marker
-                key={id}
-                title={name}
-                description={score ? `평점: ${parseFloat(score).toFixed(1)}점  /  방문 횟수: ${count}회` : `방문 횟수: ${count}회`}
-                coordinate={{latitude, longitude}}
-                pinColor={friendId ? '#11D050' : '#FA5858'}
-                onCalloutPress={() => {
-                  setPlaceUrl(url);
-                  setIsVisiblePlaceDetail(true);
-                }}
-              />
-            )
+          places.map(({id, name, latitude, longitude, score, url, count}) =>
+            <Marker
+              key={id}
+              title={name}
+              description={score ? `평점: ${parseFloat(score).toFixed(1)}점  /  방문 횟수: ${count}회` : `방문 횟수: ${count}회`}
+              coordinate={{latitude, longitude}}
+              pinColor={'#FA5858'}
+              onCalloutPress={() => {
+                setPlaceUrl(url);
+                setIsVisiblePlaceDetail(true);
+              }}
+            />,
+          )
         }
       </MapView>
-      
-      <Modal
-        animationType="slide"
-        visible={isVisibleFriendSearchForm}
-      >
-        <SearchFriends
-          userId={userId}
-          setFriendId={setFriendId}
-          close={() => setIsVisibleFriendSearchForm(false)}
-        />
-      </Modal>
       
       <Modal animationType='slide' visible={isVisiblePlaceDetail}>
         <SafeAreaView>
@@ -310,23 +257,39 @@ function MapScreen() {
 }
 
 const styles = StyleSheet.create({
-  reFetchContainer: {
+  reSearchHereContainer: {
     position: 'absolute',
-    zIndex: 1000,
-    left: (Dimensions.get('window').width - 120) / 2,
+    zIndex: 99,
     top: 50,
-    width: 120,
-    height: 30,
+    left: (Dimensions.get('window').width - 100) / 2,
   },
-  btnReFetch: {
-    width: 120,
-    paddingTop: 5,
-    paddingBottom: 5,
+  reSearchHereButton: {
+    backgroundColor: '#FFF',
+    width: 100,
     borderRadius: 20,
-    backgroundColor: '#FFFFFF',
-    borderColor: '#E6E6E6',
-    borderWidth: 0.3,
+    padding: 5,
   },
+  reSearchTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#d23669',
+  },
+  goToUserContainer: {
+    backgroundColor: '#FFF',
+    borderRadius: 50,
+    position: 'absolute',
+    zIndex: 99,
+    right: 10,
+    top: 90,
+  },
+  userButton: {
+    backgroundColor: '#FFF',
+    width: 45,
+    height: 45,
+    borderRadius: 50,
+    borderWidth: 0,
+  },
+  
   toolContainer: {
     position: 'absolute',
     zIndex: 99,
