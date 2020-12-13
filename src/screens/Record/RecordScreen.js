@@ -151,7 +151,7 @@ function RecordScreen() {
         setIsModify(false);
         navigation.navigate('List', {reload: true});
       } else {
-        alert('삭제에 실패했습니다.')
+        alert('삭제에 실패했습니다.');
       }
     })(deletingId);
   }, [deletingId]);
@@ -256,7 +256,29 @@ function RecordScreen() {
               placeholder={`${formData.isDutch ? '데이트 장소' : '지출처'}를 입력하세요`}
               inputAccessoryViewID={inputAccessoryView}
               value={formData.placeName}
-              onChangeText={value => setPlaceByOne('placeName', value)}
+              onChangeText={value => formData.placeId ?
+                Alert.alert(
+                  '카카오맵 정보가 제거됩니다. 계속 입력하시겠습니까?',
+                  null,
+                  [
+                    {text: '취소', style: 'cancel'},
+                    {
+                      text: '확인',
+                      onPress: () => setFormData({
+                        ...formData,
+                        x: 0, y: 0,
+                        placeId: '',
+                        address: '',
+                        url: '',
+                        placeName: value,
+                      }),
+                      style: 'destructive',
+                    },
+                  ],
+                  {cancelable: true},
+                )
+                :
+                setPlaceByOne('placeName', value)}
             />
             <InputAccessoryView nativeID={inputAccessoryView} backgroundColor='#FFF'>
               <Button

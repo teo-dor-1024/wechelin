@@ -197,7 +197,7 @@ function MyScreen() {
         myLover ?
           <View style={styles.boxInfo}>
             <View style={styles.boxRow}>
-              <Text style={styles.generalText}>{myLover.nickname} 님</Text>
+              <Text style={styles.generalText}>{myLover.nickname}</Text>
               <TouchableOpacity
                 onPress={() => Alert.alert(
                   '정말 연결을 끊으시겠습니까?',
