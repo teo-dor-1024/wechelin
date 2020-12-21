@@ -5,6 +5,7 @@ import {useMutation, useQuery} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import {Alert, Clipboard, Modal, SafeAreaView, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Divider, Text} from 'react-native-elements';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import useMyInfo from '../../util/useMyInfo';
 import ReceivedAlarms from './ReceivedAlarms';
 import RequestedAlarms from './RequestedAlarms';
@@ -122,26 +123,18 @@ function MyScreen() {
     setTargetInfo(myLover.userId, myLover.nickname);
   };
   
-  if (loading) {
-    return (
-      <SafeAreaView>
-        <Text> 내 정보 가져오는 중 ...</Text>
-      </SafeAreaView>
-    );
-  }
-  
   if (error) {
     return (
-      <SafeAreaView>
-        <Text> 내 정보 찾다가 에러 발생!! </Text>
+      <SafeAreaView style={styles.container}>
+        <Text>사용자 정보를 가져올 수 없습니다.</Text>
         <Text>{error.toString()}</Text>
       </SafeAreaView>
     );
   }
   
-  const {receivedAlarms = [], requestedAlarms = [], myLover} = data;
-  const requestedOnAlarm = requestedAlarms.filter(({alarm}) => alarm);
-  const alreadyRequestedInfo = requestedAlarms.find(({completed, type}) => !completed && type === 'couple');
+  const {receivedAlarms = [], requestedAlarms = [], myLover} = data || {};
+  const requestedOnAlarm = requestedAlarms?.filter(({alarm}) => alarm);
+  const alreadyRequestedInfo = requestedAlarms?.find(({completed, type}) => !completed && type === 'couple');
   const crushedName = alreadyRequestedInfo ? alreadyRequestedInfo.targetName : '';
   
   return (
@@ -154,90 +147,119 @@ function MyScreen() {
         </TouchableOpacity>}
       />
       
-      <View style={styles.boxInfo}>
-        <View style={styles.boxRow}>
-          <Text style={styles.generalText}>닉네임</Text>
-          <Text style={styles.generalText}>{nickName}</Text>
-        </View>
-        
-        <TouchableOpacity onPress={() => Clipboard.setString(id)}>
-          <View style={styles.boxRow}>
-            <Text style={styles.generalText}>아이디</Text>
-            <Text style={styles.generalText}>{id}</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-      
-      <View style={styles.boxHeader}>
-        <Text style={styles.boxTitle}>알림</Text>
-        <TouchableOpacity onPress={() => refetch()}><Text>새로고침</Text></TouchableOpacity>
-      </View>
-      <Divider style={styles.divider}/>
-      <ReceivedAlarms myId={id} receivedAlarms={receivedAlarms}/>
-      <RequestedAlarms requestedAlarms={requestedOnAlarm}/>
       {
-        (receivedAlarms.length || requestedOnAlarm.length) ?
-          null
+        loading ?
+          <SkeletonPlaceholder>
+            <View style={styles.boxInfo}>
+              <View style={styles.boxRow}>
+                <View style={styles.skeletonBoxName}/>
+                <View style={styles.skeletonBoxValue}/>
+              </View>
+              <View style={styles.boxRow}>
+                <View style={styles.skeletonBoxName}/>
+                <View style={styles.skeletonBoxValue}/>
+              </View>
+            </View>
+            <View style={styles.boxHeader}>
+              <View style={styles.skeletonAlarmContainer}/>
+            </View>
+            <View style={styles.boxHeader}>
+              <View style={styles.skeletonAlarmContainer}/>
+            </View>
+          </SkeletonPlaceholder>
           :
-          <Text style={styles.emptyAlarm}>
-            수신된 알림이 없습니다.
-          </Text>
-      }
-      
-      <Text style={styles.title}>커플</Text>
-      <Divider style={styles.divider}/>
-      {
-        !(myLover || crushedName) &&
-        <TouchableOpacity stye={styles.boxInfo} onPress={openCoupleSearchForm}>
-          <Text style={{color: '#0080FF', fontWeight: 'bold'}}>커플찾기</Text>
-        </TouchableOpacity>
-      }
-      
-      {
-        myLover ?
-          <View style={styles.boxInfo}>
-            <View style={styles.boxRow}>
-              <Text style={styles.generalText}>{myLover.nickname}</Text>
-              <TouchableOpacity
-                onPress={() => Alert.alert(
-                  '정말 연결을 끊으시겠습니까?',
-                  null,
-                  [
-                    {text: '취소', style: 'cancel'},
-                    {
-                      text: '해제',
-                      onPress: coupleBreakUp,
-                      style: 'destructive',
-                    },
-                  ],
-                  {cancelable: true},
-                )}
-              >
-                <Text style={styles.cancelButton}>연결 해제</Text>
+          <>
+            <View style={styles.boxInfo}>
+              <View style={styles.boxRow}>
+                <Text style={styles.generalText}>닉네임</Text>
+                <Text style={styles.generalText}>{nickName}</Text>
+              </View>
+              
+              <TouchableOpacity onPress={() => Clipboard.setString(id)}>
+                <View style={styles.boxRow}>
+                  <Text style={styles.generalText}>아이디</Text>
+                  <Text style={styles.generalText}>{id}</Text>
+                </View>
               </TouchableOpacity>
             </View>
-          </View>
-          :
-          <Text style={styles.emptyAlarm}>
+            
+            <View style={styles.boxHeader}>
+              <Text style={styles.boxTitle}>알림</Text>
+              <TouchableOpacity onPress={() => refetch()}><Text>새로고침</Text></TouchableOpacity>
+            </View>
+            <Divider style={styles.divider}/>
+            <ReceivedAlarms myId={id} receivedAlarms={receivedAlarms}/>
+            <RequestedAlarms requestedAlarms={requestedOnAlarm}/>
             {
-              crushedName ? `${crushedName}님의 수락을 기다리는 중입니다.` : '연결된 커플이 없습니다.'
+              (receivedAlarms.length || requestedOnAlarm.length) ?
+                null
+                :
+                <Text style={styles.emptyAlarm}>
+                  수신된 알림이 없습니다.
+                </Text>
             }
-          </Text>
+            
+            <Text style={styles.title}>커플</Text>
+            <Divider style={styles.divider}/>
+            {
+              !(myLover || crushedName) &&
+              <TouchableOpacity stye={styles.boxInfo} onPress={openCoupleSearchForm}>
+                <Text style={{color: '#0080FF', fontWeight: 'bold'}}>커플찾기</Text>
+              </TouchableOpacity>
+            }
+            
+            {
+              myLover ?
+                <View style={styles.boxInfo}>
+                  <View style={styles.boxRow}>
+                    <Text style={styles.generalText}>{myLover.nickname}</Text>
+                    <TouchableOpacity
+                      onPress={() => Alert.alert(
+                        '정말 연결을 끊으시겠습니까?',
+                        null,
+                        [
+                          {text: '취소', style: 'cancel'},
+                          {
+                            text: '해제',
+                            onPress: coupleBreakUp,
+                            style: 'destructive',
+                          },
+                        ],
+                        {cancelable: true},
+                      )}
+                    >
+                      <Text style={styles.cancelButton}>연결 해제</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                :
+                <Text style={styles.emptyAlarm}>
+                  {
+                    crushedName ? `${crushedName}님의 수락을 기다리는 중입니다.` : '연결된 커플이 없습니다.'
+                  }
+                </Text>
+            }
+            
+            <Modal animationType='slide' visible={isVisibleModal}>
+              <SearchUnMatched
+                userId={id}
+                setTargetInfo={setTargetInfo}
+                searchType={searchType}
+                setIsVisibleModal={setIsVisibleModal}
+              />
+            </Modal>
+          </>
       }
-      
-      <Modal animationType='slide' visible={isVisibleModal}>
-        <SearchUnMatched
-          userId={id}
-          setTargetInfo={setTargetInfo}
-          searchType={searchType}
-          setIsVisibleModal={setIsVisibleModal}
-        />
-      </Modal>
+    
+    
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  skeletonBoxName: {width: 40, height: 20},
+  skeletonBoxValue: {width: 60, height: 20},
+  skeletonAlarmContainer: {width: 335, height: 40},
   container: {backgroundColor: '#FFFFFF', height: '100%'},
   boxInfo: {paddingHorizontal: 20},
   boxHeader: {

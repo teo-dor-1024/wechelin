@@ -2,9 +2,10 @@ import React, {useRef, useState} from 'react';
 import {eachMonthOfInterval, getMonth} from 'date-fns';
 import gql from 'graphql-tag';
 import {useQuery} from '@apollo/react-hooks';
-import {Dimensions, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Badge, Icon, Text} from 'react-native-elements';
 import {PieChart} from 'react-native-chart-kit';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import useMyInfo from '../../util/useMyInfo';
 import {convertMoney} from '../../util/StringUtils';
 import MonthOption from './MonthOption';
@@ -42,11 +43,41 @@ function StatsScreen() {
   const {loading, error, data} = useQuery(GET_STATS, {variables: {userId: id, now}});
   
   if (loading) {
-    return <SafeAreaView><Text> 통계 정보 계산하는 중 ... </Text></SafeAreaView>;
+    return (
+      <SafeAreaView style={{backgroundColor: '#FFF', height: '100%'}}>
+        <SkeletonPlaceholder>
+          <View style={styles.skeletonContainer}>
+            <View style={styles.skeletonMonthSelector}/>
+            <View style={styles.skeletonSpending}/>
+            <View style={styles.skeletonSettlement}/>
+            <View style={styles.skeletonDivider}/>
+            <View style={styles.skeletonMonthlyPieTitle}/>
+            <View style={styles.monthlyPieContainer}>
+              <View style={styles.skeletonMonthlyPie}/>
+            </View>
+            {
+              new Array(5).fill(0).map((_, i) => (
+                <View style={styles.skeletonListItem} key={_ + i}>
+                  <View style={styles.skeletonListCategory}/>
+                  <View style={styles.skeletonListMoney}/>
+                </View>
+              ))
+            }
+          </View>
+        </SkeletonPlaceholder>
+      </SafeAreaView>
+    );
   }
   
   if (error) {
-    return <SafeAreaView><Text> 통계 정보 가져오다 에러 발생 !! {error.toString()}</Text></SafeAreaView>;
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.boxContainer}>
+          <Text>통계 정보를 가져올 수 없습니다.</Text>
+          <Text>{error.toString()}</Text>
+        </View>
+      </SafeAreaView>
+    );
   }
   
   const {spending: {total, settlement}, monthlyPie, recordsByCount} = data;
@@ -151,7 +182,18 @@ function StatsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {backgroundColor: '#FFFFFF', height: '100%', paddingBottom: 80},
+  skeletonContainer: {paddingHorizontal: 20},
+  skeletonMonthSelector: {width: 100, height: 35, marginVertical: 10, borderRadius: 10},
+  skeletonSpending: {width: 130, height: 40, marginBottom: 10, borderRadius: 10},
+  skeletonSettlement: {width: 200, height: 20, borderRadius: 10},
+  skeletonDivider: {height: 15, marginVertical: 20, borderRadius: 10},
+  skeletonMonthlyPieTitle: {width: 220, height: 20, marginBottom: 10, borderRadius: 10},
+  monthlyPieContainer: {justifyContent: 'center', alignItems: 'center'},
+  skeletonMonthlyPie: {width: 190, height: 190, borderRadius: 100, marginVertical: 10},
+  skeletonListItem: {flexDirection: 'row', justifyContent: 'space-between', marginTop: 10},
+  skeletonListCategory: {width: 160, height: 20},
+  skeletonListMoney: {width: 40, height: 20},
+  container: {backgroundColor: '#FFF', height: '100%', paddingBottom: 80},
   divider: {backgroundColor: '#F2F2F2', width: '100%', height: 15, marginVertical: 20},
   boxContainer: {paddingHorizontal: 20},
   boxTitle: {fontSize: 16, fontWeight: 'bold'},
