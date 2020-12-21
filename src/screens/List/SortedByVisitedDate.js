@@ -56,7 +56,11 @@ function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, refetch, r
         )
       }
       {
-        !records.length && <Text>기록이 없습니다.</Text>
+        !records.length && (
+          <View style={styles.emptyContainer}>
+            <Text>기록이 없습니다.</Text>
+          </View>
+        )
       }
       
       <Modal animationType="slide" visible={!!detail}>
@@ -69,6 +73,7 @@ function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, refetch, r
 const styles = StyleSheet.create({
   container: {marginTop: 15},
   date: {marginHorizontal: 20, paddingBottom: 15, color: '#848484'},
+  emptyContainer: {paddingHorizontal: 20, marginTop: 20},
   divider: {marginHorizontal: 20},
   moreButton: {backgroundColor: '#FFF', height: 60, marginBottom: 10},
   moreButtonTitle: {color: '#585858'},

@@ -344,6 +344,7 @@ function RecordScreen() {
             buttonStyle={styles.confirmButton}
             titleStyle={styles.confirmButtonTitle}
             onPress={() => setIsWriteDone(true)}
+            disabled={!formData.placeName}
           />
         </View>
       </View>
