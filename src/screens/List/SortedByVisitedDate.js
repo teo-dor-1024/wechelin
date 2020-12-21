@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Divider} from 'react-native-elements';
-import {Modal, ScrollView, Text, View} from 'react-native';
+import {Modal, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {format} from 'date-fns';
 import ko from 'date-fns/locale/ko';
 import ListItem from './ListItem';
@@ -33,11 +33,11 @@ function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, refetch, r
           
           prevDate = yyyymmdd;
           return (
-            <View key={_id} style={{marginTop: 15}}>
-              <Text style={{marginHorizontal: 20, paddingBottom: 15, color: '#848484'}}>
+            <View key={_id} style={styles.container}>
+              <Text style={styles.date}>
                 {format(new Date(visitedDate), 'M월 d일 EEEE', {locale: ko})}
               </Text>
-              <Divider style={{marginHorizontal: 20}}/>
+              <Divider style={styles.divider}/>
               <ListItem {...record} setDetail={setDetail}/>
             </View>
           );
@@ -48,8 +48,8 @@ function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, refetch, r
           <Button
             title={shouldFetchMore ? ' 기록 가져오는 중 ...' : '더보기'}
             type='clear'
-            containerStyle={{backgroundColor: '#FFF', height: 60, marginBottom: 10}}
-            titleStyle={{color: '#585858'}}
+            containerStyle={styles.moreButton}
+            titleStyle={styles.moreButtonTitle}
             onPress={onPressMoreView}
             disabled={shouldFetchMore}
           />
@@ -65,5 +65,13 @@ function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, refetch, r
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {marginTop: 15},
+  date: {marginHorizontal: 20, paddingBottom: 15, color: '#848484'},
+  divider: {marginHorizontal: 20},
+  moreButton: {backgroundColor: '#FFF', height: 60, marginBottom: 10},
+  moreButtonTitle: {color: '#585858'},
+});
 
 export default SortedByVisitedDate;

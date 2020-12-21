@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useQuery} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import {SearchBar} from 'react-native-elements';
-import {Dimensions, SafeAreaView, Text, View} from 'react-native';
+import {Dimensions, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {useRoute} from '@react-navigation/native';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import useMyInfo from '../../util/useMyInfo';
@@ -85,7 +85,7 @@ function ListScreen() {
   
   if (error) {
     return (
-      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <SafeAreaView style={styles.errorContainer}>
         <Text>기록을 가져올 수 없습니다.</Text>
         <Text>{error.toString()}</Text>
       </SafeAreaView>
@@ -93,7 +93,7 @@ function ListScreen() {
   }
   
   return (
-    <SafeAreaView style={{backgroundColor: '#FFFFFF', height: '100%'}}>
+    <SafeAreaView style={styles.container}>
       <SearchBar
         platform="ios"
         containerStyle={{backgroundColor: '#FFFFFF', paddingHorizontal: 10}}
@@ -101,10 +101,7 @@ function ListScreen() {
         inputStyle={{fontSize: 16}}
         leftIconContainerStyle={{marginRight: 5}}
         cancelButtonTitle='취소'
-        cancelButtonProps={{
-          buttonStyle: {marginRight: 10},
-          buttonTextStyle: {fontSize: 16},
-        }}
+        cancelButtonProps={{buttonStyle: {marginRight: 10}, buttonTextStyle: {fontSize: 16}}}
         placeholder="검색"
         value={keyword}
         onChangeText={keyword => setKeyword(keyword)}
@@ -115,22 +112,12 @@ function ListScreen() {
           !shouldFetchMore && (loading || networkStatus === 2) ?
             new Array(10).fill(0).map((_, i) => (
               <SkeletonPlaceholder key={_ + i}>
-                <View style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  paddingHorizontal: 20,
-                  marginVertical: 15,
-                }}>
-                  <View style={{width: RIGHT_WIDTH}}>
-                    <View style={{width: RIGHT_WIDTH - 100, height: 30, borderRadius: 5}}/>
-                    <View style={{width: RIGHT_WIDTH - 40, height: 15, marginTop: 5, borderRadius: 5}}/>
+                <View style={styles.skeletonContainer}>
+                  <View>
+                    <View style={styles.skeletonPlaceName}/>
+                    <View style={styles.skeletonMenus}/>
                   </View>
-                  <View style={{
-                    width: 60,
-                    height: 25,
-                    marginLeft: 10,
-                    borderRadius: 5,
-                  }}/>
+                  <View style={styles.skeletonMoney}/>
                 </View>
               </SkeletonPlaceholder>
             ))
@@ -148,5 +135,25 @@ function ListScreen() {
     </SafeAreaView>
   );
 }
+
+
+const styles = StyleSheet.create({
+  container: {backgroundColor: '#FFFFFF', height: '100%'},
+  errorContainer: {flex: 1, justifyContent: 'center', alignItems: 'center'},
+  skeletonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    marginVertical: 15,
+  },
+  skeletonPlaceName: {width: RIGHT_WIDTH - 100, height: 30, borderRadius: 5},
+  skeletonMenus: {width: RIGHT_WIDTH - 40, height: 15, marginTop: 5, borderRadius: 5},
+  skeletonMoney: {
+    width: 60,
+    height: 25,
+    marginLeft: 10,
+    borderRadius: 5,
+  },
+});
 
 export default ListScreen;

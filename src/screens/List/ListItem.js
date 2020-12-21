@@ -1,29 +1,20 @@
 import React from 'react';
-import {Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {convertMoney} from '../../util/StringUtils';
-
-const styles = {
-  container: {
-    backgroundColor: '#FFF',
-    height: 70,
-    paddingHorizontal: 15,
-  },
-};
 
 function ListItem({setDetail, ...item}) {
   const {placeName, money, menus, isDutch} = item;
   
   return (
-    <TouchableOpacity style={{backgroundColor: '#FFF', height: 70, paddingHorizontal: 15}}
-                      onPress={() => setDetail(item)}>
-      <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 20}}>
-        <View style={{flexDirection: 'row', width: '75%'}}>
-          <View style={{marginHorizontal: 15}}>
-            <Text style={{fontSize: 16}} numberOfLines={1}>{placeName}</Text>
-            <Text style={{marginTop: 3, color: '#222', fontSize: 12}} numberOfLines={1}>{menus?.join(', ')}</Text>
+    <TouchableOpacity style={styles.container} onPress={() => setDetail(item)}>
+      <View style={styles.inner}>
+        <View style={styles.placeInfo}>
+          <View>
+            <Text style={styles.placeName} numberOfLines={1}>{placeName}</Text>
+            <Text style={styles.placeMenus} numberOfLines={1}>{menus?.join(', ')}</Text>
           </View>
         </View>
-        <View style={{alignItems: 'flex-end'}}>
+        <View style={styles.moneyContainer}>
           <Text style={{fontWeight: 'bold', fontSize: 16, color: isDutch ? '#d23669' : '#222'}}>
             {convertMoney(isDutch ? money / 2 : money)}원
           </Text>
@@ -32,5 +23,14 @@ function ListItem({setDetail, ...item}) {
     </TouchableOpacity>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {backgroundColor: '#FFF', height: 70, paddingHorizontal: 15},
+  inner: {flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 20},
+  placeInfo: {flexDirection: 'row', width: '75%', marginHorizontal: 15},
+  placeName: {fontSize: 16},
+  placeMenus: {marginTop: 3, color: '#222', fontSize: 12},
+  moneyContainer: {alignItems: 'flex-end'},
+});
 
 export default ListItem;
