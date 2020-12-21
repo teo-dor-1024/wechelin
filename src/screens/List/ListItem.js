@@ -11,10 +11,11 @@ const styles = {
 };
 
 function ListItem({setDetail, ...item}) {
-  const {placeName, category, money, menus, isDutch} = item;
+  const {placeName, money, menus, isDutch} = item;
   
   return (
-    <TouchableOpacity style={styles.container} onPress={() => setDetail(item)}>
+    <TouchableOpacity style={{backgroundColor: '#FFF', height: 70, paddingHorizontal: 15}}
+                      onPress={() => setDetail(item)}>
       <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 20}}>
         <View style={{flexDirection: 'row', width: '75%'}}>
           <View style={{marginHorizontal: 15}}>

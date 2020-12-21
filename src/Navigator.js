@@ -12,7 +12,7 @@ import MyScreen from './screens/My/MyScreen';
 import {Text} from 'react-native';
 
 const makeTabBarLabel = title => ({focused}) =>
-  <Text style={{color: focused ? '#000' : '#A4A4A4', fontSize: 11}}>
+  <Text style={{color: focused ? '#d23669' : '#A4A4A4', fontSize: 11}}>
     {title}
   </Text>;
 
@@ -53,7 +53,7 @@ function TabNavigator() {
                 type={type}
                 name={name}
                 size={30}
-                color={focused ? '#000' : '#A4A4A4'}
+                color={focused ? '#d23669' : '#A4A4A4'}
               />
             );
           },

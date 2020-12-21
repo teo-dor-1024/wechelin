@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Dimensions, Platform, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Dimensions, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {Button, Icon} from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useMutation} from '@apollo/react-hooks';
@@ -8,9 +8,9 @@ import KakaoLogins from '@react-native-seoul/kakao-login';
 import appleAuth, {
   AppleAuthCredentialState,
   AppleAuthRequestOperation,
-  AppleAuthRequestScope
+  AppleAuthRequestScope,
 } from '@invertase/react-native-apple-authentication';
-import RegisterForm from "./RegisterForm";
+import RegisterForm from './RegisterForm';
 
 const viewHeight = Dimensions.get('window').height;
 const ENROLL_USER = gql`
@@ -57,7 +57,7 @@ function LoginScreen({navigation}) {
         await login({id: user, nickname, accessToken: identityToken});
       }
     } catch (error) {
-      if (!error.message.includes("1001")) {
+      if (!error.message.includes('1001')) {
         console.error(error);
       }
     }
@@ -78,40 +78,36 @@ function LoginScreen({navigation}) {
   
   return (
     <SafeAreaView style={styles.container}>
-      <Text
-        style={{
-          ...styles.title,
-          marginTop: viewHeight > 750 ? 120 : 80,
-        }}
-      >
-        Wechelin!
-      </Text>
-      <Text style={styles.desc}>위슐랭, 우리만의 맛집 지도 만들기</Text>
-      <View style={{marginTop: viewHeight > 830 ? 330 : viewHeight > 660 ? 250 : 170}}>
-        {
-          Platform.OS === 'ios' &&
-          <Button
-            title='Apple로 로그인'
-            titleStyle={{color: 'black', fontWeight: 'bold', marginLeft: 5}}
-            icon={<Icon type='ionicon' name='logo-apple' size={20}/>}
-            buttonStyle={styles.btnLogin}
-            containerStyle={{marginBottom: 10}}
-            onPress={onClickApple}
-          />
-        }
+      <View style={{marginTop: viewHeight > 750 ? 120 : 80}}>
+        <Text style={styles.title}>
+          Wechelin
+        </Text>
+        <Text style={styles.subtitle}>
+          같이 작성하는 커플 가계부
+        </Text>
+      </View>
+      <View style={{marginTop: viewHeight > 830 ? 300 : viewHeight > 660 ? 250 : 200}}>
+        <Button
+          title='Apple로 로그인'
+          titleStyle={{color: '#FFF', fontWeight: 'bold', marginLeft: 5}}
+          icon={<Icon type='ionicon' name='logo-apple' size={20} color='#FFF'/>}
+          buttonStyle={{...styles.btnLogin, backgroundColor: '#000'}}
+          containerStyle={{marginBottom: 10}}
+          onPress={onClickApple}
+        />
         <Button
           title='Kakao로 로그인'
-          titleStyle={{color: '#513302', fontWeight: 'bold', marginLeft: 5}}
-          icon={<Icon type='ionicon' name='ios-chatbubbles' size={18} color='#513302'/>}
-          buttonStyle={styles.btnLogin}
+          titleStyle={{color: '#3A1D1D', fontWeight: 'bold', marginLeft: 5}}
+          icon={<Icon type='ionicon' name='ios-chatbubbles' size={18} color='#3A1D1D'/>}
+          buttonStyle={{...styles.btnLogin, backgroundColor: '#fef01b'}}
           containerStyle={{marginBottom: 10}}
           onPress={onClickKakao}
         />
         <Button
           title='Guest로 로그인'
-          titleStyle={{color: '#6E6E6E', fontWeight: 'bold', marginLeft: 5}}
-          icon={<Icon type='font-awesome' name='user-circle' size={16} color='#6E6E6E'/>}
-          buttonStyle={styles.btnLogin}
+          titleStyle={{color: '#FFF', fontWeight: 'bold', marginLeft: 5}}
+          icon={<Icon type='font-awesome' name='user-circle' size={16} color='#FFF'/>}
+          buttonStyle={{...styles.btnLogin, backgroundColor: '#6E6E6E'}}
           onPress={() => setIsVisible(true)}
         />
       </View>
@@ -129,24 +125,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#2E2E2E',
+    backgroundColor: '#FFF',
   },
   title: {
-    fontSize: 34,
-    color: '#FFA7C4',
-    fontWeight: 'bold',
+    fontSize: 40,
+    color: '#d23669',
+    fontFamily: 'Menlo-Bold',
+    textAlign: 'center',
   },
-  desc: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+  subtitle: {
+    fontSize: 22,
+    color: '#222',
+    fontFamily: 'Menlo-Bold',
+    textAlign: 'center',
     marginTop: 10,
   },
   btnLogin: {
-    borderRadius: 25,
-    paddingVertical: 8,
-    paddingHorizontal: 60,
-    backgroundColor: '#FFF',
+    borderRadius: 30,
+    paddingVertical: 6,
+    paddingHorizontal: 70,
   },
 });
 

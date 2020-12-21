@@ -58,6 +58,7 @@ function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, refetch, r
       {
         !records.length && <Text>기록이 없습니다.</Text>
       }
+      
       <Modal animationType="slide" visible={!!detail}>
         <RecordDetail detail={detail} setDetail={setDetail} refetch={refetch}/>
       </Modal>
