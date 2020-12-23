@@ -31,7 +31,7 @@ const INIT_FORM_DATA = {
   money: 0,
   placeName: '',
   menus: [],
-  category: '식비',
+  category: '음식점',
   visitedDate: new Date(),
   score: 0,
 };

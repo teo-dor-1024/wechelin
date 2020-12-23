@@ -14,7 +14,7 @@ function ListItem({setDetail, ...item}) {
         </View>
         <View style={styles.moneyContainer}>
           <Text style={{fontWeight: 'bold', fontSize: 16, color: isDutch ? '#d23669' : '#222'}}>
-            {convertMoney(isDutch ? money / 2 : money)}원
+            {convertMoney(money)}원
           </Text>
         </View>
       </View>

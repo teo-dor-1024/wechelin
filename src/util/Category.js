@@ -5,7 +5,7 @@ export const allCategories = [
   {label: '잡화', icon: 'shopping-bag'},
   {label: '식자재', icon: 'carrot'},
   {label: '마트 · 편의점', icon: 'shopping-cart'},
-  {label: '식비', icon: 'utensils'},
+  {label: '음식점', icon: 'utensils'},
   {label: '카페 · 베이커리', icon: 'coffee'},
   {label: '술 · 유흥', icon: 'beer'},
   {label: '화장품', icon: 'magic'},
@@ -23,7 +23,7 @@ export const allCategories = [
 
 export const mappingCategory = categoryGroup => {
   if (/음식점/gi.test(categoryGroup)) {
-    return '식비';
+    return '음식점';
   } else if (/대형마트|편의점/gi.test(categoryGroup)) {
     return '마트 · 편의점';
   } else if (/주차장|주유소|충전소/gi.test(categoryGroup)) {

@@ -257,9 +257,9 @@ function MyScreen() {
 }
 
 const styles = StyleSheet.create({
-  skeletonBoxName: {width: 40, height: 20},
-  skeletonBoxValue: {width: 60, height: 20},
-  skeletonAlarmContainer: {width: 335, height: 40},
+  skeletonBoxName: {width: 40, height: 20, borderRadius: 5},
+  skeletonBoxValue: {width: 60, height: 20, borderRadius: 5},
+  skeletonAlarmContainer: {width: 335, height: 40, borderRadius: 5},
   container: {backgroundColor: '#FFFFFF', height: '100%'},
   boxInfo: {paddingHorizontal: 20},
   boxHeader: {

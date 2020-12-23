@@ -9,17 +9,16 @@ import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import useMyInfo from '../../util/useMyInfo';
 import {convertMoney} from '../../util/StringUtils';
 import MonthOption from './MonthOption';
-import MonthlySpending from './MonthlySpending';
+import MonthlyTrend from './MonthlyTrend';
 import RankedByVisits from './RankedByVisits';
 import BottomSelect from '../components/BottomSelect';
 
-const PIE_COLORS = ['#ffa7c4', '#6E6E6E', '#A4A4A4', '#D8D8D8', '#F2F2F2'];
+const PIE_COLORS = ['#ff5c92', '#ff8ab0', '#ffbdd3', '#ffe0ea', '#fff0f5'];
 
 const GET_STATS = gql`
   query ($userId: String!, $now: Date) {
     spending(userId: $userId, now: $now) {
       total
-      dutch
       settlement
     }
     monthlyPie(userId: $userId, now: $now) {
@@ -114,7 +113,7 @@ function StatsScreen() {
             <>
               <View style={styles.divider}/>
               <View style={styles.boxContainer}>
-                <MonthlySpending/>
+                <MonthlyTrend/>
               </View>
             </>
           )
@@ -145,7 +144,7 @@ function StatsScreen() {
             }
           </View>
           {
-            monthlyPie.map(({category, spending, count}, index) => (
+            monthlyPie?.map(({category, spending, count}, index) => (
               <View key={category} style={styles.monthlyPie}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <Badge badgeStyle={{backgroundColor: PIE_COLORS[index], marginRight: 10}}/>
@@ -191,8 +190,8 @@ const styles = StyleSheet.create({
   monthlyPieContainer: {justifyContent: 'center', alignItems: 'center'},
   skeletonMonthlyPie: {width: 190, height: 190, borderRadius: 100, marginVertical: 10},
   skeletonListItem: {flexDirection: 'row', justifyContent: 'space-between', marginTop: 10},
-  skeletonListCategory: {width: 160, height: 20},
-  skeletonListMoney: {width: 40, height: 20},
+  skeletonListCategory: {width: 160, height: 20, borderRadius: 5},
+  skeletonListMoney: {width: 40, height: 20, borderRadius: 5},
   container: {backgroundColor: '#FFF', height: '100%', paddingBottom: 80},
   divider: {backgroundColor: '#F2F2F2', width: '100%', height: 15, marginVertical: 20},
   boxContainer: {paddingHorizontal: 20},

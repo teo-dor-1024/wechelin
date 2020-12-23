@@ -10,14 +10,14 @@ import useMyInfo from '../../util/useMyInfo';
 const MONTHLY_TREND_COUNT = 4;
 const GET_MONTHLY_SPENDING = gql`
   query ($userId: String!, $now: Date, $count: Int) {
-    monthlySpending(userId: $userId, now: $now, count: $count) {
+    monthlySpendingTrend(userId: $userId, now: $now, count: $count) {
       label
       spending
     }
   }
 `;
 
-function MonthlySpending() {
+function MonthlyTrend() {
   const {id} = useMyInfo();
   const {loading, error, data} = useQuery(GET_MONTHLY_SPENDING, {
     variables: {
@@ -85,4 +85,4 @@ function MonthlySpending() {
   );
 }
 
-export default MonthlySpending;
+export default MonthlyTrend;
