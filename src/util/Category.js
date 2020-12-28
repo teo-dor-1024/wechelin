@@ -24,11 +24,11 @@ export const allCategories = [
 export const mappingCategory = categoryGroup => {
   if (/음식점/gi.test(categoryGroup)) {
     return '음식점';
-  } else if (/대형마트|편의점/gi.test(categoryGroup)) {
+  } else if (/슈퍼|마트|편의점/gi.test(categoryGroup)) {
     return '마트 · 편의점';
   } else if (/주차장|주유소|충전소/gi.test(categoryGroup)) {
     return '자동차';
-  } else  if (/문화시설|관광명소/gi.test(categoryGroup)) {
+  } else if (/문화시설|관광명소/gi.test(categoryGroup)) {
     return '문화 · 여가';
   } else if (/숙박/gi.test(categoryGroup)) {
     return '숙박';
@@ -36,6 +36,8 @@ export const mappingCategory = categoryGroup => {
     return '카페 · 베이커리';
   } else if (/병원|약국/gi.test(categoryGroup)) {
     return '병원 · 약국';
+  } else if ((/화장품/gi).test(categoryGroup)) {
+    return '화장품';
   } else {
     return '기타';
   }

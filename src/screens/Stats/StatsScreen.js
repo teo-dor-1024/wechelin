@@ -8,6 +8,7 @@ import {PieChart} from 'react-native-chart-kit';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import useMyInfo from '../../util/useMyInfo';
 import {convertMoney} from '../../util/StringUtils';
+import {mappingCategory} from '../../util/Category';
 import MonthOption from './MonthOption';
 import MonthlyTrend from './MonthlyTrend';
 import RankedByVisits from './RankedByVisits';
@@ -19,6 +20,7 @@ const GET_STATS = gql`
   query ($userId: String!, $now: Date) {
     spending(userId: $userId, now: $now) {
       total
+      dating
       settlement
     }
     monthlyPie(userId: $userId, now: $now) {
@@ -47,6 +49,7 @@ function StatsScreen() {
         <SkeletonPlaceholder>
           <View style={styles.skeletonContainer}>
             <View style={styles.skeletonMonthSelector}/>
+            <View style={styles.skeletonSpending}/>
             <View style={styles.skeletonSpending}/>
             <View style={styles.skeletonSettlement}/>
             <View style={styles.skeletonDivider}/>
@@ -79,7 +82,7 @@ function StatsScreen() {
     );
   }
   
-  const {spending: {total, settlement}, monthlyPie, recordsByCount} = data;
+  const {spending: {total, dating, settlement}, monthlyPie, recordsByCount} = data;
   
   return (
     <SafeAreaView style={styles.container}>
@@ -90,22 +93,29 @@ function StatsScreen() {
         </TouchableOpacity>
         
         <View style={styles.boxContainer}>
+          <Text style={styles.spendingLabel}>개인 소비</Text>
           <Text style={styles.spending}>{convertMoney(total)}원</Text>
-          {
-            now && (
-              <Text style={styles.settlement}>
-                {
-                  settlement > 0 ?
-                    `정산 : ${convertMoney(Math.abs(settlement))}원 받으세요`
-                    :
-                    settlement < 0 ?
-                      `정산: ${convertMoney(Math.abs(settlement))}원 보내세요`
+          <View style={styles.dating}>
+            <View>
+              <Text style={styles.spendingLabel}>데이트 총 소비</Text>
+              <Text style={styles.spending}>{convertMoney(dating)}원</Text>
+            </View>
+            {
+              now && (
+                <Text style={styles.settlement}>
+                  {
+                    settlement > 0 ?
+                      `${convertMoney(Math.abs(settlement))}원 받으세요`
                       :
-                      '정산할 금액이 없습니다.'
-                }
-              </Text>
-            )
-          }
+                      settlement < 0 ?
+                        `${convertMoney(Math.abs(settlement))}원 보내세요`
+                        :
+                        '정산할 금액이 없습니다.'
+                  }
+                </Text>
+              )
+            }
+          </View>
         </View>
         
         {
@@ -127,7 +137,11 @@ function StatsScreen() {
               monthlyPie?.length ?
                 <PieChart
                   data={monthlyPie.map(({category, spending}, index) => {
-                    return {name: category, population: spending, color: PIE_COLORS[index]};
+                    return {
+                      name: mappingCategory(category),
+                      population: spending,
+                      color: PIE_COLORS[index],
+                    };
                   })}
                   width={300}
                   height={220}
@@ -148,7 +162,7 @@ function StatsScreen() {
               <View key={category} style={styles.monthlyPie}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <Badge badgeStyle={{backgroundColor: PIE_COLORS[index], marginRight: 10}}/>
-                  <Text>{category}</Text>
+                  <Text>{mappingCategory(category)}</Text>
                 </View>
                 <Text>{convertMoney(spending)}원</Text>
               </View>
@@ -199,8 +213,10 @@ const styles = StyleSheet.create({
   boxInner: {alignItems: 'center', marginVertical: 10, height: 250},
   monthSelector: {padding: 20, flexDirection: 'row', alignItems: 'center'},
   month: {fontSize: 20, fontWeight: 'bold', marginRight: 10},
+  spendingLabel: {color: '#848484'},
   spending: {fontSize: 22, fontWeight: 'bold', marginBottom: 10},
-  settlement: {fontSize: 16, color: '#d23669'},
+  dating: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end'},
+  settlement: {marginLeft: 10, fontSize: 18, color: '#d23669', marginBottom: 13},
   monthlyPie: {flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10},
 });
 

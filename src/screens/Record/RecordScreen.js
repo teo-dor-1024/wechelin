@@ -394,9 +394,19 @@ function RecordScreen() {
 
 const styles = StyleSheet.create({
   container: {backgroundColor: '#FFFFFF', height: '100%', paddingBottom: 80},
-  body: {flex: 1, justifyContent: 'space-between', paddingBottom: 20, paddingHorizontal: 20},
+  body: {
+    flex: 1,
+    justifyContent: 'space-between',
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+  },
   dutchContainer: {
-    backgroundColor: '#F2F2F2', borderWidth: 0, borderRadius: 20, height: 45, padding: 5, marginBottom: 15,
+    backgroundColor: '#F2F2F2',
+    borderWidth: 0,
+    borderRadius: 20,
+    height: 45,
+    padding: 5,
+    marginBottom: 15,
   },
   spendKind: {paddingHorizontal: 20},
   inputBox: {marginVertical: 5},
