@@ -2,7 +2,7 @@ import React, {useRef, useState} from 'react';
 import {eachMonthOfInterval, getMonth} from 'date-fns';
 import gql from 'graphql-tag';
 import {useQuery} from '@apollo/react-hooks';
-import {SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Image, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Badge, Icon, Text} from 'react-native-elements';
 import {PieChart} from 'react-native-chart-kit';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
@@ -92,94 +92,107 @@ function StatsScreen() {
           <Icon name='ios-arrow-down' type='ionicon' size={20}/>
         </TouchableOpacity>
         
-        <View style={styles.boxContainer}>
-          <Text style={styles.spendingLabel}>개인 소비</Text>
-          <Text style={styles.spending}>{convertMoney(total)}원</Text>
-          <View style={styles.dating}>
-            <View>
-              <Text style={styles.spendingLabel}>데이트 총 소비</Text>
-              <Text style={styles.spending}>{convertMoney(dating)}원</Text>
+        {
+          !total ?
+            <View style={styles.emptyContainer}>
+              <Image
+                source={require('../../../assets/analytics.png')}
+                style={{width: '100%', height: '100%', resizeMode:'contain'}}
+              />
+              <Text style={styles.emptyText}>통계를 낼 기록이 없습니다.</Text>
             </View>
-            {
-              now && (
-                <Text style={styles.settlement}>
+            :
+            <>
+              <View style={styles.boxContainer}>
+                <Text style={styles.spendingLabel}>개인 소비</Text>
+                <Text style={styles.spending}>{convertMoney(total)}원</Text>
+                {
+                
+                }
+                <View style={styles.dating}>
+                  <View>
+                    <Text style={styles.spendingLabel}>데이트 총 소비</Text>
+                    <Text style={styles.spending}>{convertMoney(dating)}원</Text>
+                  </View>
                   {
-                    settlement > 0 ?
-                      `${convertMoney(Math.abs(settlement))}원 받으세요`
-                      :
-                      settlement < 0 ?
-                        `${convertMoney(Math.abs(settlement))}원 보내세요`
-                        :
-                        '정산할 금액이 없습니다.'
+                    now && !!settlement && (
+                      <Text style={styles.settlement}>
+                        {
+                          settlement > 0 ?
+                            `${convertMoney(Math.abs(settlement))}원 받으세요`
+                            :
+                            `${convertMoney(Math.abs(settlement))}원 보내세요`
+                        }
+                      </Text>
+                    )
                   }
-                </Text>
-              )
-            }
-          </View>
-        </View>
-        
-        {
-          !now && (
-            <>
-              <View style={styles.divider}/>
-              <View style={styles.boxContainer}>
-                <MonthlyTrend/>
-              </View>
-            </>
-          )
-        }
-        
-        <View style={styles.divider}/>
-        <View style={styles.boxContainer}>
-          <Text style={styles.boxTitle}>지출이 가장 많은 곳을 확인하세요</Text>
-          <View style={styles.boxInner}>
-            {
-              monthlyPie?.length ?
-                <PieChart
-                  data={monthlyPie.map(({category, spending}, index) => {
-                    return {
-                      name: mappingCategory(category),
-                      population: spending,
-                      color: PIE_COLORS[index],
-                    };
-                  })}
-                  width={300}
-                  height={220}
-                  chartConfig={{decimalPlaces: 0, color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`}}
-                  style={{padding: 0, marginRight: -115}}
-                  accessor="population"
-                  backgroundColor="transparent"
-                  paddingLeft="15"
-                  hasLegend={false}
-                  absolute
-                />
-                :
-                <Text style={{marginTop: 20}}>기록된 내역이 없어요</Text>
-            }
-          </View>
-          {
-            monthlyPie?.map(({category, spending, count}, index) => (
-              <View key={category} style={styles.monthlyPie}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Badge badgeStyle={{backgroundColor: PIE_COLORS[index], marginRight: 10}}/>
-                  <Text>{mappingCategory(category)}</Text>
                 </View>
-                <Text>{convertMoney(spending)}원</Text>
               </View>
-            ))
-          }
-        </View>
-        
-        
-        {
-          !now && (
-            <>
-              <View style={styles.divider}/>
-              <View style={styles.boxContainer}>
-                <RankedByVisits recordsByCount={recordsByCount}/>
-              </View>
+              
+              {
+                !now && (
+                  <>
+                    <View style={styles.divider}/>
+                    <View style={styles.boxContainer}>
+                      <MonthlyTrend/>
+                    </View>
+                  </>
+                )
+              }
+              
+              {
+                !!monthlyPie?.length && (
+                  <>
+                    <View style={styles.divider}/>
+                    <View style={styles.boxContainer}>
+                      <Text style={styles.boxTitle}>지출이 가장 많은 곳을 확인하세요</Text>
+                      <View style={styles.boxInner}>
+                        <PieChart
+                          data={monthlyPie.map(({category, spending}, index) => {
+                            return {
+                              name: mappingCategory(category),
+                              population: spending,
+                              color: PIE_COLORS[index],
+                            };
+                          })}
+                          width={300}
+                          height={220}
+                          chartConfig={{decimalPlaces: 0, color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`}}
+                          style={{padding: 0, marginRight: -115}}
+                          accessor="population"
+                          backgroundColor="transparent"
+                          paddingLeft="15"
+                          hasLegend={false}
+                          absolute
+                        />
+                      </View>
+                      {
+                        monthlyPie.map(({category, spending, count}, index) => (
+                          <View key={category} style={styles.monthlyPie}>
+                            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                              <Badge badgeStyle={{backgroundColor: PIE_COLORS[index], marginRight: 10}}/>
+                              <Text>{mappingCategory(category)}</Text>
+                            </View>
+                            <Text>{convertMoney(spending)}원</Text>
+                          </View>
+                        ))
+                      }
+                    </View>
+                  </>
+                )
+              }
+              
+              {
+                !now && (
+                  <>
+                    <View style={styles.divider}/>
+                    <View style={styles.boxContainer}>
+                      <RankedByVisits recordsByCount={recordsByCount}/>
+                    </View>
+                  </>
+                )
+              }
             </>
-          )
         }
       </ScrollView>
       
@@ -213,6 +226,8 @@ const styles = StyleSheet.create({
   boxInner: {alignItems: 'center', marginVertical: 10, height: 250},
   monthSelector: {padding: 20, flexDirection: 'row', alignItems: 'center'},
   month: {fontSize: 20, fontWeight: 'bold', marginRight: 10},
+  emptyContainer: {marginTop: 200, height: 120, alignItems: 'center'},
+  emptyText: {fontWeight: 'bold', fontSize: 18, color: '#d23669', marginTop: 10},
   spendingLabel: {color: '#848484'},
   spending: {fontSize: 22, fontWeight: 'bold', marginBottom: 10},
   dating: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end'},

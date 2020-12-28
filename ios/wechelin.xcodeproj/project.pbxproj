@@ -18,7 +18,7 @@
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* wechelinTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* wechelinTests.m */; };
-		6381FC33568A90E3BC35FD4B /* libPods-wechelinTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD468043614845A0D71B6EAE /* libPods-wechelinTests.a */; };
+		31A838206191B7BB5978B18A /* libPods-wechelinTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B274F91B00D0AEC7C83DA7C /* libPods-wechelinTests.a */; };
 		8564845715364EB7C1310923 /* libPods-wechelin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 753DF59ECDC16BBD6862B4C3 /* libPods-wechelin.a */; };
 		A4547F13C9E17DB0BBCF6BFD /* libPods-wechelin-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F017740A938AC7059FD9B7A5 /* libPods-wechelin-tvOS.a */; };
 /* End PBXBuildFile section */
@@ -54,19 +54,21 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = wechelin/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = wechelin/main.m; sourceTree = "<group>"; };
 		1AB4E448957920D38563A82E /* Pods-wechelin-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wechelin-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-wechelin-tvOS/Pods-wechelin-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		1B274F91B00D0AEC7C83DA7C /* libPods-wechelinTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-wechelinTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		27EEC4252590781A00190BB3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "wechelin/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* wechelin-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "wechelin-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* wechelin-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "wechelin-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		378EAAEB57B7AD984FB56BFD /* Pods-wechelin-wechelinTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wechelin-wechelinTests.debug.xcconfig"; path = "Target Support Files/Pods-wechelin-wechelinTests/Pods-wechelin-wechelinTests.debug.xcconfig"; sourceTree = "<group>"; };
 		39883941FE9DE77E7EB8FF6C /* Pods-wechelin.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wechelin.release.xcconfig"; path = "Target Support Files/Pods-wechelin/Pods-wechelin.release.xcconfig"; sourceTree = "<group>"; };
 		4CA6F21124317439006524AE /* wechelin.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = wechelin.entitlements; path = wechelin/wechelin.entitlements; sourceTree = "<group>"; };
 		753DF59ECDC16BBD6862B4C3 /* libPods-wechelin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-wechelin.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7650216D96EE7DED5FB5ACC3 /* Pods-wechelinTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wechelinTests.release.xcconfig"; path = "Target Support Files/Pods-wechelinTests/Pods-wechelinTests.release.xcconfig"; sourceTree = "<group>"; };
 		94E470039607E8F34A03B536 /* libPods-wechelin-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-wechelin-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DB31E5FB54A156C0BC2CF68 /* Pods-wechelin-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wechelin-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-wechelin-tvOSTests/Pods-wechelin-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
+		AE7B1F43C318F3851F8B8D8B /* Pods-wechelin-wechelinTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wechelin-wechelinTests.release.xcconfig"; path = "Target Support Files/Pods-wechelin-wechelinTests/Pods-wechelin-wechelinTests.release.xcconfig"; sourceTree = "<group>"; };
 		B736140B759B524E64C509C7 /* Pods-wechelin.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wechelin.debug.xcconfig"; path = "Target Support Files/Pods-wechelin/Pods-wechelin.debug.xcconfig"; sourceTree = "<group>"; };
 		D303348F93EA24CDDAB0B4A3 /* Pods-wechelin-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wechelin-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-wechelin-tvOSTests/Pods-wechelin-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		D685845D2DCD9D5892B5F168 /* Pods-wechelin-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wechelin-tvOS.release.xcconfig"; path = "Target Support Files/Pods-wechelin-tvOS/Pods-wechelin-tvOS.release.xcconfig"; sourceTree = "<group>"; };
-		DD468043614845A0D71B6EAE /* libPods-wechelinTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-wechelinTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		F017740A938AC7059FD9B7A5 /* libPods-wechelin-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-wechelin-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -77,7 +79,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6381FC33568A90E3BC35FD4B /* libPods-wechelinTests.a in Frameworks */,
+				31A838206191B7BB5978B18A /* libPods-wechelinTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -149,7 +151,7 @@
 				753DF59ECDC16BBD6862B4C3 /* libPods-wechelin.a */,
 				F017740A938AC7059FD9B7A5 /* libPods-wechelin-tvOS.a */,
 				94E470039607E8F34A03B536 /* libPods-wechelin-tvOSTests.a */,
-				DD468043614845A0D71B6EAE /* libPods-wechelinTests.a */,
+				1B274F91B00D0AEC7C83DA7C /* libPods-wechelinTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -198,6 +200,8 @@
 				D303348F93EA24CDDAB0B4A3 /* Pods-wechelin-tvOSTests.release.xcconfig */,
 				034866E7DD973B16EA3AF682 /* Pods-wechelinTests.debug.xcconfig */,
 				7650216D96EE7DED5FB5ACC3 /* Pods-wechelinTests.release.xcconfig */,
+				378EAAEB57B7AD984FB56BFD /* Pods-wechelin-wechelinTests.debug.xcconfig */,
+				AE7B1F43C318F3851F8B8D8B /* Pods-wechelin-wechelinTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -299,10 +303,12 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = V9H9Q8NH3Z;
+						LastSwiftMigration = 1200;
 						ProvisioningStyle = Automatic;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
+						LastSwiftMigration = 1200;
 						ProvisioningStyle = Automatic;
 					};
 					2D02E48F1E0B4A5D006451C7 = {
@@ -465,6 +471,7 @@
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Octicons.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
@@ -484,6 +491,7 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Octicons.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SimpleLineIcons.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Zocial.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -685,6 +693,7 @@
 			baseConfigurationReference = B736140B759B524E64C509C7 /* Pods-wechelin.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = wechelin/wechelin.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -753,6 +762,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.reactjs.native.wechelin;
 				PRODUCT_NAME = wechelin;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -762,6 +773,7 @@
 			baseConfigurationReference = 39883941FE9DE77E7EB8FF6C /* Pods-wechelin.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = wechelin/wechelin.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -829,6 +841,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.reactjs.native.wechelin;
 				PRODUCT_NAME = wechelin;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -840,6 +853,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -856,6 +870,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.wechelin-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 			};
@@ -868,6 +884,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -884,6 +901,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.wechelin-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 			};
@@ -990,6 +1008,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = "";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1036,6 +1056,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = "";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;

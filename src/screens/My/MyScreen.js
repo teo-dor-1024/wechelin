@@ -3,7 +3,17 @@ import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import {Alert, Clipboard, Modal, SafeAreaView, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+  Alert,
+  Clipboard,
+  Image,
+  Modal,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {Divider, Text} from 'react-native-elements';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import useMyInfo from '../../util/useMyInfo';
@@ -142,9 +152,11 @@ function MyScreen() {
       <ModalHeader
         useLeft={false}
         title={`${nickName || '게스트'}님 정보`}
-        RightComponent={<TouchableOpacity onPress={logout}>
-          <Text>로그아웃</Text>
-        </TouchableOpacity>}
+        RightComponent={
+          <TouchableOpacity onPress={logout}>
+            <Text style={styles.normalButton}>로그아웃</Text>
+          </TouchableOpacity>
+        }
       />
       
       {
@@ -169,15 +181,22 @@ function MyScreen() {
           </SkeletonPlaceholder>
           :
           <>
+            <View style={styles.profile}>
+              <Image
+                source={require('../../../assets/beggar.png')}
+                style={{width: '100%', height: '100%', resizeMode: 'contain'}}
+              />
+            </View>
+            
             <View style={styles.boxInfo}>
               <View style={styles.boxRow}>
-                <Text style={styles.generalText}>닉네임</Text>
+                <Text style={styles.boxTitle}>닉네임</Text>
                 <Text style={styles.generalText}>{nickName}</Text>
               </View>
               
               <TouchableOpacity onPress={() => Clipboard.setString(id)}>
                 <View style={styles.boxRow}>
-                  <Text style={styles.generalText}>아이디</Text>
+                  <Text style={styles.boxTitle}>아이디</Text>
                   <Text style={styles.generalText}>{id}</Text>
                 </View>
               </TouchableOpacity>
@@ -185,29 +204,33 @@ function MyScreen() {
             
             <View style={styles.boxHeader}>
               <Text style={styles.boxTitle}>알림</Text>
-              <TouchableOpacity onPress={() => refetch()}><Text>새로고침</Text></TouchableOpacity>
+              <TouchableOpacity onPress={() => refetch()}>
+                <Text style={styles.normalButton}>새로고침</Text>
+              </TouchableOpacity>
             </View>
             <Divider style={styles.divider}/>
-            <ReceivedAlarms myId={id} receivedAlarms={receivedAlarms}/>
-            <RequestedAlarms requestedAlarms={requestedOnAlarm}/>
             {
               (receivedAlarms.length || requestedOnAlarm.length) ?
-                null
+                <ScrollView style={{height: 150}}>
+                  <ReceivedAlarms myId={id} receivedAlarms={receivedAlarms}/>
+                  <RequestedAlarms requestedAlarms={requestedOnAlarm}/>
+                </ScrollView>
                 :
                 <Text style={styles.emptyAlarm}>
                   수신된 알림이 없습니다.
                 </Text>
             }
             
-            <Text style={styles.title}>커플</Text>
+            <View style={styles.boxHeader}>
+              <Text style={styles.boxTitle}>커플</Text>
+              {
+                !(myLover || crushedName) &&
+                <TouchableOpacity stye={styles.boxInfo} onPress={openCoupleSearchForm}>
+                  <Text style={styles.button}>커플찾기</Text>
+                </TouchableOpacity>
+              }
+            </View>
             <Divider style={styles.divider}/>
-            {
-              !(myLover || crushedName) &&
-              <TouchableOpacity stye={styles.boxInfo} onPress={openCoupleSearchForm}>
-                <Text style={{color: '#0080FF', fontWeight: 'bold'}}>커플찾기</Text>
-              </TouchableOpacity>
-            }
-            
             {
               myLover ?
                 <View style={styles.boxInfo}>
@@ -228,7 +251,7 @@ function MyScreen() {
                         {cancelable: true},
                       )}
                     >
-                      <Text style={styles.cancelButton}>연결 해제</Text>
+                      <Text style={styles.button}>연결 해제</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -261,6 +284,7 @@ const styles = StyleSheet.create({
   skeletonBoxValue: {width: 60, height: 20, borderRadius: 5},
   skeletonAlarmContainer: {width: 335, height: 40, borderRadius: 5},
   container: {backgroundColor: '#FFFFFF', height: '100%'},
+  profile: {height: 100, borderRadius: 50, marginVertical: 20},
   boxInfo: {paddingHorizontal: 20},
   boxHeader: {
     flexDirection: 'row',
@@ -272,10 +296,22 @@ const styles = StyleSheet.create({
   boxTitle: {fontSize: 16, fontWeight: 'bold'},
   boxRow: {flexDirection: 'row', justifyContent: 'space-between', marginTop: 25},
   generalText: {fontSize: 16},
-  title: {paddingHorizontal: 20, marginTop: 40, marginBottom: 10, fontSize: 16, fontWeight: 'bold'},
+  title: {
+    paddingHorizontal: 20,
+    marginTop: 40,
+    marginBottom: 10,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   divider: {marginHorizontal: 20},
-  emptyAlarm: {paddingHorizontal: 20, marginTop: 20, fontSize: 18},
-  cancelButton: {color: '#d23669'},
+  emptyAlarm: {
+    paddingHorizontal: 20,
+    marginTop: 20,
+    fontSize: 18,
+    color: '#6E6E6E',
+  },
+  button: {color: '#d23669'},
+  normalButton: {color: '#848484'},
 });
 
 export default MyScreen;

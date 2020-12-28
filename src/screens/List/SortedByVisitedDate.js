@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Divider} from 'react-native-elements';
-import {Modal, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {Image, Modal, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {format} from 'date-fns';
 import ko from 'date-fns/locale/ko';
 import ListItem from './ListItem';
@@ -58,7 +58,11 @@ function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, refetch, r
       {
         !records.length && (
           <View style={styles.emptyContainer}>
-            <Text>기록이 없습니다.</Text>
+            <Image
+              source={require('../../../assets/pencil.png')}
+              style={{width: '100%', height: '100%', resizeMode: 'contain'}}
+            />
+            <Text style={styles.emptyText}>기록이 없습니다.</Text>
           </View>
         )
       }
@@ -73,7 +77,8 @@ function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, refetch, r
 const styles = StyleSheet.create({
   container: {marginTop: 15},
   date: {marginHorizontal: 20, paddingBottom: 15, color: '#848484'},
-  emptyContainer: {paddingHorizontal: 20, marginTop: 20},
+  emptyContainer: {marginTop: 170, height: 120, alignItems: 'center'},
+  emptyText: {fontWeight: 'bold', color: '#d23669', fontSize: 18, marginTop: 20},
   divider: {marginHorizontal: 20},
   moreButton: {backgroundColor: '#FFF', height: 60, marginBottom: 10},
   moreButtonTitle: {color: '#585858'},

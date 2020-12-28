@@ -57,9 +57,7 @@ function LoginScreen({navigation}) {
         await login({id: user, nickname, accessToken: identityToken});
       }
     } catch (error) {
-      if (!error.message.includes('1001')) {
-        console.error(error);
-      }
+    
     }
   };
   
