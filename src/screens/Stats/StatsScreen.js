@@ -8,7 +8,6 @@ import {PieChart} from 'react-native-chart-kit';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import useMyInfo from '../../util/useMyInfo';
 import {convertMoney} from '../../util/StringUtils';
-import {mappingCategory} from '../../util/Category';
 import MonthOption from './MonthOption';
 import MonthlyTrend from './MonthlyTrend';
 import RankedByVisits from './RankedByVisits';
@@ -150,7 +149,7 @@ function StatsScreen() {
                         <PieChart
                           data={monthlyPie.map(({category, spending}, index) => {
                             return {
-                              name: mappingCategory(category),
+                              name: category,
                               population: spending,
                               color: PIE_COLORS[index],
                             };
@@ -171,7 +170,7 @@ function StatsScreen() {
                           <View key={category} style={styles.monthlyPie}>
                             <View style={{flexDirection: 'row', alignItems: 'center'}}>
                               <Badge badgeStyle={{backgroundColor: PIE_COLORS[index], marginRight: 10}}/>
-                              <Text>{mappingCategory(category)}</Text>
+                              <Text>{category}</Text>
                             </View>
                             <Text>{convertMoney(spending)}원</Text>
                           </View>
