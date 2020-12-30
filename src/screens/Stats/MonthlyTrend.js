@@ -33,13 +33,12 @@ function MonthlyTrend() {
     return <Text> 통계 정보 가져오다 에러 발생 !! {error.toString()}</Text>;
   }
   
-  const {monthlySpending} = data;
-  
-  if (monthlySpending.length < 4) {
+  const {monthlySpendingTrend} = data;
+  if (monthlySpendingTrend.length < 4) {
     return null;
   }
   
-  const trendList = monthlySpending.slice(-(MONTHLY_TREND_COUNT));
+  const trendList = monthlySpendingTrend.slice(-(MONTHLY_TREND_COUNT));
   const trendSpending = trendList.map(({spending}) => spending);
   const chartData = {
     labels: trendList.map(({label}) => `${label}월`),
@@ -53,7 +52,7 @@ function MonthlyTrend() {
   return (
     <>
       <Text style={{fontSize: 16, fontWeight: 'bold'}}>
-        월 평균 {convertMoney(calcAvg(monthlySpending.map(({spending}) => spending)))}원 지출했어요
+        월 평균 {convertMoney(calcAvg(monthlySpendingTrend.map(({spending}) => spending)))}원 지출했어요
       </Text>
       {
         !!diffPrevAndTarget && (
