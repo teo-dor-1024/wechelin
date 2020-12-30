@@ -22,13 +22,13 @@ export const allCategories = [
 ];
 
 export const mappingCategory = categoryGroup => {
-  if (/음식점/gi.test(categoryGroup)) {
+  if (/음식점|식당/gi.test(categoryGroup)) {
     return '음식점';
-  } else if (/슈퍼|마트|편의점/gi.test(categoryGroup)) {
+  } else if (/슈퍼|마트|편의점|백화점|아울렛/gi.test(categoryGroup)) {
     return '마트 · 편의점';
-  } else if (/주차장|주유소|충전소/gi.test(categoryGroup)) {
+  } else if (/주차장|주유소|충전소|대리/gi.test(categoryGroup)) {
     return '자동차';
-  } else if (/문화시설|관광명소/gi.test(categoryGroup)) {
+  } else if (/문화|관광|영화|극장|볼링|당구|노래|스키|보드/gi.test(categoryGroup)) {
     return '문화 · 여가';
   } else if (/숙박/gi.test(categoryGroup)) {
     return '숙박';
@@ -38,6 +38,12 @@ export const mappingCategory = categoryGroup => {
     return '병원 · 약국';
   } else if ((/화장품/gi).test(categoryGroup)) {
     return '화장품';
+  } else if ((/주류/gi).test(categoryGroup)) {
+    return '술 · 유흥';
+  } else if ((/의류/gi).test(categoryGroup)) {
+    return '의류';
+  } else if ((/미용|피부/gi).test(categoryGroup)) {
+    return '미용실 · 피부과';
   } else {
     return '기타';
   }
