@@ -350,6 +350,7 @@ function RecordScreen() {
       </View>
       
       <DateTimePickerModal
+        display='spinner'
         isVisible={isDateOpen} mode='datetime'
         onCancel={() => setIsDateOpen(false)}
         headerTextIOS='날짜를 선택하세요' cancelTextIOS='취소' confirmTextIOS='완료'

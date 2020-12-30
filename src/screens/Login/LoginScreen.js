@@ -78,7 +78,7 @@ function LoginScreen({navigation}) {
     <SafeAreaView style={styles.container}>
       <View style={{marginTop: viewHeight > 750 ? 120 : 80}}>
         <Text style={styles.title}>
-          Wechelin
+          내돈어디
         </Text>
         <Text style={styles.subtitle}>
           같이 작성하는 커플 가계부
@@ -128,13 +128,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 40,
     color: '#d23669',
-    fontFamily: 'Menlo-Bold',
+    fontFamily: 'Verdana-Bold',
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 22,
     color: '#222',
-    fontFamily: 'Menlo-Bold',
+    fontFamily: 'Verdana-Bold',
     textAlign: 'center',
     marginTop: 10,
   },
