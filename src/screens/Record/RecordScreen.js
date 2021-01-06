@@ -103,7 +103,7 @@ function RecordScreen() {
         const {data: {createRecord: result}} = await createRecord({
           variables: {
             input: {
-              userId,
+              userId: isModify ? formData.userId : userId,
               ...formData,
               placeId: placeId || '',
               address: address || '',
@@ -121,6 +121,7 @@ function RecordScreen() {
         if (result) {
           const {__typename, ...detail} = result;
           setIsModify(false);
+          setFormData(INIT_FORM_DATA);
           navigation.navigate('List', {reload: true, detail});
         } else {
           alert('기록 저장 실패!');
@@ -200,7 +201,7 @@ function RecordScreen() {
           navigation.navigate('List', {detail: params?.modify});
           setIsModify(false);
         }}
-        title={`지출 ${title}`}
+        title={title}
         useLeft={isModify}
         RightComponent={
           isModify ?
@@ -230,19 +231,12 @@ function RecordScreen() {
             <Input
               inputStyle={styles.inputFont}
               inputContainerStyle={{borderBottomColor: getColor(focusInput === 'money')}}
-              onFocus={() => setFocusInput('money')} onBlur={() => setFocusInput('')}
+              onFocus={() => setFocusInput('money')}
+              onBlur={() => setFocusInput('')}
               keyboardType='number-pad' returnKeyType='done'
-              value={`${convertMoney(formData.money)} 원`}
+              value={`${convertMoney(formData.money)}${focusInput === 'money' ? '' : ' 원'}`}
               onChangeText={value => {
-                // 숫자 입력인지 Backspace 인지
-                let next = value.replace(/\s+|원|^0원|,/g, '');
-                if (!value.includes('원')) {
-                  next = next.length === 1 ?
-                    0
-                    :
-                    next.substring(0, next.length - 1);
-                }
-                
+                const next = value.replace(/,/g, '') || 0;
                 setPlaceByOne('money', parseInt(next, 10));
               }}
             />

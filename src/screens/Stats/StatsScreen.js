@@ -82,7 +82,7 @@ function StatsScreen() {
   }
   
   const {spending: {total, dating, settlement}, monthlyPie, recordsByCount} = data;
-  
+  console.log(total, dating, settlement);
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   skeletonListItem: {flexDirection: 'row', justifyContent: 'space-between', marginTop: 10},
   skeletonListCategory: {width: 160, height: 20, borderRadius: 5},
   skeletonListMoney: {width: 40, height: 20, borderRadius: 5},
-  container: {backgroundColor: '#FFF', height: '100%', paddingBottom: 80},
+  container: {backgroundColor: '#FFF', height: '100%'},
   divider: {backgroundColor: '#F2F2F2', width: '100%', height: 15, marginVertical: 20},
   boxContainer: {paddingHorizontal: 20},
   boxTitle: {fontSize: 16, fontWeight: 'bold'},

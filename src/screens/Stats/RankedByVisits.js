@@ -1,8 +1,9 @@
 import React from 'react';
-import {ListItem, Text} from 'react-native-elements';
+import {Text} from 'react-native-elements';
 import gql from 'graphql-tag';
 import useMyInfo from '../../util/useMyInfo';
 import {useQuery} from '@apollo/react-hooks';
+import {View} from 'react-native';
 
 export const RANKING_COUNT = 5;
 const GET_RANK = gql`
@@ -19,7 +20,7 @@ function RankedByVisits() {
   const {loading, error, data} = useQuery(GET_RANK, {variables: {userId: id}});
   
   if (loading) {
-    return <Text> 통계 정보 계산하는 중 ... </Text>;
+    return null;
   }
   
   if (error) {
@@ -34,20 +35,20 @@ function RankedByVisits() {
   
   return (
     <>
-      <Text style={{fontSize: 16, fontWeight: 'bold'}}>
+      <Text style={{fontSize: 16, fontWeight: 'bold', marginBottom: 20}}>
         방문이 가장 많은 곳을 확인하세요
       </Text>
       {
         recordsByCount
           .slice(0, RANKING_COUNT)
           .map(({placeName, count}, index) => (
-            <ListItem
-              key={placeName}
-              title={placeName}
-              titleProps={{numberOfLines: 1}}
-              leftElement={<Text>{index + 1}위</Text>}
-              rightElement={<Text>{count}회</Text>}
-            />
+            <View style={{flexDirection: 'row', marginTop: 10, justifyContent: 'space-between'}}>
+              <View style={{flexDirection: 'row'}}>
+                <Text style={{marginRight: 20}}>{index + 1}위</Text>
+                <Text>{placeName}</Text>
+              </View>
+              <Text style={{fontWeight: 'bold'}}>{count}회</Text>
+            </View>
           ))
       }
     </>

@@ -697,7 +697,7 @@
 				CODE_SIGN_ENTITLEMENTS = wechelin/wechelin.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.11;
+				CURRENT_PROJECT_VERSION = 1.12;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = V9H9Q8NH3Z;
 				INFOPLIST_FILE = wechelin/Info.plist;
@@ -777,7 +777,7 @@
 				CODE_SIGN_ENTITLEMENTS = wechelin/wechelin.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.11;
+				CURRENT_PROJECT_VERSION = 1.12;
 				DEVELOPMENT_TEAM = V9H9Q8NH3Z;
 				INFOPLIST_FILE = wechelin/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;

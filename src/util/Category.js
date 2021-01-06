@@ -1,6 +1,7 @@
 export const allCategories = [
   {label: '생필품', icon: 'shopping-basket'},
   {label: '전자제품', icon: 'tv'},
+  {label: '가구', icon: 'chair'},
   {label: '의류', icon: 'tshirt'},
   {label: '잡화', icon: 'shopping-bag'},
   {label: '식자재', icon: 'carrot'},

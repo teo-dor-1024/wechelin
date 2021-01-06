@@ -27,7 +27,7 @@ function RecordDetail({detail, setDetail}) {
       
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <Text style={styles.name}>{placeName}</Text>
-        <Text style={styles.money}>{convertMoney(money)}원</Text>
+        <Text style={styles.money}>{convertMoney(isDutch ? money / 2 : money)}원</Text>
         <Text style={styles.category}>{category}</Text>
         <Text style={styles.date}>{convertDate(visitedDate)}</Text>
         {
