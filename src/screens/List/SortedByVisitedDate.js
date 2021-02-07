@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Divider} from 'react-native-elements';
 import {Image, Modal, ScrollView, StyleSheet, Text, View} from 'react-native';
-import {format} from 'date-fns';
-import ko from 'date-fns/locale/ko';
 import ListItem from './ListItem';
 import RecordDetail from './RecordDetail';
+import {convertDate} from '../../util/StringUtils';
 
 function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, refetch, reOpenDetail}) {
   const {records, hasMore} = data;
@@ -27,6 +26,7 @@ function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, refetch, r
         records.map(record => {
           const {_id, visitedDate} = record;
           const yyyymmdd = visitedDate?.substring(0, 10);
+  
           if (prevDate && prevDate === yyyymmdd) {
             return <ListItem key={_id} {...record} setDetail={setDetail}/>;
           }
@@ -35,7 +35,7 @@ function SortedByVisitedDate({data, onPressMoreView, shouldFetchMore, refetch, r
           return (
             <View key={_id} style={styles.container}>
               <Text style={styles.date}>
-                {format(new Date(visitedDate), 'M월 d일 EEEE', {locale: ko})}
+                {convertDate(visitedDate, 'MM월 dd일 EEEE')}
               </Text>
               <Divider style={styles.divider}/>
               <ListItem {...record} setDetail={setDetail}/>

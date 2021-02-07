@@ -82,7 +82,7 @@ function StatsScreen() {
   }
   
   const {spending: {total, dating, settlement}, monthlyPie, recordsByCount} = data;
-  console.log(total, dating, settlement);
+  
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
